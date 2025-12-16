@@ -1,6 +1,24 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useState } from "react";
+
+import { FrequencyHeatmap } from "./components/charts/FrequencyHeatmap";
+
+const FrequencyBarChart = dynamic(
+  () =>
+    import("./components/charts/FrequencyBarChart").then(
+      (m) => m.FrequencyBarChart,
+    ),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="text-sm text-zinc-500 dark:text-zinc-400">
+        Loading chart…
+      </div>
+    ),
+  },
+);
 
 export default function Home() {
   const [input, setInput] = useState("");
@@ -203,31 +221,26 @@ export default function Home() {
                   </div>
                 </div>
 
-                {/* Chart Container (CSS Bar Chart) */}
-                <div className="bg-white dark:bg-zinc-800 p-6 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700">
-                  <h3 className="text-lg font-semibold mb-6">Frequency Distribution</h3>
-                  <div className="flex items-end space-x-1 h-64 overflow-x-auto pb-2">
-                    {Array.from({ length: 49 }, (_, i) => i + 1).map((num) => {
-                      const count = results.frequency[num] || 0;
-                      // Find max count for scaling
-                      const maxVal = Math.max(...Object.values(results.frequency));
-                      const heightPercentage = maxVal > 0 ? (count / maxVal) * 100 : 0;
-                      
-                      return (
-                        <div key={num} className="flex-1 min-w-[12px] flex flex-col items-center group">
-                          <div 
-                            className="w-full bg-blue-200 dark:bg-blue-900/50 rounded-t-sm relative transition-all hover:bg-blue-500 dark:hover:bg-blue-500"
-                            style={{ height: `${Math.max(heightPercentage, 0)}%`, minHeight: count > 0 ? '4px' : '0' }}
-                          >
-                             {/* Tooltip */}
-                             <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover:block bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap z-10">
-                                #{num}: {count}
-                             </div>
-                          </div>
-                          <span className="text-[10px] text-zinc-400 mt-1">{num % 5 === 0 || num === 1 || num === 49 ? num : ''}</span>
-                        </div>
-                      );
-                    })}
+                {/* Visualizations */}
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                  <div className="bg-white dark:bg-zinc-800 p-6 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700">
+                    <h3 className="text-lg font-semibold mb-2">Frequency Distribution</h3>
+                    <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-4">
+                      Hotter colors indicate more frequent numbers; cooler colors indicate less frequent numbers.
+                    </p>
+                    <div className="overflow-x-auto pb-2">
+                      <div className="min-w-[720px]">
+                        <FrequencyBarChart frequency={results.frequency} />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-white dark:bg-zinc-800 p-6 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700">
+                    <h3 className="text-lg font-semibold mb-2">Frequency Heatmap (7×7)</h3>
+                    <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-4">
+                      Each cell is a number from 1-49. Intensity is relative to the most frequent number.
+                    </p>
+                    <FrequencyHeatmap frequency={results.frequency} />
                   </div>
                 </div>
 
