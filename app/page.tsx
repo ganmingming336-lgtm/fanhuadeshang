@@ -8,6 +8,7 @@ export default function Home() {
   const [results, setResults] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState("");
   const [realTimeWarning, setRealTimeWarning] = useState("");
+  const [showGuide, setShowGuide] = useState(false);
 
   const validateInput = (value: string) => {
     // Check for characters that are not digits, whitespace, or commas
@@ -68,6 +69,139 @@ export default function Home() {
             Analyze your lottery numbers instantly. Paste your data to see frequency distributions, ranges, and statistical summaries.
           </p>
         </header>
+
+        {/* How to Use Guide - Accordion */}
+        <section className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-zinc-800 dark:to-zinc-900 rounded-xl shadow-lg border border-blue-200 dark:border-zinc-700 overflow-hidden">
+          <button
+            onClick={() => setShowGuide(!showGuide)}
+            className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-blue-100/50 dark:hover:bg-zinc-700/50 transition-colors"
+            aria-expanded={showGuide}
+          >
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">📚</span>
+              <div>
+                <h2 className="text-xl font-bold text-blue-900 dark:text-blue-300">How to Use This Tool / 使用指南</h2>
+                <p className="text-sm text-zinc-600 dark:text-zinc-400">Click to expand step-by-step instructions</p>
+              </div>
+            </div>
+            <svg 
+              className={`w-6 h-6 text-blue-600 dark:text-blue-400 transform transition-transform ${showGuide ? 'rotate-180' : ''}`}
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+
+          {showGuide && (
+            <div className="px-6 pb-6 space-y-6 animate-in slide-in-from-top-2 duration-300">
+              {/* Quick Start */}
+              <div className="bg-white dark:bg-zinc-800/50 rounded-lg p-5 border border-zinc-200 dark:border-zinc-600">
+                <h3 className="text-lg font-semibold text-blue-800 dark:text-blue-300 mb-3 flex items-center gap-2">
+                  <span className="text-xl">🚀</span> Quick Start / 快速开始
+                </h3>
+                <ol className="space-y-2 text-sm text-zinc-700 dark:text-zinc-300 list-decimal list-inside">
+                  <li><strong>Paste your numbers</strong> in the input box on the left (or click &ldquo;Paste &amp; Analyze Example&rdquo;)</li>
+                  <li className="text-zinc-600 dark:text-zinc-400 ml-5">在左侧的输入框中粘贴您的号码（或点击&ldquo;粘贴并分析示例&rdquo;）</li>
+                  <li><strong>Click &ldquo;Analyze Numbers&rdquo;</strong> button</li>
+                  <li className="text-zinc-600 dark:text-zinc-400 ml-5">点击&ldquo;分析号码&rdquo;按钮</li>
+                  <li><strong>View results</strong> on the right: stats, charts, and tables will appear instantly</li>
+                  <li className="text-zinc-600 dark:text-zinc-400 ml-5">在右侧查看结果：统计数据、图表和表格将立即显示</li>
+                </ol>
+              </div>
+
+              {/* Data Format Tips */}
+              <div className="bg-white dark:bg-zinc-800/50 rounded-lg p-5 border border-zinc-200 dark:border-zinc-600">
+                <h3 className="text-lg font-semibold text-green-800 dark:text-green-300 mb-3 flex items-center gap-2">
+                  <span className="text-xl">✏️</span> Formatting Tips / 格式提示
+                </h3>
+                <div className="space-y-3 text-sm">
+                  <div>
+                    <p className="font-medium text-zinc-800 dark:text-zinc-200">✅ Accepted formats:</p>
+                    <ul className="list-disc list-inside ml-4 text-zinc-600 dark:text-zinc-400 space-y-1">
+                      <li>Comma-separated: <code className="bg-zinc-100 dark:bg-zinc-700 px-2 py-0.5 rounded">5, 12, 23, 34, 45, 49</code></li>
+                      <li>Space-separated: <code className="bg-zinc-100 dark:bg-zinc-700 px-2 py-0.5 rounded">1 2 3 4 5 6</code></li>
+                      <li>Multiple lines or mixed formats are OK!</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <p className="font-medium text-zinc-800 dark:text-zinc-200">⚠️ Important rules:</p>
+                    <ul className="list-disc list-inside ml-4 text-zinc-600 dark:text-zinc-400 space-y-1">
+                      <li>Numbers must be between <strong>1 and 49</strong> (inclusive)</li>
+                      <li>Only numbers, commas, and spaces are allowed</li>
+                      <li>Letters and special symbols will trigger a warning</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              {/* Understanding Results */}
+              <div className="bg-white dark:bg-zinc-800/50 rounded-lg p-5 border border-zinc-200 dark:border-zinc-600">
+                <h3 className="text-lg font-semibold text-purple-800 dark:text-purple-300 mb-3 flex items-center gap-2">
+                  <span className="text-xl">📊</span> Understanding Your Results / 理解分析结果
+                </h3>
+                <div className="space-y-3 text-sm text-zinc-700 dark:text-zinc-300">
+                  <div>
+                    <p className="font-semibold text-blue-700 dark:text-blue-300">🔥 Hot Numbers (Most Common):</p>
+                    <p className="ml-4 text-zinc-600 dark:text-zinc-400">These numbers appear most frequently in your data. They might indicate trending patterns.</p>
+                    <p className="ml-4 text-zinc-500 dark:text-zinc-500 text-xs">这些号码在您的数据中出现最频繁，可能表明趋势模式。</p>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-blue-700 dark:text-blue-300">❄️ Cold Numbers (Least Common):</p>
+                    <p className="ml-4 text-zinc-600 dark:text-zinc-400">These numbers appear least frequently. They may be &ldquo;due&rdquo; or simply less popular.</p>
+                    <p className="ml-4 text-zinc-500 dark:text-zinc-500 text-xs">这些号码出现频率最低，可能是&ldquo;应出&rdquo;号码或只是不太常见。</p>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-blue-700 dark:text-blue-300">📈 Frequency Chart:</p>
+                    <p className="ml-4 text-zinc-600 dark:text-zinc-400">Hover over bars to see exact counts. Taller bars = more frequent numbers.</p>
+                    <p className="ml-4 text-zinc-500 dark:text-zinc-500 text-xs">悬停在条形图上可查看确切数量。条形越高 = 号码越频繁。</p>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-blue-700 dark:text-blue-300">📋 Detailed Table:</p>
+                    <p className="ml-4 text-zinc-600 dark:text-zinc-400">Shows each number&apos;s frequency count and percentage of total. Scroll to see all entries.</p>
+                    <p className="ml-4 text-zinc-500 dark:text-zinc-500 text-xs">显示每个号码的频率计数和总数百分比。滚动查看所有条目。</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Troubleshooting */}
+              <div className="bg-white dark:bg-zinc-800/50 rounded-lg p-5 border border-zinc-200 dark:border-zinc-600">
+                <h3 className="text-lg font-semibold text-red-800 dark:text-red-300 mb-3 flex items-center gap-2">
+                  <span className="text-xl">🔧</span> Troubleshooting / 故障排除
+                </h3>
+                <div className="space-y-3 text-sm">
+                  <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded p-3">
+                    <p className="font-semibold text-yellow-900 dark:text-yellow-300">⚠️ &ldquo;Input contains invalid characters&rdquo;</p>
+                    <p className="text-zinc-700 dark:text-zinc-300 mt-1">Remove any letters, symbols (except commas), or characters that aren&apos;t numbers.</p>
+                  </div>
+                  <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded p-3">
+                    <p className="font-semibold text-red-900 dark:text-red-300">❌ &ldquo;No valid numbers found&rdquo;</p>
+                    <p className="text-zinc-700 dark:text-zinc-300 mt-1">Make sure all numbers are between 1-49 and properly separated by commas or spaces.</p>
+                  </div>
+                  <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded p-3">
+                    <p className="font-semibold text-blue-900 dark:text-blue-300">💡 Tip: Export Results</p>
+                    <p className="text-zinc-700 dark:text-zinc-300 mt-1">To save your analysis, take a screenshot or manually copy data from the statistics cards and table. Future versions may include CSV download.</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Mobile Tips */}
+              <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg p-5 border border-blue-200 dark:border-blue-800">
+                <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-300 mb-2 flex items-center gap-2">
+                  <span className="text-xl">📱</span> Mobile Users / 移动端用户
+                </h3>
+                <p className="text-sm text-zinc-700 dark:text-zinc-300">
+                  This tool works great on phones and tablets! On smaller screens, you&apos;ll see the input and results stacked vertically. 
+                  Swipe left/right on the chart to see all numbers. The table is also scrollable.
+                </p>
+                <p className="text-xs text-zinc-600 dark:text-zinc-400 mt-2">
+                  此工具在手机和平板电脑上运行良好！在较小的屏幕上，您将看到输入和结果垂直堆叠。在图表上左右滑动可查看所有号码。表格也可以滚动。
+                </p>
+              </div>
+            </div>
+          )}
+        </section>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Input Workspace */}
