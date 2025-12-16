@@ -31,3 +31,7 @@ pnpm-debug.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# test files
+test-*.html
+*.log
