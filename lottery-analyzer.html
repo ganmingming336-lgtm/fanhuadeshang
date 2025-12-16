@@ -770,6 +770,274 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        /* 卡方检验部分样式 */
+        .chi-square-test-section {
+            background: linear-gradient(135deg, #f5f3ff, #ede9fe);
+            border: 2px solid #8b5cf6;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .chi-square-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #5b21b6;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .chi-square-subtitle {
+            font-size: 0.875rem;
+            color: #6b21a8;
+            margin-bottom: 1rem;
+        }
+
+        .test-result-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .test-result-card {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #c4b5fd;
+        }
+
+        .test-result-label {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .test-result-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #5b21b6;
+            margin-bottom: 0.25rem;
+        }
+
+        .test-result-interpretation {
+            font-size: 0.75rem;
+            color: #6b7280;
+        }
+
+        .test-explanation-box {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #c4b5fd;
+        }
+
+        .test-explanation-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #5b21b6;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .test-explanation-text {
+            font-size: 0.75rem;
+            color: #6b7280;
+            line-height: 1.6;
+            margin-bottom: 0.5rem;
+        }
+
+        .significance-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+
+        .significance-random {
+            background-color: #d1fae5;
+            color: #065f46;
+            border: 1px solid #10b981;
+        }
+
+        .significance-non-random {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+
+        /* 卡方预测部分样式 */
+        .chi-square-prediction-section {
+            background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+            border: 2px solid #6366f1;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .chi-square-prediction-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #3730a3;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .chi-square-prediction-subtitle {
+            font-size: 0.875rem;
+            color: #4338ca;
+            margin-bottom: 1rem;
+        }
+
+        .chi-square-prediction-disclaimer {
+            background: #e0e7ff;
+            border: 1px solid #6366f1;
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            font-size: 0.75rem;
+            color: #3730a3;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .chi-square-prediction-card {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .chi-square-prediction-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .chi-square-prediction-card.rank-1,
+        .chi-square-prediction-card.rank-2,
+        .chi-square-prediction-card.rank-3 {
+            border-color: #6366f1;
+            background: linear-gradient(135deg, #ffffff, #eef2ff);
+        }
+
+        .chi-square-prediction-card.rank-4,
+        .chi-square-prediction-card.rank-5,
+        .chi-square-prediction-card.rank-6 {
+            border-color: #818cf8;
+            background: linear-gradient(135deg, #ffffff, #eef2ff);
+        }
+
+        .chi-square-prediction-card.rank-7,
+        .chi-square-prediction-card.rank-8,
+        .chi-square-prediction-card.rank-9,
+        .chi-square-prediction-card.rank-10 {
+            border-color: #a5b4fc;
+            background: linear-gradient(135deg, #ffffff, #f5f3ff);
+        }
+
+        .chi-square-number-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 1.25rem;
+            background: linear-gradient(135deg, #eef2ff, #c7d2fe);
+            color: #3730a3;
+            border: 2px solid #6366f1;
+        }
+
+        .chi-square-rank-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.75rem;
+            height: 1.75rem;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 0.75rem;
+            background: #6366f1;
+            color: white;
+        }
+
+        .chi-square-residual-bar {
+            flex: 1;
+            height: 1rem;
+            background: #f3f4f6;
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+
+        .chi-square-residual-fill {
+            height: 100%;
+            border-radius: 9999px;
+            transition: width 0.5s ease-out;
+        }
+
+        .chi-square-residual-fill.high {
+            background: linear-gradient(90deg, #6366f1, #4f46e5);
+        }
+
+        .chi-square-residual-fill.medium {
+            background: linear-gradient(90deg, #818cf8, #6366f1);
+        }
+
+        .chi-square-residual-fill.low {
+            background: linear-gradient(90deg, #a5b4fc, #818cf8);
+        }
+
+        .model-comparison-header {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb;
+        }
+
+        .model-comparison-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #18181b;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .model-comparison-text {
+            font-size: 0.75rem;
+            color: #6b7280;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .test-result-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
@@ -949,14 +1217,46 @@
                     </div>
                 </div>
 
-                <!-- 下一期预测 -->
+                <!-- 卡方检验部分 -->
+                <div class="chi-square-test-section" id="chi-square-test-section">
+                    <div class="chi-square-title">
+                        <span style="font-size: 1.5rem;">📊</span>
+                        统计检验 / Statistical Test
+                    </div>
+                    <div class="chi-square-subtitle">
+                        卡方检验：科学检测数据随机性 / Chi-square Test: Scientific Randomness Testing
+                    </div>
+                    
+                    <div class="test-result-grid" id="chi-square-results">
+                        <!-- 将通过JavaScript动态生成 -->
+                    </div>
+                    
+                    <div class="test-explanation-box" id="chi-square-explanation">
+                        <!-- 将通过JavaScript动态生成 -->
+                    </div>
+                </div>
+
+                <!-- 模型对比说明 -->
+                <div class="model-comparison-header">
+                    <div class="model-comparison-title">
+                        <span style="font-size: 1.25rem;">🔬</span>
+                        双模型预测对比 / Dual Model Prediction Comparison
+                    </div>
+                    <div class="model-comparison-text">
+                        我们提供两种基于不同假设的预测模型。<strong>模型 A（频率模型）</strong>基于历史频率、冷号反弹和均衡性；<strong>模型 B（卡方模型）</strong>基于统计偏差分析。两个模型互相补充，帮助您从不同角度理解数据。
+                        <br><br>
+                        We provide two prediction models based on different assumptions. <strong>Model A (Frequency Model)</strong> is based on historical frequency, cold number rebound, and balance; <strong>Model B (Chi-square Model)</strong> is based on statistical deviation analysis. Both models complement each other to help you understand the data from different perspectives.
+                    </div>
+                </div>
+
+                <!-- 下一期预测 - 模型 A -->
                 <div class="prediction-section" id="prediction-section">
                     <div class="prediction-title">
                         <span style="font-size: 1.5rem;">🔮</span>
-                        下一期预测 Top 10 / Next Draw Predictions
+                        模型 A - 频率预测 Top 10 / Model A - Frequency Predictions
                     </div>
                     <div class="prediction-subtitle">
-                        基于历史数据的智能预测分析 / AI-powered predictions based on historical data
+                        基于历史频率、冷号反弹和均衡性的智能预测 / Predictions based on frequency, cold rebound & balance
                     </div>
                     <div class="prediction-disclaimer">
                         ⚠️ 免责声明：此预测仅供参考娱乐，不构成投注建议。彩票结果完全随机。/ Disclaimer: For reference only, not betting advice.
@@ -969,6 +1269,31 @@
                             📊 预测说明 / Prediction Methodology
                         </div>
                         <div class="prediction-explanation-list" id="prediction-explanation-list">
+                            <!-- 将通过JavaScript动态生成 -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 下一期预测 - 模型 B -->
+                <div class="chi-square-prediction-section" id="chi-square-prediction-section">
+                    <div class="chi-square-prediction-title">
+                        <span style="font-size: 1.5rem;">📈</span>
+                        模型 B - 卡方预测 Top 10 / Model B - Chi-square Predictions
+                    </div>
+                    <div class="chi-square-prediction-subtitle">
+                        基于统计偏差的预测分析 / Predictions based on statistical deviation analysis
+                    </div>
+                    <div class="chi-square-prediction-disclaimer">
+                        ℹ️ 说明：卡方模型识别偏离随机分布最多的数字。如果彩票存在规律，这些数字最可能继续表现异常。/ Chi-square model identifies numbers that deviate most from random distribution.
+                    </div>
+                    <div class="prediction-grid" id="chi-square-prediction-grid">
+                        <!-- 将通过JavaScript动态生成 -->
+                    </div>
+                    <div class="prediction-explanation" id="chi-square-prediction-explanation">
+                        <div class="prediction-explanation-title">
+                            📊 卡方预测说明 / Chi-square Prediction Methodology
+                        </div>
+                        <div class="prediction-explanation-list" id="chi-square-prediction-explanation-list">
                             <!-- 将通过JavaScript动态生成 -->
                         </div>
                     </div>
@@ -1202,7 +1527,9 @@
         function displayResults(result) {
             displayStatsCards(result);
             displayHotColdNumbers(result);
+            displayChiSquareTest(result);
             displayPredictions(result);
+            displayChiSquarePredictions(result);
             displayQuickStats(result);
             displayChart(result);
             displayTable(result);
@@ -1235,6 +1562,275 @@
             coldContainer.innerHTML = result.coldNumbers.map(num => 
                 `<span class="number-tag cold-tag">${num}</span>`
             ).join('');
+        }
+
+        // 计算卡方检验
+        function calculateChiSquare(result) {
+            const totalDraws = result.totalDraws;
+            const expected = totalDraws / 49;
+            let chiSquareValue = 0;
+            const residuals = [];
+            
+            for (let i = 1; i <= 49; i++) {
+                const observed = result.frequency[i] || 0;
+                const residual = Math.pow(observed - expected, 2) / expected;
+                chiSquareValue += residual;
+                residuals.push({
+                    number: i,
+                    observed: observed,
+                    expected: expected,
+                    residual: residual
+                });
+            }
+            
+            const degreesOfFreedom = 48;
+            const pValue = calculatePValue(chiSquareValue, degreesOfFreedom);
+            
+            return {
+                chiSquare: chiSquareValue,
+                degreesOfFreedom: degreesOfFreedom,
+                pValue: pValue,
+                residuals: residuals,
+                expected: expected
+            };
+        }
+
+        // 计算 p 值（使用正态近似）
+        function calculatePValue(chiSquare, df) {
+            // 对于大的自由度，使用 Wilson-Hilferty 变换近似
+            const z = Math.pow(chiSquare / df, 1/3) - (1 - 2/(9*df)) / Math.sqrt(2/(9*df));
+            
+            // 计算标准正态分布的累积分布函数
+            const pValue = 1 - normalCDF(z);
+            
+            return Math.max(0, Math.min(1, pValue));
+        }
+
+        // 标准正态分布的累积分布函数
+        function normalCDF(z) {
+            const t = 1 / (1 + 0.2316419 * Math.abs(z));
+            const d = 0.3989423 * Math.exp(-z * z / 2);
+            const p = d * t * (0.3193815 + t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274))));
+            return z > 0 ? 1 - p : p;
+        }
+
+        // 显示卡方检验结果
+        function displayChiSquareTest(result) {
+            const chiSquareData = calculateChiSquare(result);
+            const resultsContainer = document.getElementById('chi-square-results');
+            const explanationContainer = document.getElementById('chi-square-explanation');
+            
+            const isSignificant = chiSquareData.pValue < 0.05;
+            const significanceClass = isSignificant ? 'significance-non-random' : 'significance-random';
+            const significanceText = isSignificant 
+                ? '显著偏离随机 / Significantly Non-random' 
+                : '符合随机分布 / Appears Random';
+            
+            resultsContainer.innerHTML = `
+                <div class="test-result-card">
+                    <div class="test-result-label">卡方值 / χ² Value</div>
+                    <div class="test-result-value">${chiSquareData.chiSquare.toFixed(2)}</div>
+                    <div class="test-result-interpretation">自由度 / df = ${chiSquareData.degreesOfFreedom}</div>
+                </div>
+                <div class="test-result-card">
+                    <div class="test-result-label">P 值 / P-value</div>
+                    <div class="test-result-value">${chiSquareData.pValue.toFixed(4)}</div>
+                    <div class="test-result-interpretation">显著性水平 α = 0.05</div>
+                </div>
+                <div class="test-result-card">
+                    <div class="test-result-label">期望频率 / Expected Freq</div>
+                    <div class="test-result-value">${chiSquareData.expected.toFixed(2)}</div>
+                    <div class="test-result-interpretation">每个号码应出现次数</div>
+                </div>
+            `;
+            
+            let explanationHTML = `
+                <div class="test-explanation-title">
+                    <span style="font-size: 1rem;">💡</span>
+                    检验结果解释 / Test Result Interpretation
+                </div>
+            `;
+            
+            if (isSignificant) {
+                explanationHTML += `
+                    <div class="test-explanation-text">
+                        <strong>🔴 结论：</strong>p 值 = ${chiSquareData.pValue.toFixed(4)} < 0.05，数据<strong>显著偏离</strong>随机分布。
+                        这表明某些号码的出现频率明显高于或低于期望值。
+                    </div>
+                    <div class="test-explanation-text">
+                        <strong>Conclusion:</strong> p-value = ${chiSquareData.pValue.toFixed(4)} < 0.05. The data <strong>significantly deviates</strong> from random distribution. 
+                        This suggests that certain numbers appear more or less frequently than expected.
+                    </div>
+                    <div class="test-explanation-text">
+                        <strong>💭 含义：</strong>如果彩票真的存在某种规律或偏差（例如机器偏好、球重量差异等），
+                        那么偏差最大的数字（卡方残差最高）可能会继续表现异常。下方的"卡方预测模型"展示了这些数字。
+                    </div>
+                    <div class="test-explanation-text">
+                        <strong>Implication:</strong> If the lottery has any pattern or bias (e.g., machine preference, ball weight differences),
+                        numbers with the largest deviations (highest chi-square residuals) may continue to show abnormal behavior.
+                        See "Chi-square Prediction Model" below for these numbers.
+                    </div>
+                `;
+            } else {
+                explanationHTML += `
+                    <div class="test-explanation-text">
+                        <strong>🟢 结论：</strong>p 值 = ${chiSquareData.pValue.toFixed(4)} > 0.05，数据<strong>符合</strong>随机分布。
+                        各号码出现频率的差异在统计学上可由随机性解释。
+                    </div>
+                    <div class="test-explanation-text">
+                        <strong>Conclusion:</strong> p-value = ${chiSquareData.pValue.toFixed(4)} > 0.05. The data <strong>appears random</strong>.
+                        The differences in number frequencies can be explained by random chance.
+                    </div>
+                    <div class="test-explanation-text">
+                        <strong>💭 含义：</strong>彩票看起来是公平的。虽然某些号码出现频率可能稍高或稍低，
+                        但这些差异在统计学上不显著。即使如此，下方的"卡方预测模型"仍展示了偏差相对较大的数字供参考。
+                    </div>
+                    <div class="test-explanation-text">
+                        <strong>Implication:</strong> The lottery appears fair. While some numbers may appear slightly more or less frequently,
+                        these differences are not statistically significant. The "Chi-square Prediction Model" below still shows numbers with relatively larger deviations for reference.
+                    </div>
+                `;
+            }
+            
+            explanationHTML += `
+                <div class="significance-badge ${significanceClass}">
+                    ${significanceText}
+                </div>
+            `;
+            
+            explanationContainer.innerHTML = explanationHTML;
+        }
+
+        // 计算基于卡方的预测
+        function calculateChiSquarePredictions(result) {
+            const chiSquareData = calculateChiSquare(result);
+            
+            // 按残差降序排序
+            const predictions = chiSquareData.residuals.sort((a, b) => {
+                if (b.residual !== a.residual) {
+                    return b.residual - a.residual;
+                }
+                return a.number - b.number;
+            });
+            
+            return predictions.map(pred => ({
+                ...pred,
+                deviationType: pred.observed > pred.expected ? 'over' : 'under',
+                deviationPercent: pred.expected > 0 ? ((pred.observed - pred.expected) / pred.expected * 100) : 0
+            }));
+        }
+
+        // 显示卡方预测结果
+        function displayChiSquarePredictions(result) {
+            const predictions = calculateChiSquarePredictions(result);
+            const top10 = predictions.slice(0, 10);
+            
+            const gridContainer = document.getElementById('chi-square-prediction-grid');
+            const explanationContainer = document.getElementById('chi-square-prediction-explanation-list');
+            
+            const maxResidual = Math.max(...predictions.map(p => p.residual));
+            
+            // 生成预测卡片
+            gridContainer.innerHTML = top10.map((pred, index) => {
+                const rank = index + 1;
+                let heatClass = 'low';
+                if (rank <= 3) heatClass = 'high';
+                else if (rank <= 6) heatClass = 'medium';
+                
+                const residualPercent = maxResidual > 0 ? (pred.residual / maxResidual * 100) : 0;
+                
+                const deviationIcon = pred.deviationType === 'over' ? '📈' : '📉';
+                const deviationText = pred.deviationType === 'over' 
+                    ? `高于期望 ${Math.abs(pred.deviationPercent).toFixed(1)}%` 
+                    : `低于期望 ${Math.abs(pred.deviationPercent).toFixed(1)}%`;
+                const deviationTextEn = pred.deviationType === 'over'
+                    ? `${Math.abs(pred.deviationPercent).toFixed(1)}% above expected`
+                    : `${Math.abs(pred.deviationPercent).toFixed(1)}% below expected`;
+                
+                return `
+                    <div class="chi-square-prediction-card rank-${rank}">
+                        <div class="prediction-header">
+                            <div class="prediction-number">
+                                <div class="chi-square-number-badge">${pred.number}</div>
+                                <div style="font-size: 0.875rem; font-weight: 600; color: #18181b;">
+                                    号码 ${pred.number}
+                                </div>
+                            </div>
+                            <div class="chi-square-rank-badge">#${rank}</div>
+                        </div>
+                        <div class="prediction-index">
+                            <div class="chi-square-residual-bar">
+                                <div class="chi-square-residual-fill ${heatClass}" style="width: ${residualPercent}%"></div>
+                            </div>
+                            <div class="prediction-index-score">${pred.residual.toFixed(2)}</div>
+                        </div>
+                        <div class="prediction-details">
+                            <div class="prediction-detail-item">
+                                <span>卡方残差 / χ² Residual:</span>
+                                <span style="font-weight: 600;">${pred.residual.toFixed(2)}</span>
+                            </div>
+                            <div class="prediction-detail-item">
+                                <span>实际频率 / Observed:</span>
+                                <span style="font-weight: 600;">${pred.observed} 次</span>
+                            </div>
+                            <div class="prediction-detail-item">
+                                <span>期望频率 / Expected:</span>
+                                <span style="font-weight: 600;">${pred.expected.toFixed(2)} 次</span>
+                            </div>
+                            <div class="prediction-detail-item" style="color: ${pred.deviationType === 'over' ? '#ef4444' : '#3b82f6'};">
+                                <span>${deviationIcon} 偏差 / Deviation:</span>
+                                <span style="font-weight: 600;">${deviationText}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            // 生成预测说明
+            const explanations = [];
+            
+            // 统计偏高和偏低的数字
+            const overExpected = top10.filter(p => p.deviationType === 'over');
+            const underExpected = top10.filter(p => p.deviationType === 'under');
+            
+            if (overExpected.length > 0) {
+                const nums = overExpected.slice(0, 3).map(p => p.number).join(', ');
+                const avgDeviation = (overExpected.reduce((sum, p) => sum + Math.abs(p.deviationPercent), 0) / overExpected.length).toFixed(1);
+                explanations.push(
+                    `<div class="prediction-explanation-item">` +
+                    `<strong>📈 超频号码：</strong>数字 ${nums} 等出现频率显著<strong>高于</strong>期望值（平均高 ${avgDeviation}%）。` +
+                    `如果存在系统性偏差，这些号码可能继续频繁出现。` +
+                    `</div>`
+                );
+            }
+            
+            if (underExpected.length > 0) {
+                const nums = underExpected.slice(0, 3).map(p => p.number).join(', ');
+                const avgDeviation = (underExpected.reduce((sum, p) => sum + Math.abs(p.deviationPercent), 0) / underExpected.length).toFixed(1);
+                explanations.push(
+                    `<div class="prediction-explanation-item">` +
+                    `<strong>📉 欠频号码：</strong>数字 ${nums} 等出现频率显著<strong>低于</strong>期望值（平均低 ${avgDeviation}%）。` +
+                    `如果存在系统性偏差，这些号码可能继续出现较少，或可能"反弹"。` +
+                    `</div>`
+                );
+            }
+            
+            // 算法说明
+            explanations.push(
+                `<div class="prediction-explanation-item">` +
+                `<strong>🔬 算法原理：</strong>卡方残差 = (观测值 - 期望值)² / 期望值。残差越大，该号码偏离随机分布越多。` +
+                `排名基于残差大小，无论偏高还是偏低。` +
+                `</div>`
+            );
+            
+            explanations.push(
+                `<div class="prediction-explanation-item">` +
+                `<strong>💡 使用建议：</strong>将卡方模型与频率模型（模型 A）结合使用。两个模型共同推荐的号码可能更值得关注。` +
+                `但请记住：彩票本质上是随机的，历史数据无法真正预测未来。` +
+                `</div>`
+            );
+            
+            explanationContainer.innerHTML = explanations.join('');
         }
 
         // 计算预测指数
@@ -1546,11 +2142,29 @@
                     csv += `${data.rank},${data.number},${data.count},${data.percentage.toFixed(1)}%,${status}\n`;
                 });
             
-            // 添加预测数据
-            csv += '\n\nPrediction Rank,Number,Prediction Index,Frequency,Draws Since Last Seen\n';
+            // 添加卡方检验结果
+            const chiSquareData = calculateChiSquare(analysisResult);
+            csv += '\n\nChi-square Test Results\n';
+            csv += `Chi-square Value,${chiSquareData.chiSquare.toFixed(2)}\n`;
+            csv += `Degrees of Freedom,${chiSquareData.degreesOfFreedom}\n`;
+            csv += `P-value,${chiSquareData.pValue.toFixed(4)}\n`;
+            csv += `Expected Frequency,${chiSquareData.expected.toFixed(2)}\n`;
+            csv += `Significance,${chiSquareData.pValue < 0.05 ? 'Non-random' : 'Random'}\n`;
+            
+            // 添加模型 A 预测数据
+            csv += '\n\nModel A - Frequency Predictions (Top 10)\n';
+            csv += 'Rank,Number,Prediction Index,Frequency,Draws Since Last Seen\n';
             const predictions = calculatePredictions(analysisResult);
             predictions.slice(0, 10).forEach((pred, index) => {
                 csv += `${index + 1},${pred.number},${pred.predictionIndex},${pred.frequency},${pred.drawsSinceLastSeen}\n`;
+            });
+            
+            // 添加模型 B 卡方预测数据
+            csv += '\n\nModel B - Chi-square Predictions (Top 10)\n';
+            csv += 'Rank,Number,Chi-square Residual,Observed,Expected,Deviation Type,Deviation %\n';
+            const chiSquarePredictions = calculateChiSquarePredictions(analysisResult);
+            chiSquarePredictions.slice(0, 10).forEach((pred, index) => {
+                csv += `${index + 1},${pred.number},${pred.residual.toFixed(2)},${pred.observed},${pred.expected.toFixed(2)},${pred.deviationType},${pred.deviationPercent.toFixed(1)}%\n`;
             });
             
             downloadFile('lottery-analysis.csv', csv, 'text/csv');
@@ -1561,9 +2175,20 @@
             if (!analysisResult) return;
             
             const predictions = calculatePredictions(analysisResult);
+            const chiSquareData = calculateChiSquare(analysisResult);
+            const chiSquarePredictions = calculateChiSquarePredictions(analysisResult);
+            
             const exportData = {
                 ...analysisResult,
-                predictions: predictions.slice(0, 10)
+                chiSquareTest: {
+                    chiSquare: chiSquareData.chiSquare,
+                    degreesOfFreedom: chiSquareData.degreesOfFreedom,
+                    pValue: chiSquareData.pValue,
+                    expected: chiSquareData.expected,
+                    significance: chiSquareData.pValue < 0.05 ? 'non-random' : 'random'
+                },
+                modelA_frequencyPredictions: predictions.slice(0, 10),
+                modelB_chiSquarePredictions: chiSquarePredictions.slice(0, 10)
             };
             
             const json = JSON.stringify(exportData, null, 2);
@@ -1576,6 +2201,9 @@
             
             const predictions = calculatePredictions(analysisResult);
             const top10 = predictions.slice(0, 10);
+            const chiSquareData = calculateChiSquare(analysisResult);
+            const chiSquarePredictions = calculateChiSquarePredictions(analysisResult);
+            const chiSquareTop10 = chiSquarePredictions.slice(0, 10);
             
             const printWindow = window.open('', '_blank');
             printWindow.document.write(`
@@ -1586,12 +2214,16 @@
                         body { font-family: Arial, sans-serif; margin: 20px; }
                         .header { text-align: center; margin-bottom: 30px; }
                         .section { margin-bottom: 30px; }
-                        .stats { display: flex; gap: 20px; margin-bottom: 20px; }
-                        .stat { padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
-                        table { width: 100%; border-collapse: collapse; }
+                        .stats { display: flex; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
+                        .stat { padding: 10px; border: 1px solid #ccc; border-radius: 5px; flex: 1; min-width: 150px; }
+                        table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
                         th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
                         th { background-color: #f5f5f5; }
                         .prediction-warning { background: #fff3cd; border: 1px solid #ffc107; padding: 10px; border-radius: 5px; margin-bottom: 15px; }
+                        .chi-square-box { background: #f3e8ff; border: 1px solid #8b5cf6; padding: 15px; border-radius: 5px; margin-bottom: 15px; }
+                        .significance-badge { display: inline-block; padding: 5px 10px; border-radius: 15px; font-size: 12px; font-weight: bold; margin-top: 10px; }
+                        .random { background: #d1fae5; color: #065f46; }
+                        .non-random { background: #fee2e2; color: #991b1b; }
                     </style>
                 </head>
                 <body>
@@ -1619,7 +2251,35 @@
                     </div>
                     
                     <div class="section">
-                        <h2>下一期预测 Top 10 / Next Draw Predictions</h2>
+                        <h2>📊 卡方检验 / Chi-square Test</h2>
+                        <div class="chi-square-box">
+                            <div class="stats">
+                                <div class="stat">
+                                    <strong>卡方值 / χ² Value:</strong><br>${chiSquareData.chiSquare.toFixed(2)}
+                                </div>
+                                <div class="stat">
+                                    <strong>自由度 / df:</strong><br>${chiSquareData.degreesOfFreedom}
+                                </div>
+                                <div class="stat">
+                                    <strong>P 值 / P-value:</strong><br>${chiSquareData.pValue.toFixed(4)}
+                                </div>
+                                <div class="stat">
+                                    <strong>期望频率 / Expected:</strong><br>${chiSquareData.expected.toFixed(2)}
+                                </div>
+                            </div>
+                            <div class="significance-badge ${chiSquareData.pValue < 0.05 ? 'non-random' : 'random'}">
+                                ${chiSquareData.pValue < 0.05 ? '显著偏离随机 / Significantly Non-random' : '符合随机分布 / Appears Random'}
+                            </div>
+                            <p style="margin-top: 10px; font-size: 14px; color: #666;">
+                                ${chiSquareData.pValue < 0.05 
+                                    ? 'p < 0.05: 数据显著偏离随机分布，某些号码可能存在规律。' 
+                                    : 'p > 0.05: 数据符合随机分布，彩票看起来是公平的。'}
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="section">
+                        <h2>🔮 模型 A - 频率预测 Top 10 / Model A - Frequency Predictions</h2>
                         <div class="prediction-warning">
                             ⚠️ 免责声明：此预测仅供参考娱乐，不构成投注建议。彩票结果完全随机。
                         </div>
@@ -1641,6 +2301,39 @@
                                         <td>${pred.predictionIndex}/100</td>
                                         <td>${pred.frequency} 次</td>
                                         <td>${pred.drawsSinceLastSeen} 期前</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="section">
+                        <h2>📈 模型 B - 卡方预测 Top 10 / Model B - Chi-square Predictions</h2>
+                        <p style="font-size: 14px; color: #666; margin-bottom: 10px;">
+                            基于统计偏差分析，显示偏离随机分布最多的数字。
+                        </p>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>预测排名 / Rank</th>
+                                    <th>号码 / Number</th>
+                                    <th>卡方残差 / Residual</th>
+                                    <th>实际 / Observed</th>
+                                    <th>期望 / Expected</th>
+                                    <th>偏差 / Deviation</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${chiSquareTop10.map((pred, index) => `
+                                    <tr>
+                                        <td>#${index + 1}</td>
+                                        <td><strong>${pred.number}</strong></td>
+                                        <td>${pred.residual.toFixed(2)}</td>
+                                        <td>${pred.observed} 次</td>
+                                        <td>${pred.expected.toFixed(2)} 次</td>
+                                        <td style="color: ${pred.deviationType === 'over' ? '#ef4444' : '#3b82f6'};">
+                                            ${pred.deviationType === 'over' ? '📈' : '📉'} ${Math.abs(pred.deviationPercent).toFixed(1)}%
+                                        </td>
                                     </tr>
                                 `).join('')}
                             </tbody>
