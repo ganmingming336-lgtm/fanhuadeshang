@@ -1,16 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { analyzeInput, AnalysisResult } from "../lib/lottery";
 
 export default function Home() {
   const [input, setInput] = useState("");
-  const [results, setResults] = useState<{
-    totalNumbers: number;
-    uniqueNumbers: number;
-    mostCommon: string;
-    leastCommon: string;
-    frequency: Record<number, number>;
-  } | null>(null);
+  const [results, setResults] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState("");
   const [realTimeWarning, setRealTimeWarning] = useState("");
 
@@ -40,53 +35,19 @@ export default function Home() {
       return;
     }
 
-    // Split by comma, space, or newline
-    const rawItems = input.split(/[\s,]+/);
-    const numbers: number[] = [];
-    const invalidItems: string[] = [];
+    const res = analyzeInput(input);
 
-    rawItems.forEach((item) => {
-      if (!item) return;
-      const num = Number(item);
-      if (!isNaN(num) && num >= 1 && num <= 49) {
-        numbers.push(num);
-      } else {
-        invalidItems.push(item);
-      }
-    });
-
-    if (numbers.length === 0) {
+    if (res.totalNumbers === 0) {
       setError("No valid numbers found (1-49). Check your format.");
       return;
     }
 
-    // Calculate statistics
-    const freq: Record<number, number> = {};
-    numbers.forEach((n) => {
-      freq[n] = (freq[n] || 0) + 1;
-    });
+    if (res.invalidEntries.length > 0) {
+        // We warn but still show results if we have valid numbers
+        setError(`Found ${res.invalidEntries.length} invalid entries (ignored).`);
+    }
 
-    const sortedFreq = Object.entries(freq).sort((a, b) => b[1] - a[1]);
-    const maxFreq = sortedFreq[0][1];
-    const minFreq = sortedFreq[sortedFreq.length - 1][1];
-
-    const mostCommon = sortedFreq
-      .filter(([, count]) => count === maxFreq)
-      .map(([num]) => num)
-      .join(", ");
-
-    const leastCommon = sortedFreq
-      .filter(([, count]) => count === minFreq)
-      .map(([num]) => num)
-      .join(", ");
-
-    setResults({
-      totalNumbers: numbers.length,
-      uniqueNumbers: Object.keys(freq).length,
-      mostCommon,
-      leastCommon,
-      frequency: freq,
-    });
+    setResults(res);
   };
 
   const pasteExample = () => {
@@ -190,18 +151,63 @@ export default function Home() {
                 {/* Summary Cards */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-white dark:bg-zinc-800 p-4 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700">
+                    <h3 className="text-sm font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Total Draws</h3>
+                    <p className="text-3xl font-bold mt-2">{results.totalDraws}</p>
+                  </div>
+                  <div className="bg-white dark:bg-zinc-800 p-4 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700">
                     <h3 className="text-sm font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Total Numbers</h3>
                     <p className="text-3xl font-bold mt-2">{results.totalNumbers}</p>
                   </div>
-                  <div className="bg-white dark:bg-zinc-800 p-4 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700">
-                    <h3 className="text-sm font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Unique Numbers</h3>
-                    <p className="text-3xl font-bold mt-2">{results.uniqueNumbers}</p>
-                  </div>
-                  <div className="bg-white dark:bg-zinc-800 p-4 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 col-span-2">
-                    <h3 className="text-sm font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Most Common</h3>
-                    <p className="text-xl font-bold mt-2 text-blue-600 dark:text-blue-400 break-words">{results.mostCommon}</p>
-                  </div>
                 </div>
+
+                {/* Hot and Cold Lists */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="bg-red-50 dark:bg-red-900/10 p-4 rounded-xl border border-red-100 dark:border-red-900/30">
+                        <h3 className="text-sm font-bold text-red-600 dark:text-red-400 uppercase tracking-wider flex items-center gap-2">
+                             🔥 Hot Numbers
+                        </h3>
+                        <div className="mt-3 flex flex-wrap gap-2">
+                            {results.hotNumbers.map(num => (
+                                <span key={num} className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 font-bold text-sm">
+                                    {num}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
+                    <div className="bg-blue-50 dark:bg-blue-900/10 p-4 rounded-xl border border-blue-100 dark:border-blue-900/30">
+                        <h3 className="text-sm font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider flex items-center gap-2">
+                             🧊 Cold Numbers
+                        </h3>
+                        <div className="mt-3 flex flex-wrap gap-2">
+                            {results.coldNumbers.map(num => (
+                                <span key={num} className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 font-bold text-sm">
+                                    {num}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+
+                 {/* Quick Stats */}
+                 <div className="bg-white dark:bg-zinc-800 p-4 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700">
+                    <h3 className="text-sm font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-4">Quick Stats</h3>
+                    <div className="space-y-3 text-sm">
+                        <div className="flex justify-between border-b border-zinc-100 dark:border-zinc-700/50 pb-2">
+                            <span className="text-zinc-600 dark:text-zinc-400">Most Frequent:</span>
+                            <span className="font-semibold">{results.mostFrequent.join(", ")}</span>
+                        </div>
+                        <div className="flex justify-between border-b border-zinc-100 dark:border-zinc-700/50 pb-2">
+                            <span className="text-zinc-600 dark:text-zinc-400">Least Frequent (drawn):</span>
+                            <span className="font-semibold">{results.leastFrequent.join(", ")}</span>
+                        </div>
+                         <div className="flex justify-between">
+                            <span className="text-zinc-600 dark:text-zinc-400">Never Drawn:</span>
+                            <span className="font-semibold text-zinc-500">
+                                {results.neverDrawn.length > 0 ? results.neverDrawn.join(", ") : "None"}
+                            </span>
+                        </div>
+                    </div>
+                 </div>
 
                 {/* Chart Container (CSS Bar Chart) */}
                 <div className="bg-white dark:bg-zinc-800 p-6 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700">
@@ -212,11 +218,17 @@ export default function Home() {
                       // Find max count for scaling
                       const maxVal = Math.max(...Object.values(results.frequency));
                       const heightPercentage = maxVal > 0 ? (count / maxVal) * 100 : 0;
-                      
+                      const isHot = results.hotNumbers.includes(num);
+                      const isCold = results.coldNumbers.includes(num);
+
+                      let barColor = "bg-zinc-300 dark:bg-zinc-600";
+                      if (isHot) barColor = "bg-red-500 dark:bg-red-500";
+                      if (isCold) barColor = "bg-blue-500 dark:bg-blue-500";
+
                       return (
                         <div key={num} className="flex-1 min-w-[12px] flex flex-col items-center group">
                           <div 
-                            className="w-full bg-blue-200 dark:bg-blue-900/50 rounded-t-sm relative transition-all hover:bg-blue-500 dark:hover:bg-blue-500"
+                            className={`w-full rounded-t-sm relative transition-all hover:opacity-80 ${barColor}`}
                             style={{ height: `${Math.max(heightPercentage, 0)}%`, minHeight: count > 0 ? '4px' : '0' }}
                           >
                              {/* Tooltip */}
@@ -224,7 +236,9 @@ export default function Home() {
                                 #{num}: {count}
                              </div>
                           </div>
-                          <span className="text-[10px] text-zinc-400 mt-1">{num % 5 === 0 || num === 1 || num === 49 ? num : ''}</span>
+                          <span className={`text-[10px] mt-1 ${isHot ? 'font-bold text-red-600' : isCold ? 'font-bold text-blue-600' : 'text-zinc-400'}`}>
+                              {num % 5 === 0 || num === 1 || num === 49 ? num : ''}
+                          </span>
                         </div>
                       );
                     })}
@@ -236,27 +250,38 @@ export default function Home() {
                    <div className="px-6 py-4 border-b border-zinc-200 dark:border-zinc-700">
                      <h3 className="text-lg font-semibold">Detailed Statistics</h3>
                    </div>
-                   <div className="overflow-x-auto max-h-64 overflow-y-auto">
+                   <div className="overflow-x-auto max-h-96 overflow-y-auto">
                       <table className="w-full text-left text-sm">
-                          <thead className="bg-zinc-50 dark:bg-zinc-900/50 text-zinc-500 dark:text-zinc-400 sticky top-0">
+                          <thead className="bg-zinc-50 dark:bg-zinc-900/50 text-zinc-500 dark:text-zinc-400 sticky top-0 z-10">
                               <tr>
+                                  <th scope="col" className="px-6 py-3 font-medium">Rank</th>
                                   <th scope="col" className="px-6 py-3 font-medium">Number</th>
                                   <th scope="col" className="px-6 py-3 font-medium">Frequency</th>
                                   <th scope="col" className="px-6 py-3 font-medium text-right">Percentage</th>
+                                  <th scope="col" className="px-6 py-3 font-medium text-center">Status</th>
                               </tr>
                           </thead>
                           <tbody className="divide-y divide-zinc-200 dark:divide-zinc-700">
-                              {Object.entries(results.frequency)
-                                .sort((a, b) => Number(a[0]) - Number(b[0]))
-                                .map(([num, count]) => (
-                                  <tr key={num} className="hover:bg-zinc-50 dark:hover:bg-zinc-700/50 transition-colors">
-                                      <td className="px-6 py-3 font-medium">{num}</td>
-                                      <td className="px-6 py-3">{count}</td>
+                              {results.frequencyList
+                                .sort((a, b) => a.number - b.number) // Sort by number for table
+                                .map((data) => {
+                                    const isHot = results.hotNumbers.includes(data.number);
+                                    const isCold = results.coldNumbers.includes(data.number);
+                                    
+                                    return (
+                                  <tr key={data.number} className={`hover:bg-zinc-50 dark:hover:bg-zinc-700/50 transition-colors ${isHot ? 'bg-red-50/30 dark:bg-red-900/5' : isCold ? 'bg-blue-50/30 dark:bg-blue-900/5' : ''}`}>
+                                      <td className="px-6 py-3 text-zinc-500">{data.rank}</td>
+                                      <td className="px-6 py-3 font-medium">{data.number}</td>
+                                      <td className="px-6 py-3">{data.count}</td>
                                       <td className="px-6 py-3 text-right">
-                                          {((count / results.totalNumbers) * 100).toFixed(1)}%
+                                          {data.percentage.toFixed(1)}%
+                                      </td>
+                                      <td className="px-6 py-3 text-center">
+                                          {isHot && <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">Hot</span>}
+                                          {isCold && <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">Cold</span>}
                                       </td>
                                   </tr>
-                              ))}
+                                )})}
                           </tbody>
                       </table>
                    </div>
