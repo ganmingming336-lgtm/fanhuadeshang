@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>彩票分析器 - Lottery Analyzer</title>
+    <style>
+        /* 重置样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* 基础样式 */
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: #18181b;
+            background-color: #fafafa;
+            min-height: 100vh;
+        }
+
+        /* 容器 */
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        /* 头部 */
+        .header {
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #2563eb;
+            margin-bottom: 1rem;
+        }
+
+        .subtitle {
+            font-size: 1.125rem;
+            color: #52525b;
+            max-width: 32rem;
+            margin: 0 auto;
+        }
+
+        /* 卡片 */
+        .card {
+            background: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e4e4e7;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header {
+            padding: 1.5rem 1.5rem 0;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-subtitle {
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+
+        /* 按钮 */
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            text-align: center;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background-color: #2563eb;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #1d4ed8;
+        }
+
+        .btn-secondary {
+            background-color: #f3f4f6;
+            color: #374151;
+            border: 1px solid #d1d5db;
+        }
+
+        .btn-secondary:hover {
+            background-color: #e5e7eb;
+        }
+
+        /* 输入区域 */
+        .input-group {
+            margin-bottom: 1rem;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+
+        .textarea {
+            width: 100%;
+            height: 16rem;
+            padding: 1rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.875rem;
+            resize: vertical;
+            background-color: #f9fafb;
+        }
+
+        .textarea:focus {
+            outline: none;
+            ring: 2px;
+            ring-color: #3b82f6;
+            border-color: #3b82f6;
+        }
+
+        .textarea.error {
+            border-color: #ef4444;
+            ring-color: #ef4444;
+        }
+
+        .textarea.warning {
+            border-color: #f59e0b;
+            ring-color: #f59e0b;
+        }
+
+        /* 警告信息 */
+        .alert {
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+
+        .alert-warning {
+            background-color: #fef3c7;
+            color: #92400e;
+            border: 1px solid #f59e0b;
+        }
+
+        .alert-error {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+
+        .alert-info {
+            background-color: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #3b82f6;
+        }
+
+        /* 网格布局 */
+        .grid {
+            display: grid;
+            gap: 2rem;
+        }
+
+        .grid-cols-1 {
+            grid-template-columns: repeat(1, minmax(0, 1fr));
+        }
+
+        .grid-cols-2 {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .flex {
+            display: flex;
+        }
+
+        .flex-wrap {
+            flex-wrap: wrap;
+        }
+
+        .gap-2 {
+            gap: 0.5rem;
+        }
+
+        .gap-4 {
+            gap: 1rem;
+        }
+
+        .items-center {
+            align-items: center;
+        }
+
+        .justify-between {
+            justify-content: space-between;
+        }
+
+        /* 统计卡片 */
+        .stat-card {
+            background: white;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e4e4e7;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #18181b;
+            margin-top: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* 热号/冷号 */
+        .hot-numbers {
+            background: linear-gradient(135deg, #fef2f2, #fecaca);
+            border: 1px solid #f87171;
+            border-radius: 0.75rem;
+            padding: 1rem;
+        }
+
+        .cold-numbers {
+            background: linear-gradient(135deg, #eff6ff, #bfdbfe);
+            border: 1px solid #60a5fa;
+            border-radius: 0.75rem;
+            padding: 1rem;
+        }
+
+        .number-tag {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 0.875rem;
+            margin: 0.25rem;
+        }
+
+        .hot-tag {
+            background-color: #fecaca;
+            color: #991b1b;
+        }
+
+        .cold-tag {
+            background-color: #bfdbfe;
+            color: #1e40af;
+        }
+
+        /* 图表容器 */
+        .chart-container {
+            background: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e4e4e7;
+            padding: 1.5rem;
+            overflow-x: auto;
+        }
+
+        .chart-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        /* SVG 图表 */
+        .chart-svg {
+            width: 100%;
+            height: 16rem;
+        }
+
+        .bar {
+            transition: opacity 0.2s;
+            cursor: pointer;
+        }
+
+        .bar:hover {
+            opacity: 0.8;
+        }
+
+        .bar-hot {
+            fill: #ef4444;
+        }
+
+        .bar-cold {
+            fill: #3b82f6;
+        }
+
+        .bar-normal {
+            fill: #d1d5db;
+        }
+
+        /* 表格 */
+        .table-container {
+            background: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e4e4e7;
+            overflow: hidden;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+        }
+
+        .table th {
+            background-color: #f9fafb;
+            padding: 0.75rem 1.5rem;
+            text-align: left;
+            font-weight: 500;
+            color: #6b7280;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .table td {
+            padding: 0.75rem 1.5rem;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .table tr:hover {
+            background-color: #f9fafb;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.125rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .status-hot {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        .status-cold {
+            background-color: #dbeafe;
+            color: #1e40af;
+        }
+
+        /* 指南部分 */
+        .guide-section {
+            background: linear-gradient(135deg, #eff6ff, #e0e7ff);
+            border: 1px solid #93c5fd;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .guide-header {
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #eff6ff, #e0e7ff);
+            border-bottom: 1px solid #93c5fd;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .guide-content {
+            padding: 1.5rem;
+            display: none;
+        }
+
+        .guide-content.show {
+            display: block;
+        }
+
+        .guide-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1e40af;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .arrow {
+            transition: transform 0.2s;
+        }
+
+        .arrow.rotated {
+            transform: rotate(180deg);
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0.5rem;
+            }
+
+            .title {
+                font-size: 2rem;
+            }
+
+            .grid {
+                gap: 1rem;
+            }
+
+            .grid-cols-2 {
+                grid-template-columns: repeat(1, minmax(0, 1fr));
+            }
+
+            .card-body {
+                padding: 1rem;
+            }
+
+            .chart-svg {
+                height: 12rem;
+            }
+        }
+
+        /* 工具提示 */
+        .tooltip {
+            position: absolute;
+            background: #000;
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            z-index: 1000;
+        }
+
+        .tooltip.show {
+            opacity: 1;
+        }
+
+        /* 空状态 */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 24rem;
+            border: 2px dashed #d1d5db;
+            border-radius: 0.75rem;
+            padding: 3rem;
+            text-align: center;
+            color: #6b7280;
+        }
+
+        .empty-state-icon {
+            width: 4rem;
+            height: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* 隐藏元素 */
+        .hidden {
+            display: none;
+        }
+
+        /* 动画 */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(1rem);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 导出按钮组 */
+        .export-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-export {
+            background-color: #059669;
+            color: white;
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+
+        .btn-export:hover {
+            background-color: #047857;
+        }
+
+        .quick-stats {
+            background: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e4e4e7;
+            padding: 1rem;
+        }
+
+        .quick-stats h3 {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+        }
+
+        .quick-stats-item {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid #f3f4f6;
+            padding: 0.75rem 0;
+            font-size: 0.875rem;
+        }
+
+        .quick-stats-item:last-child {
+            border-bottom: none;
+        }
+
+        .quick-stats-label {
+            color: #6b7280;
+        }
+
+        .quick-stats-value {
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 头部 -->
+        <header class="header">
+            <h1 class="title">彩票分析器</h1>
+            <p class="subtitle">
+                立即分析您的彩票号码。粘贴数据查看频率分布、范围和统计摘要。
+            </p>
+        </header>
+
+        <!-- 使用指南 -->
+        <section class="guide-section">
+            <div class="guide-header" onclick="toggleGuide()">
+                <div class="guide-title">
+                    <span style="font-size: 1.5rem;">📚</span>
+                    <div>
+                        <div>使用指南 / How to Use</div>
+                        <div style="font-size: 0.875rem; color: #6b7280; font-weight: 400;">
+                            点击展开分步说明
+                        </div>
+                    </div>
+                    <svg class="arrow" id="guide-arrow" width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </div>
+            </div>
+            <div class="guide-content" id="guide-content">
+                <!-- 快速开始 -->
+                <div style="background: white; border-radius: 0.5rem; padding: 1.25rem; border: 1px solid #e5e7eb; margin-bottom: 1.5rem;">
+                    <h3 style="font-size: 1.125rem; font-weight: 600; color: #1e40af; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span style="font-size: 1.25rem;">🚀</span>
+                        快速开始 / Quick Start
+                    </h3>
+                    <ol style="font-size: 0.875rem; color: #374151; line-height: 1.5;">
+                        <li><strong>在左侧输入框中粘贴号码</strong>（或点击"粘贴示例"）</li>
+                        <li style="margin-left: 1.25rem; color: #6b7280;">Paste your numbers in the input box on the left</li>
+                        <li><strong>点击"分析号码"按钮</strong></li>
+                        <li style="margin-left: 1.25rem; color: #6b7280;">Click "Analyze Numbers" button</li>
+                        <li><strong>查看右侧结果</strong>：统计、图表和表格将立即显示</li>
+                        <li style="margin-left: 1.25rem; color: #6b7280;">View results on the right: stats, charts, and tables appear instantly</li>
+                    </ol>
+                </div>
+
+                <!-- 格式提示 -->
+                <div style="background: white; border-radius: 0.5rem; padding: 1.25rem; border: 1px solid #e5e7eb; margin-bottom: 1.5rem;">
+                    <h3 style="font-size: 1.125rem; font-weight: 600; color: #059669; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span style="font-size: 1.25rem;">✏️</span>
+                        格式提示 / Formatting Tips
+                    </h3>
+                    <div style="font-size: 0.875rem; line-height: 1.5;">
+                        <div style="margin-bottom: 0.75rem;">
+                            <p style="font-weight: 600; color: #374151;">✅ 接受的格式：</p>
+                            <ul style="list-style: disc; margin-left: 1.25rem; color: #6b7280;">
+                                <li>逗号分隔：<code style="background: #f3f4f6; padding: 0.125rem 0.25rem; border-radius: 0.25rem;">5, 12, 23, 34, 45, 49</code></li>
+                                <li>空格分隔：<code style="background: #f3f4f6; padding: 0.125rem 0.25rem; border-radius: 0.25rem;">1 2 3 4 5 6</code></li>
+                                <li>多行或混合格式都可以！</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <p style="font-weight: 600; color: #374151;">⚠️ 重要规则：</p>
+                            <ul style="list-style: disc; margin-left: 1.25rem; color: #6b7280;">
+                                <li>数字必须在 <strong>1 到 49</strong> 之间（包含）</li>
+                                <li>只允许数字、逗号和空格</li>
+                                <li>字母和特殊符号会触发警告</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 移动端提示 -->
+                <div style="background: linear-gradient(135deg, #eff6ff, #f3e8ff); border: 1px solid #93c5fd; border-radius: 0.5rem; padding: 1.25rem;">
+                    <h3 style="font-size: 1.125rem; font-weight: 600; color: #1e40af; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span style="font-size: 1.25rem;">📱</span>
+                        移动端用户 / Mobile Users
+                    </h3>
+                    <p style="font-size: 0.875rem; color: #374151; line-height: 1.5;">
+                        此工具在手机和平板电脑上运行良好！在较小的屏幕上，您将看到输入和结果垂直堆叠。
+                        在图表上左右滑动可查看所有号码。表格也可以滚动。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 主要内容区域 -->
+        <div class="grid grid-cols-1 lg:grid-cols-2">
+            <!-- 输入区域 -->
+            <section>
+                <!-- 指令 -->
+                <div class="card">
+                    <div class="card-body">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                            <h2 class="card-title">输入数据</h2>
+                            <button class="btn btn-secondary" onclick="pasteExample()" style="font-size: 0.875rem;">
+                                粘贴示例
+                            </button>
+                        </div>
+                        <div style="color: #6b7280; font-size: 0.875rem;">
+                            <p style="margin-bottom: 0.5rem;">输入由逗号、空格或换行符分隔的彩票号码。</p>
+                            <ul style="list-style: disc; margin-left: 1.25rem;">
+                                <li>可接受范围：<strong>1 到 49</strong></li>
+                                <li>示例：<code style="background: #f3f4f6; padding: 0.125rem 0.25rem; border-radius: 0.25rem;">5, 12, 23, 34, 45, 49</code></li>
+                                <li>示例：<code style="background: #f3f4f6; padding: 0.125rem 0.25rem; border-radius: 0.25rem;">1 2 3 4 5 6</code></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 输入框 -->
+                <div class="card">
+                    <div class="card-body">
+                        <textarea
+                            id="lottery-input"
+                            class="textarea"
+                            placeholder="在这里粘贴号码..."
+                        ></textarea>
+                        
+                        <!-- 实时警告 -->
+                        <div id="real-time-warning" class="alert alert-warning hidden">
+                            输入包含无效字符。仅允许数字（1-49）、逗号和空格。
+                        </div>
+
+                        <!-- 错误信息 -->
+                        <div id="error-message" class="alert alert-error hidden">
+                            请输入一些号码。
+                        </div>
+
+                        <button class="btn btn-primary" onclick="analyzeNumbers()" style="width: 100%; margin-top: 1rem;">
+                            分析号码
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 结果区域 -->
+            <section id="results-section" class="hidden">
+                <!-- 导出按钮 -->
+                <div class="card">
+                    <div class="card-body">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <h2 class="card-title">导出结果</h2>
+                            <div class="export-buttons">
+                                <button class="btn btn-export" onclick="exportCSV()">导出CSV</button>
+                                <button class="btn btn-export" onclick="exportJSON()">导出JSON</button>
+                                <button class="btn btn-export" onclick="printResults()">打印结果</button>
+                            </div>
+                        </div>
+                        <p style="color: #6b7280; font-size: 0.875rem;">
+                            导出分析结果或打印保存您的数据。
+                        </p>
+                    </div>
+                </div>
+
+                <!-- 统计卡片 -->
+                <div class="grid grid-cols-2 gap-4" id="stats-cards">
+                    <!-- 将通过JavaScript动态生成 -->
+                </div>
+
+                <!-- 热号/冷号 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="hot-cold-section">
+                    <div class="hot-numbers">
+                        <h3 style="font-size: 0.875rem; font-weight: 700; color: #dc2626; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                            🔥 热号 / Hot Numbers
+                        </h3>
+                        <div id="hot-numbers-list" class="flex flex-wrap">
+                            <!-- 将通过JavaScript动态生成 -->
+                        </div>
+                    </div>
+                    <div class="cold-numbers">
+                        <h3 style="font-size: 0.875rem; font-weight: 700; color: #2563eb; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                            🧊 冷号 / Cold Numbers
+                        </h3>
+                        <div id="cold-numbers-list" class="flex flex-wrap">
+                            <!-- 将通过JavaScript动态生成 -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 快速统计 -->
+                <div class="quick-stats" id="quick-stats">
+                    <h3>快速统计 / Quick Stats</h3>
+                    <div id="quick-stats-content">
+                        <!-- 将通过JavaScript动态生成 -->
+                    </div>
+                </div>
+
+                <!-- 图表 -->
+                <div class="chart-container">
+                    <h3 class="chart-title">频率分布 / Frequency Distribution</h3>
+                    <svg id="frequency-chart" class="chart-svg">
+                        <!-- 将通过JavaScript动态生成 -->
+                    </svg>
+                </div>
+
+                <!-- 详细表格 -->
+                <div class="table-container">
+                    <div style="padding: 1.5rem; border-bottom: 1px solid #e5e7eb;">
+                        <h3 class="card-title">详细统计 / Detailed Statistics</h3>
+                    </div>
+                    <div style="overflow-x: auto; max-height: 24rem; overflow-y: auto;">
+                        <table class="table" id="results-table">
+                            <thead>
+                                <tr>
+                                    <th>排名 / Rank</th>
+                                    <th>号码 / Number</th>
+                                    <th>频率 / Frequency</th>
+                                    <th style="text-align: right;">百分比 / Percentage</th>
+                                    <th style="text-align: center;">状态 / Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="results-table-body">
+                                <!-- 将通过JavaScript动态生成 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- 空状态 -->
+        <div id="empty-state" class="empty-state">
+            <svg class="empty-state-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+            </svg>
+            <p style="font-size: 1.125rem; font-weight: 500;">尚未分析数据</p>
+            <p style="font-size: 0.875rem;">在左侧输入号码并点击分析查看统计信息。</p>
+        </div>
+    </div>
+
+    <!-- 工具提示 -->
+    <div id="tooltip" class="tooltip"></div>
+
+    <script>
+        // 全局变量
+        let analysisResult = null;
+        let showGuideContent = false;
+
+        // 分析输入的核心逻辑
+        function analyzeInput(input) {
+            const lines = input.split(/\r?\n/);
+            const validDraws = [];
+            const invalidEntries = [];
+            const frequency = {};
+            let totalNumbers = 0;
+
+            // 初始化频率
+            for (let i = 1; i <= 49; i++) {
+                frequency[i] = 0;
+            }
+
+            lines.forEach((line) => {
+                if (!line.trim()) return;
+
+                // 分割非数字字符
+                const rawTokens = line.split(/[^0-9]+/);
+                const draw = [];
+                
+                rawTokens.forEach((token) => {
+                    if (!token) return;
+                    const num = Number(token);
+                    if (!isNaN(num)) {
+                        if (num >= 1 && num <= 49) {
+                            draw.push(num);
+                            frequency[num] = (frequency[num] || 0) + 1;
+                            totalNumbers++;
+                        } else {
+                            invalidEntries.push(token);
+                        }
+                    } else {
+                        invalidEntries.push(token);
+                    }
+                });
+
+                if (draw.length > 0) {
+                    validDraws.push(draw);
+                }
+            });
+
+            // 计算统计数据
+            const frequencyList = [];
+            for (let i = 1; i <= 49; i++) {
+                frequencyList.push({
+                    number: i,
+                    count: frequency[i],
+                    percentage: totalNumbers > 0 ? (frequency[i] / totalNumbers) * 100 : 0,
+                    rank: 0
+                });
+            }
+
+            // 按频率降序排序
+            frequencyList.sort((a, b) => {
+                if (b.count !== a.count) {
+                    return b.count - a.count;
+                }
+                return a.number - b.number;
+            });
+
+            // 分配排名
+            let currentRank = 1;
+            for (let i = 0; i < frequencyList.length; i++) {
+                if (i > 0 && frequencyList[i].count < frequencyList[i-1].count) {
+                    currentRank = i + 1;
+                }
+                frequencyList[i].rank = currentRank;
+            }
+
+            // 热号：前5名
+            const hotNumbers = frequencyList.slice(0, 5).map(f => f.number);
+
+            // 冷号：后5名
+            const coldNumbers = frequencyList.slice(-5).map(f => f.number);
+
+            // 最频繁的号码
+            const maxFreq = frequencyList[0].count;
+            const mostFrequent = frequencyList.filter(f => f.count === maxFreq).map(f => f.number);
+
+            // 最不频繁的号码
+            const minFreq = frequencyList[frequencyList.length - 1].count;
+            const leastFrequent = frequencyList.filter(f => f.count === minFreq).map(f => f.number);
+            
+            const neverDrawn = frequencyList.filter(f => f.count === 0).map(f => f.number);
+
+            return {
+                totalDraws: validDraws.length,
+                totalNumbers,
+                validDraws,
+                frequency,
+                frequencyList,
+                hotNumbers,
+                coldNumbers,
+                mostFrequent,
+                leastFrequent,
+                neverDrawn,
+                invalidEntries,
+            };
+        }
+
+        // 验证输入
+        function validateInput(value) {
+            const textarea = document.getElementById('lottery-input');
+            const warning = document.getElementById('real-time-warning');
+            
+            if (/[^0-9,\s]/.test(value)) {
+                warning.classList.remove('hidden');
+                textarea.classList.add('warning');
+                textarea.classList.remove('error');
+            } else {
+                warning.classList.add('hidden');
+                textarea.classList.remove('warning');
+            }
+        }
+
+        // 输入变更处理
+        function handleInputChange() {
+            const input = document.getElementById('lottery-input').value;
+            validateInput(input);
+            
+            // 清除主要错误
+            const error = document.getElementById('error-message');
+            error.classList.add('hidden');
+        }
+
+        // 分析号码
+        function analyzeNumbers() {
+            const input = document.getElementById('lottery-input').value;
+            const error = document.getElementById('error-message');
+            const resultsSection = document.getElementById('results-section');
+            const emptyState = document.getElementById('empty-state');
+            
+            error.classList.add('hidden');
+
+            if (!input.trim()) {
+                error.textContent = '请输入一些号码。';
+                error.classList.remove('hidden');
+                return;
+            }
+
+            const res = analyzeInput(input);
+
+            if (res.totalNumbers === 0) {
+                error.textContent = '未找到有效号码（1-49）。请检查您的格式。';
+                error.classList.remove('hidden');
+                return;
+            }
+
+            if (res.invalidEntries.length > 0) {
+                error.textContent = `发现 ${res.invalidEntries.length} 个无效条目（已忽略）。`;
+                error.classList.remove('hidden');
+            }
+
+            analysisResult = res;
+            displayResults(res);
+            
+            resultsSection.classList.remove('hidden');
+            emptyState.classList.add('hidden');
+            resultsSection.classList.add('fade-in');
+        }
+
+        // 显示结果
+        function displayResults(result) {
+            displayStatsCards(result);
+            displayHotColdNumbers(result);
+            displayQuickStats(result);
+            displayChart(result);
+            displayTable(result);
+        }
+
+        // 显示统计卡片
+        function displayStatsCards(result) {
+            const container = document.getElementById('stats-cards');
+            container.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-label">总抽奖次数 / Total Draws</div>
+                    <div class="stat-value">${result.totalDraws}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">总号码数 / Total Numbers</div>
+                    <div class="stat-value">${result.totalNumbers}</div>
+                </div>
+            `;
+        }
+
+        // 显示热号/冷号
+        function displayHotColdNumbers(result) {
+            const hotContainer = document.getElementById('hot-numbers-list');
+            const coldContainer = document.getElementById('cold-numbers-list');
+            
+            hotContainer.innerHTML = result.hotNumbers.map(num => 
+                `<span class="number-tag hot-tag">${num}</span>`
+            ).join('');
+            
+            coldContainer.innerHTML = result.coldNumbers.map(num => 
+                `<span class="number-tag cold-tag">${num}</span>`
+            ).join('');
+        }
+
+        // 显示快速统计
+        function displayQuickStats(result) {
+            const container = document.getElementById('quick-stats-content');
+            container.innerHTML = `
+                <div class="quick-stats-item">
+                    <span class="quick-stats-label">最频繁 / Most Frequent:</span>
+                    <span class="quick-stats-value">${result.mostFrequent.join(', ')}</span>
+                </div>
+                <div class="quick-stats-item">
+                    <span class="quick-stats-label">最不频繁 / Least Frequent:</span>
+                    <span class="quick-stats-value">${result.leastFrequent.join(', ')}</span>
+                </div>
+                <div class="quick-stats-item">
+                    <span class="quick-stats-label">从未出现 / Never Drawn:</span>
+                    <span class="quick-stats-value">${result.neverDrawn.length > 0 ? result.neverDrawn.join(', ') : '无 / None'}</span>
+                </div>
+            `;
+        }
+
+        // 显示图表
+        function displayChart(result) {
+            const svg = document.getElementById('frequency-chart');
+            const maxVal = Math.max(...Object.values(result.frequency));
+            const width = 1400;
+            const height = 250;
+            const barWidth = width / 49 - 2;
+            const padding = 20;
+            
+            let bars = '';
+            
+            for (let i = 1; i <= 49; i++) {
+                const count = result.frequency[i] || 0;
+                const heightPercent = maxVal > 0 ? (count / maxVal) * 100 : 0;
+                const barHeight = (height - padding * 2) * heightPercent / 100;
+                const y = height - padding - barHeight;
+                const x = (i - 1) * (width / 49) + 1;
+                
+                let barClass = 'bar-normal';
+                if (result.hotNumbers.includes(i)) barClass = 'bar-hot';
+                if (result.coldNumbers.includes(i)) barClass = 'bar-cold';
+                
+                bars += `
+                    <rect
+                        class="bar ${barClass}"
+                        x="${x}"
+                        y="${y}"
+                        width="${barWidth}"
+                        height="${Math.max(barHeight, count > 0 ? 2 : 0)}"
+                        onmouseover="showTooltip(event, '#${i}: ${count}')"
+                        onmouseout="hideTooltip()"
+                    />
+                    ${(i % 5 === 0 || i === 1 || i === 49) ? 
+                        `<text x="${x + barWidth/2}" y="${height - 5}" text-anchor="middle" font-size="10" fill="#6b7280">${i}</text>` : 
+                        ''
+                    }
+                `;
+            }
+            
+            svg.innerHTML = `
+                <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
+                    ${bars}
+                </svg>
+            `;
+        }
+
+        // 显示表格
+        function displayTable(result) {
+            const tbody = document.getElementById('results-table-body');
+            
+            tbody.innerHTML = result.frequencyList
+                .sort((a, b) => a.number - b.number)
+                .map(data => {
+                    const isHot = result.hotNumbers.includes(data.number);
+                    const isCold = result.coldNumbers.includes(data.number);
+                    const status = isHot ? 'Hot' : isCold ? 'Cold' : '';
+                    const statusClass = isHot ? 'status-hot' : isCold ? 'status-cold' : '';
+                    
+                    return `
+                        <tr style="${isHot ? 'background-color: #fef2f2;' : isCold ? 'background-color: #eff6ff;' : ''}">
+                            <td style="color: #6b7280;">${data.rank}</td>
+                            <td style="font-weight: 600;">${data.number}</td>
+                            <td>${data.count}</td>
+                            <td style="text-align: right;">${data.percentage.toFixed(1)}%</td>
+                            <td style="text-align: center;">
+                                ${status ? `<span class="status-badge ${statusClass}">${status}</span>` : ''}
+                            </td>
+                        </tr>
+                    `;
+                })
+                .join('');
+        }
+
+        // 工具提示
+        function showTooltip(event, text) {
+            const tooltip = document.getElementById('tooltip');
+            tooltip.textContent = text;
+            tooltip.style.left = event.pageX + 10 + 'px';
+            tooltip.style.top = event.pageY - 10 + 'px';
+            tooltip.classList.add('show');
+        }
+
+        function hideTooltip() {
+            const tooltip = document.getElementById('tooltip');
+            tooltip.classList.remove('show');
+        }
+
+        // 粘贴示例
+        function pasteExample() {
+            const example = "5, 12, 23, 34, 45, 49\n1, 2, 3, 4, 5, 6\n10, 20, 30, 40, 42, 49\n5, 15, 25, 35, 45, 12";
+            document.getElementById('lottery-input').value = example;
+            handleInputChange();
+        }
+
+        // 切换指南
+        function toggleGuide() {
+            showGuideContent = !showGuideContent;
+            const content = document.getElementById('guide-content');
+            const arrow = document.getElementById('guide-arrow');
+            
+            if (showGuideContent) {
+                content.classList.add('show');
+                arrow.classList.add('rotated');
+            } else {
+                content.classList.remove('show');
+                arrow.classList.remove('rotated');
+            }
+        }
+
+        // 导出CSV
+        function exportCSV() {
+            if (!analysisResult) return;
+            
+            let csv = 'Rank,Number,Frequency,Percentage,Status\n';
+            analysisResult.frequencyList
+                .sort((a, b) => a.number - b.number)
+                .forEach(data => {
+                    const isHot = analysisResult.hotNumbers.includes(data.number);
+                    const isCold = analysisResult.coldNumbers.includes(data.number);
+                    const status = isHot ? 'Hot' : isCold ? 'Cold' : '';
+                    
+                    csv += `${data.rank},${data.number},${data.count},${data.percentage.toFixed(1)}%,${status}\n`;
+                });
+            
+            downloadFile('lottery-analysis.csv', csv, 'text/csv');
+        }
+
+        // 导出JSON
+        function exportJSON() {
+            if (!analysisResult) return;
+            
+            const json = JSON.stringify(analysisResult, null, 2);
+            downloadFile('lottery-analysis.json', json, 'application/json');
+        }
+
+        // 打印结果
+        function printResults() {
+            if (!analysisResult) return;
+            
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>彩票分析结果 / Lottery Analysis Results</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 20px; }
+                        .header { text-align: center; margin-bottom: 30px; }
+                        .section { margin-bottom: 30px; }
+                        .stats { display: flex; gap: 20px; margin-bottom: 20px; }
+                        .stat { padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
+                        table { width: 100%; border-collapse: collapse; }
+                        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+                        th { background-color: #f5f5f5; }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>彩票分析结果 / Lottery Analysis Results</h1>
+                        <p>生成时间 / Generated: ${new Date().toLocaleString()}</p>
+                    </div>
+                    
+                    <div class="section">
+                        <h2>基本统计 / Basic Statistics</h2>
+                        <div class="stats">
+                            <div class="stat">
+                                <strong>总抽奖次数 / Total Draws:</strong> ${analysisResult.totalDraws}
+                            </div>
+                            <div class="stat">
+                                <strong>总号码数 / Total Numbers:</strong> ${analysisResult.totalNumbers}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="section">
+                        <h2>热号/冷号 / Hot/Cold Numbers</h2>
+                        <p><strong>热号 / Hot:</strong> ${analysisResult.hotNumbers.join(', ')}</p>
+                        <p><strong>冷号 / Cold:</strong> ${analysisResult.coldNumbers.join(', ')}</p>
+                    </div>
+                    
+                    <div class="section">
+                        <h2>详细统计 / Detailed Statistics</h2>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>排名 / Rank</th>
+                                    <th>号码 / Number</th>
+                                    <th>频率 / Frequency</th>
+                                    <th>百分比 / Percentage</th>
+                                    <th>状态 / Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${analysisResult.frequencyList
+                                    .sort((a, b) => a.number - b.number)
+                                    .map(data => {
+                                        const isHot = analysisResult.hotNumbers.includes(data.number);
+                                        const isCold = analysisResult.coldNumbers.includes(data.number);
+                                        const status = isHot ? 'Hot' : isCold ? 'Cold' : '';
+                                        
+                                        return `
+                                            <tr>
+                                                <td>${data.rank}</td>
+                                                <td>${data.number}</td>
+                                                <td>${data.count}</td>
+                                                <td>${data.percentage.toFixed(1)}%</td>
+                                                <td>${status}</td>
+                                            </tr>
+                                        `;
+                                    })
+                                    .join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.print();
+        }
+
+        // 下载文件
+        function downloadFile(filename, content, contentType) {
+            const blob = new Blob([content], { type: contentType });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('lottery-input').addEventListener('input', handleInputChange);
+        });
+    </script>
+</body>
+</html>
