@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { ToastContainer, ToastMessage } from "./Toast";
+import { exportAsCSV, exportAsJSON, copyResultsToClipboard } from "./exportUtils";
 
 export default function Home() {
   const [input, setInput] = useState("");
@@ -13,6 +15,16 @@ export default function Home() {
   } | null>(null);
   const [error, setError] = useState("");
   const [realTimeWarning, setRealTimeWarning] = useState("");
+  const [toasts, setToasts] = useState<ToastMessage[]>([]);
+
+  const addToast = (message: string, type: "success" | "error" | "info") => {
+    const id = `toast-${Date.now()}`;
+    setToasts((prev) => [...prev, { id, message, type }]);
+  };
+
+  const removeToast = (id: string) => {
+    setToasts((prev) => prev.filter((toast) => toast.id !== id));
+  };
 
   const validateInput = (value: string) => {
     // Check for characters that are not digits, whitespace, or commas
@@ -20,6 +32,43 @@ export default function Home() {
       setRealTimeWarning("Input contains invalid characters. Only numbers (1-49), commas, and spaces are allowed.");
     } else {
       setRealTimeWarning("");
+    }
+  };
+
+  const handleExportCSV = () => {
+    if (!results) return;
+    try {
+      exportAsCSV(results);
+      addToast("CSV file downloaded successfully", "success");
+    } catch (err) {
+      addToast("Failed to export CSV file", "error");
+      console.error(err);
+    }
+  };
+
+  const handleExportJSON = () => {
+    if (!results) return;
+    try {
+      exportAsJSON(results);
+      addToast("JSON file downloaded successfully", "success");
+    } catch (err) {
+      addToast("Failed to export JSON file", "error");
+      console.error(err);
+    }
+  };
+
+  const handleCopyToClipboard = async () => {
+    if (!results) return;
+    try {
+      const success = await copyResultsToClipboard(results);
+      if (success) {
+        addToast("Results copied to clipboard", "success");
+      } else {
+        addToast("Failed to copy to clipboard", "error");
+      }
+    } catch (err) {
+      addToast("Failed to copy to clipboard", "error");
+      console.error(err);
     }
   };
 
@@ -97,6 +146,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 p-4 md:p-8 font-sans">
+      <ToastContainer toasts={toasts} onDismiss={removeToast} />
       <main className="max-w-7xl mx-auto space-y-8">
         {/* Hero Section */}
         <header className="text-center space-y-4 py-8">
@@ -187,6 +237,43 @@ export default function Home() {
 
             {results && (
               <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                {/* Export Buttons */}
+                <div className="bg-white dark:bg-zinc-800 p-4 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 space-y-3">
+                  <h3 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider">Export Data</h3>
+                  <div className="grid grid-cols-3 gap-2">
+                    <button
+                      onClick={handleExportCSV}
+                      className="px-4 py-2 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-900/60 font-medium text-sm rounded-lg transition-colors active:scale-95 flex items-center justify-center gap-2"
+                      title="Download analysis as CSV file"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 16v-4m0 0V8m0 4h4m-4 0H8m4 12c4.418 0 8-1.79 8-4s-3.582-4-8-4-8 1.79-8 4 3.582 4 8 4z" />
+                      </svg>
+                      CSV
+                    </button>
+                    <button
+                      onClick={handleExportJSON}
+                      className="px-4 py-2 bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-900/60 font-medium text-sm rounded-lg transition-colors active:scale-95 flex items-center justify-center gap-2"
+                      title="Download analysis as JSON file"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 16v-4m0 0V8m0 4h4m-4 0H8m4 12c4.418 0 8-1.79 8-4s-3.582-4-8-4-8 1.79-8 4 3.582 4 8 4z" />
+                      </svg>
+                      JSON
+                    </button>
+                    <button
+                      onClick={handleCopyToClipboard}
+                      className="px-4 py-2 bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 hover:bg-purple-200 dark:hover:bg-purple-900/60 font-medium text-sm rounded-lg transition-colors active:scale-95 flex items-center justify-center gap-2"
+                      title="Copy results to clipboard"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                      </svg>
+                      Copy
+                    </button>
+                  </div>
+                </div>
+
                 {/* Summary Cards */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-white dark:bg-zinc-800 p-4 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700">
