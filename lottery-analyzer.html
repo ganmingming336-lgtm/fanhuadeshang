@@ -557,6 +557,262 @@
             font-weight: 600;
         }
 
+        /* 综合预测（双模型融合）样式 */
+        .combined-prediction-section {
+            background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+            border: 2px solid #10b981;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .combined-prediction-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #065f46;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .combined-prediction-subtitle {
+            font-size: 0.875rem;
+            color: #047857;
+            margin-bottom: 1rem;
+        }
+
+        .combined-prediction-disclaimer {
+            background: #d1fae5;
+            border: 1px solid #10b981;
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            font-size: 0.75rem;
+            color: #065f46;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .combined-weight-controls {
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid #a7f3d0;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .combined-weight-title {
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: #065f46;
+            margin-bottom: 0.75rem;
+        }
+
+        .combined-weight-row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .combined-weight-label {
+            width: 10rem;
+            font-size: 0.75rem;
+            color: #065f46;
+            font-weight: 600;
+        }
+
+        .combined-weight-slider {
+            flex: 1;
+            accent-color: #10b981;
+        }
+
+        .combined-weight-value,
+        .combined-weight-fixed {
+            min-width: 3rem;
+            text-align: right;
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: #064e3b;
+        }
+
+        .combined-weight-hint {
+            font-size: 0.75rem;
+            color: #047857;
+            margin-top: 0.5rem;
+            line-height: 1.5;
+        }
+
+        .combined-prediction-grid {
+            margin-bottom: 0.75rem;
+        }
+
+        .combined-prediction-card {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 2px solid #10b981;
+            transition: all 0.2s;
+        }
+
+        .combined-prediction-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .combined-prediction-card.consensus {
+            border-color: #059669;
+            background: linear-gradient(135deg, #ffffff, #ecfdf5);
+        }
+
+        .combined-prediction-card.primary {
+            border-color: #10b981;
+            background: linear-gradient(135deg, #ffffff, #f0fdf4);
+        }
+
+        .combined-prediction-card.reference {
+            border-color: #34d399;
+            background: linear-gradient(135deg, #ffffff, #f0fdfa);
+        }
+
+        .combined-number-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 1.25rem;
+            background: linear-gradient(135deg, #ecfdf5, #a7f3d0);
+            color: #065f46;
+            border: 2px solid #10b981;
+        }
+
+        .combined-rank-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.75rem;
+            height: 1.75rem;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 0.75rem;
+            background: #10b981;
+            color: white;
+        }
+
+        .combined-judgement-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            border: 1px solid transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .combined-judgement-badge.consensus {
+            background: #d1fae5;
+            border-color: #10b981;
+            color: #065f46;
+        }
+
+        .combined-judgement-badge.primary {
+            background: #fef3c7;
+            border-color: #f59e0b;
+            color: #92400e;
+        }
+
+        .combined-judgement-badge.reference {
+            background: #dbeafe;
+            border-color: #3b82f6;
+            color: #1e40af;
+        }
+
+        .combined-index-bar {
+            flex: 1;
+            height: 1rem;
+            background: #f3f4f6;
+            border-radius: 9999px;
+            overflow: hidden;
+            display: flex;
+        }
+
+        .combined-index-segment {
+            height: 100%;
+            transition: width 0.5s ease-out;
+        }
+
+        .combined-index-segment.model-a {
+            background: linear-gradient(90deg, #fbbf24, #f59e0b);
+        }
+
+        .combined-index-segment.model-b {
+            background: linear-gradient(90deg, #818cf8, #6366f1);
+        }
+
+        .combined-prediction-legend {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin: 0.25rem 0 0.75rem;
+            font-size: 0.75rem;
+            color: #065f46;
+        }
+
+        .combined-prediction-legend .legend-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid #a7f3d0;
+            border-radius: 9999px;
+            padding: 0.25rem 0.5rem;
+        }
+
+        .combined-prediction-explanation .prediction-explanation-item::before {
+            color: #10b981;
+        }
+
+        .secondary-models {
+            background: white;
+            border-radius: 0.75rem;
+            border: 1px solid #e4e4e7;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .secondary-models summary {
+            cursor: pointer;
+            font-weight: 700;
+            color: #374151;
+            user-select: none;
+        }
+
+        .secondary-models summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .secondary-models[open] summary {
+            margin-bottom: 1rem;
+        }
+
+        .secondary-models-content {
+            padding-top: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .combined-weight-label {
+                width: 8rem;
+            }
+        }
+
         /* 预测部分样式 */
         .prediction-section {
             background: linear-gradient(135deg, #fefce8, #fef3c7);
@@ -1236,68 +1492,125 @@
                     </div>
                 </div>
 
-                <!-- 模型对比说明 -->
-                <div class="model-comparison-header">
-                    <div class="model-comparison-title">
-                        <span style="font-size: 1.25rem;">🔬</span>
-                        双模型预测对比 / Dual Model Prediction Comparison
+                <!-- 综合预测 - 双模型融合 -->
+                <div class="combined-prediction-section" id="combined-prediction-section">
+                    <div class="combined-prediction-title">
+                        <span style="font-size: 1.5rem;">🧩</span>
+                        综合预测 Top 10 / Combined Predictions
                     </div>
-                    <div class="model-comparison-text">
-                        我们提供两种基于不同假设的预测模型。<strong>模型 A（频率模型）</strong>基于历史频率、冷号反弹和均衡性；<strong>模型 B（卡方模型）</strong>基于统计偏差分析。两个模型互相补充，帮助您从不同角度理解数据。
-                        <br><br>
-                        We provide two prediction models based on different assumptions. <strong>Model A (Frequency Model)</strong> is based on historical frequency, cold number rebound, and balance; <strong>Model B (Chi-square Model)</strong> is based on statistical deviation analysis. Both models complement each other to help you understand the data from different perspectives.
+                    <div class="combined-prediction-subtitle">
+                        融合模型 A（频率）与模型 B（卡方残差），作为主要预测参考 / Fusion of Model A & B as the primary reference
                     </div>
-                </div>
+                    <div class="combined-prediction-disclaimer">
+                        ⚠️ 免责声明：综合预测仅供参考娱乐，不构成投注建议。彩票结果完全随机。/ Disclaimer: For reference only, not betting advice.
+                    </div>
 
-                <!-- 下一期预测 - 模型 A -->
-                <div class="prediction-section" id="prediction-section">
-                    <div class="prediction-title">
-                        <span style="font-size: 1.5rem;">🔮</span>
-                        模型 A - 频率预测 Top 10 / Model A - Frequency Predictions
+                    <div class="combined-weight-controls">
+                        <div class="combined-weight-title">⚖️ 权重设置 / Weights</div>
+                        <div class="combined-weight-row">
+                            <div class="combined-weight-label">模型 A 权重 / Model A</div>
+                            <input type="range" min="0" max="100" value="50" id="combined-weight-a" class="combined-weight-slider">
+                            <div class="combined-weight-value"><span id="combined-weight-a-value">50</span>%</div>
+                        </div>
+                        <div class="combined-weight-row">
+                            <div class="combined-weight-label">模型 B 权重 / Model B</div>
+                            <div class="combined-weight-fixed"><span id="combined-weight-b-value">50</span>%</div>
+                        </div>
+                        <div class="combined-weight-hint">
+                            综合指数 = A 指数 × wA + B 指数 × wB，wA + wB = 1 / Combined = A×wA + B×wB
+                        </div>
                     </div>
-                    <div class="prediction-subtitle">
-                        基于历史频率、冷号反弹和均衡性的智能预测 / Predictions based on frequency, cold rebound & balance
-                    </div>
-                    <div class="prediction-disclaimer">
-                        ⚠️ 免责声明：此预测仅供参考娱乐，不构成投注建议。彩票结果完全随机。/ Disclaimer: For reference only, not betting advice.
-                    </div>
-                    <div class="prediction-grid" id="prediction-grid">
+
+                    <div class="prediction-grid combined-prediction-grid" id="combined-prediction-grid">
                         <!-- 将通过JavaScript动态生成 -->
                     </div>
-                    <div class="prediction-explanation" id="prediction-explanation">
+
+                    <div class="combined-prediction-legend">
+                        <div class="legend-item"><span>🟢</span> 双模一致 / Dual Consensus</div>
+                        <div class="legend-item"><span>🟡</span> 主要建议 / Primary</div>
+                        <div class="legend-item"><span>🔵</span> 参考数字 / Reference</div>
+                    </div>
+
+                    <div class="prediction-explanation combined-prediction-explanation" id="combined-prediction-explanation">
                         <div class="prediction-explanation-title">
-                            📊 预测说明 / Prediction Methodology
+                            🧠 综合预测说明 / Combined Methodology
                         </div>
-                        <div class="prediction-explanation-list" id="prediction-explanation-list">
+                        <div class="prediction-explanation-list" id="combined-prediction-explanation-list">
                             <!-- 将通过JavaScript动态生成 -->
                         </div>
                     </div>
                 </div>
 
-                <!-- 下一期预测 - 模型 B -->
-                <div class="chi-square-prediction-section" id="chi-square-prediction-section">
-                    <div class="chi-square-prediction-title">
-                        <span style="font-size: 1.5rem;">📈</span>
-                        模型 B - 卡方预测 Top 10 / Model B - Chi-square Predictions
-                    </div>
-                    <div class="chi-square-prediction-subtitle">
-                        基于统计偏差的预测分析 / Predictions based on statistical deviation analysis
-                    </div>
-                    <div class="chi-square-prediction-disclaimer">
-                        ℹ️ 说明：卡方模型识别偏离随机分布最多的数字。如果彩票存在规律，这些数字最可能继续表现异常。/ Chi-square model identifies numbers that deviate most from random distribution.
-                    </div>
-                    <div class="prediction-grid" id="chi-square-prediction-grid">
-                        <!-- 将通过JavaScript动态生成 -->
-                    </div>
-                    <div class="prediction-explanation" id="chi-square-prediction-explanation">
-                        <div class="prediction-explanation-title">
-                            📊 卡方预测说明 / Chi-square Prediction Methodology
+                <!-- 次要区域：模型 A / 模型 B 详情（可展开） -->
+                <details class="secondary-models" id="secondary-models">
+                    <summary>
+                        📚 展开查看：模型 A & 模型 B 详情 / Expand: Model A & Model B Details
+                    </summary>
+                    <div class="secondary-models-content">
+                        <!-- 模型对比说明 -->
+                        <div class="model-comparison-header">
+                            <div class="model-comparison-title">
+                                <span style="font-size: 1.25rem;">🔬</span>
+                                双模型预测对比 / Dual Model Prediction Comparison
+                            </div>
+                            <div class="model-comparison-text">
+                                我们提供两种基于不同假设的预测模型。<strong>模型 A（频率模型）</strong>基于历史频率、冷号反弹和均衡性；<strong>模型 B（卡方模型）</strong>基于统计偏差分析。两个模型互相补充，帮助您从不同角度理解数据。
+                                <br><br>
+                                We provide two prediction models based on different assumptions. <strong>Model A (Frequency Model)</strong> is based on historical frequency, cold number rebound, and balance; <strong>Model B (Chi-square Model)</strong> is based on statistical deviation analysis. Both models complement each other to help you understand the data from different perspectives.
+                            </div>
                         </div>
-                        <div class="prediction-explanation-list" id="chi-square-prediction-explanation-list">
-                            <!-- 将通过JavaScript动态生成 -->
+
+                        <!-- 下一期预测 - 模型 A -->
+                        <div class="prediction-section" id="prediction-section">
+                            <div class="prediction-title">
+                                <span style="font-size: 1.5rem;">🔮</span>
+                                模型 A - 频率预测 Top 10 / Model A - Frequency Predictions
+                            </div>
+                            <div class="prediction-subtitle">
+                                基于历史频率、冷号反弹和均衡性的智能预测 / Predictions based on frequency, cold rebound & balance
+                            </div>
+                            <div class="prediction-disclaimer">
+                                ⚠️ 免责声明：此预测仅供参考娱乐，不构成投注建议。彩票结果完全随机。/ Disclaimer: For reference only, not betting advice.
+                            </div>
+                            <div class="prediction-grid" id="prediction-grid">
+                                <!-- 将通过JavaScript动态生成 -->
+                            </div>
+                            <div class="prediction-explanation" id="prediction-explanation">
+                                <div class="prediction-explanation-title">
+                                    📊 预测说明 / Prediction Methodology
+                                </div>
+                                <div class="prediction-explanation-list" id="prediction-explanation-list">
+                                    <!-- 将通过JavaScript动态生成 -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 下一期预测 - 模型 B -->
+                        <div class="chi-square-prediction-section" id="chi-square-prediction-section">
+                            <div class="chi-square-prediction-title">
+                                <span style="font-size: 1.5rem;">📈</span>
+                                模型 B - 卡方预测 Top 10 / Model B - Chi-square Predictions
+                            </div>
+                            <div class="chi-square-prediction-subtitle">
+                                基于统计偏差的预测分析 / Predictions based on statistical deviation analysis
+                            </div>
+                            <div class="chi-square-prediction-disclaimer">
+                                ℹ️ 说明：卡方模型识别偏离随机分布最多的数字。如果彩票存在规律，这些数字最可能继续表现异常。/ Chi-square model identifies numbers that deviate most from random distribution.
+                            </div>
+                            <div class="prediction-grid" id="chi-square-prediction-grid">
+                                <!-- 将通过JavaScript动态生成 -->
+                            </div>
+                            <div class="prediction-explanation" id="chi-square-prediction-explanation">
+                                <div class="prediction-explanation-title">
+                                    📊 卡方预测说明 / Chi-square Prediction Methodology
+                                </div>
+                                <div class="prediction-explanation-list" id="chi-square-prediction-explanation-list">
+                                    <!-- 将通过JavaScript动态生成 -->
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </details>
 
                 <!-- 快速统计 -->
                 <div class="quick-stats" id="quick-stats">
@@ -1528,6 +1841,7 @@
             displayStatsCards(result);
             displayHotColdNumbers(result);
             displayChiSquareTest(result);
+            displayCombinedPredictions(result);
             displayPredictions(result);
             displayChiSquarePredictions(result);
             displayQuickStats(result);
@@ -1833,6 +2147,243 @@
             explanationContainer.innerHTML = explanations.join('');
         }
 
+        // 获取综合模型权重
+        function getCombinedModelWeights() {
+            const sliderA = document.getElementById('combined-weight-a');
+            const valueA = sliderA ? parseInt(sliderA.value, 10) : 50;
+            const safeA = Math.max(0, Math.min(100, Number.isFinite(valueA) ? valueA : 50));
+            const safeB = 100 - safeA;
+
+            const valueAEl = document.getElementById('combined-weight-a-value');
+            const valueBEl = document.getElementById('combined-weight-b-value');
+            if (valueAEl) valueAEl.textContent = safeA;
+            if (valueBEl) valueBEl.textContent = safeB;
+
+            return {
+                weightA: safeA / 100,
+                weightB: safeB / 100,
+                weightAPercent: safeA,
+                weightBPercent: safeB,
+            };
+        }
+
+        // 计算模型 B 指数（将残差归一化为 0-100）
+        function calculateModelBIndexMap(result) {
+            const chiSquareData = calculateChiSquare(result);
+            const residuals = chiSquareData.residuals;
+            const maxResidual = Math.max(...residuals.map(r => r.residual));
+
+            const map = new Map();
+
+            residuals.forEach(r => {
+                const deviationType = r.observed > r.expected ? 'over' : 'under';
+                const deviationPercent = r.expected > 0 ? ((r.observed - r.expected) / r.expected * 100) : 0;
+                const modelBIndex = maxResidual > 0 ? Math.round((r.residual / maxResidual) * 100) : 0;
+
+                map.set(r.number, {
+                    ...r,
+                    deviationType,
+                    deviationPercent,
+                    modelBIndex,
+                });
+            });
+
+            return { map, maxResidual };
+        }
+
+        function evaluateCombinedJudgement(pred) {
+            const strongConsensus = pred.modelAIndex >= 75 && pred.modelBIndex >= 75 && pred.consensus >= 0.8;
+            if (strongConsensus) {
+                return { className: 'consensus', icon: '🟢', text: '双模一致 / Dual Consensus' };
+            }
+
+            if (pred.combinedIndex >= 75) {
+                return { className: 'primary', icon: '🟡', text: '主要建议 / Primary' };
+            }
+
+            return { className: 'reference', icon: '🔵', text: '参考数字 / Reference' };
+        }
+
+        function buildCombinedReasonHTML(modelAData, modelBData, dominantModel, consensusPercent) {
+            const dominantText = dominantModel === 'A'
+                ? '模型 A 贡献更大 / Model A dominates'
+                : dominantModel === 'B'
+                ? '模型 B 贡献更大 / Model B dominates'
+                : '双模型均衡 / Balanced';
+
+            const aHint = modelAData
+                ? `A: 指数 ${modelAData.predictionIndex}/100（频率 ${modelAData.frequency}，距上次 ${modelAData.drawsSinceLastSeen} 期）`
+                : 'A: -';
+
+            const bHint = modelBData
+                ? `B: 指数 ${modelBData.modelBIndex}/100（残差 ${modelBData.residual.toFixed(2)}，${modelBData.deviationType === 'over' ? '📈' : '📉'} ${Math.abs(modelBData.deviationPercent).toFixed(1)}%）`
+                : 'B: -';
+
+            return `${dominantText}｜共识度 ${consensusPercent}% / Consensus ${consensusPercent}%` +
+                `<br><span style="color:#6b7280;">${aHint}；${bHint}</span>`;
+        }
+
+        // 计算综合预测（模型 A + 模型 B 加权融合）
+        function calculateCombinedPredictions(result) {
+            const { weightA, weightB, weightAPercent, weightBPercent } = getCombinedModelWeights();
+
+            const modelAPredictions = calculatePredictions(result);
+            const modelAMap = new Map(modelAPredictions.map(p => [p.number, p]));
+
+            const { map: modelBMap } = calculateModelBIndexMap(result);
+
+            const combined = [];
+            for (let i = 1; i <= 49; i++) {
+                const modelAData = modelAMap.get(i);
+                const modelBData = modelBMap.get(i);
+
+                const modelAIndex = modelAData ? modelAData.predictionIndex : 0;
+                const modelBIndex = modelBData ? modelBData.modelBIndex : 0;
+
+                let modelAContribution = Math.round(modelAIndex * weightA);
+                let modelBContribution = Math.round(modelBIndex * weightB);
+                const combinedRaw = modelAContribution + modelBContribution;
+                const combinedIndex = Math.max(0, Math.min(100, combinedRaw));
+
+                if (combinedRaw > 100) {
+                    const excess = combinedRaw - 100;
+                    if (modelAContribution >= modelBContribution) {
+                        modelAContribution = Math.max(0, modelAContribution - excess);
+                    } else {
+                        modelBContribution = Math.max(0, modelBContribution - excess);
+                    }
+                }
+
+                const consensus = Math.max(0, 1 - Math.abs(modelAIndex - modelBIndex) / 100);
+                const consensusPercent = Math.round(consensus * 100);
+
+                const dominantModel = modelAContribution === modelBContribution
+                    ? 'equal'
+                    : modelAContribution > modelBContribution
+                    ? 'A'
+                    : 'B';
+
+                combined.push({
+                    number: i,
+                    combinedIndex,
+                    modelAIndex,
+                    modelBIndex,
+                    modelAContribution,
+                    modelBContribution,
+                    consensus,
+                    consensusPercent,
+                    dominantModel,
+                    weightAPercent,
+                    weightBPercent,
+                    modelAData,
+                    modelBData,
+                });
+            }
+
+            combined.sort((a, b) => {
+                if (b.combinedIndex !== a.combinedIndex) return b.combinedIndex - a.combinedIndex;
+                if (b.consensusPercent !== a.consensusPercent) return b.consensusPercent - a.consensusPercent;
+                return a.number - b.number;
+            });
+
+            return combined.map(pred => {
+                const judgement = evaluateCombinedJudgement(pred);
+                const reasonHTML = buildCombinedReasonHTML(pred.modelAData, pred.modelBData, pred.dominantModel, pred.consensusPercent);
+                return { ...pred, judgement, reasonHTML };
+            });
+        }
+
+        // 显示综合预测
+        function displayCombinedPredictions(result) {
+            const predictions = calculateCombinedPredictions(result);
+            const top10 = predictions.slice(0, 10);
+
+            const gridContainer = document.getElementById('combined-prediction-grid');
+            const explanationContainer = document.getElementById('combined-prediction-explanation-list');
+
+            if (!gridContainer || !explanationContainer) return;
+
+            gridContainer.innerHTML = top10.map((pred, index) => {
+                const rank = index + 1;
+                const judgement = pred.judgement;
+
+                const aWidth = Math.max(0, Math.min(100, pred.modelAContribution));
+                const bWidth = Math.max(0, Math.min(100, pred.modelBContribution));
+
+                const leaningText = pred.dominantModel === 'A'
+                    ? '模型A倾向 / Leaning A'
+                    : pred.dominantModel === 'B'
+                    ? '模型B倾向 / Leaning B'
+                    : '均衡 / Balanced';
+
+                return `
+                    <div class="combined-prediction-card ${judgement.className}">
+                        <div class="prediction-header">
+                            <div class="prediction-number">
+                                <div class="combined-number-badge">${pred.number}</div>
+                                <div style="font-size: 0.875rem; font-weight: 600; color: #18181b;">
+                                    号码 ${pred.number}
+                                </div>
+                            </div>
+                            <div class="combined-rank-badge">#${rank}</div>
+                        </div>
+
+                        <div class="combined-judgement-badge ${judgement.className}">
+                            <span>${judgement.icon}</span>
+                            <span>${judgement.text}</span>
+                        </div>
+
+                        <div class="prediction-index">
+                            <div class="combined-index-bar">
+                                <div class="combined-index-segment model-a" style="width: ${aWidth}%"></div>
+                                <div class="combined-index-segment model-b" style="width: ${bWidth}%"></div>
+                            </div>
+                            <div class="prediction-index-score">${pred.combinedIndex}</div>
+                        </div>
+
+                        <div class="prediction-details">
+                            <div class="prediction-detail-item">
+                                <span>综合指数 / Combined:</span>
+                                <span style="font-weight: 700;">${pred.combinedIndex}/100</span>
+                            </div>
+                            <div class="prediction-detail-item">
+                                <span>模型 A / Model A:</span>
+                                <span style="font-weight: 600;">${pred.modelAIndex} → ${pred.modelAContribution}</span>
+                            </div>
+                            <div class="prediction-detail-item">
+                                <span>模型 B / Model B:</span>
+                                <span style="font-weight: 600;">${pred.modelBIndex} → ${pred.modelBContribution}</span>
+                            </div>
+                            <div class="prediction-detail-item">
+                                <span>共识度 / Consensus:</span>
+                                <span style="font-weight: 600;">${pred.consensusPercent}%</span>
+                            </div>
+                            <div class="prediction-detail-item">
+                                <span>倾向 / Leaning:</span>
+                                <span style="font-weight: 600;">${leaningText}</span>
+                            </div>
+                            <div style="margin-top: 0.5rem; font-size: 0.75rem; line-height: 1.5;">
+                                ${pred.reasonHTML}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            const { weightAPercent, weightBPercent } = getCombinedModelWeights();
+            const avgConsensus = Math.round(top10.reduce((sum, p) => sum + p.consensusPercent, 0) / top10.length);
+
+            const explanations = [
+                `<div class="prediction-explanation-item"><strong>🧩 组合方式：</strong>综合指数 = 模型 A 指数 × ${weightAPercent}% + 模型 B 指数 × ${weightBPercent}%。两者先标准化到 0-100 分。</div>`,
+                `<div class="prediction-explanation-item"><strong>🟢 双模一致：</strong>当两模型都给出较高分，且差异较小（共识度高）时标记为“更值得关注”的候选。</div>`,
+                `<div class="prediction-explanation-item"><strong>📏 共识度：</strong>共识度 = 1 - |A - B|/100（越接近 100% 表示两模型越一致）。Top 10 平均共识度约为 <strong>${avgConsensus}%</strong>。</div>`,
+                `<div class="prediction-explanation-item"><strong>⚙️ 权重含义：</strong>提高模型 A 权重会更偏向“频率/冷号/均衡”；提高模型 B 权重会更偏向“统计偏差（卡方残差）”。</div>`,
+                `<div class="prediction-explanation-item"><strong>⚠️ 提醒：</strong>即使“双模一致”也无法保证中奖，它只是基于历史数据的多角度参考。请理性娱乐。</div>`,
+            ];
+
+            explanationContainer.innerHTML = explanations.join('');
+        }
+
         // 计算预测指数
         function calculatePredictions(result) {
             const predictions = [];
@@ -1865,7 +2416,7 @@
                 const avgFreq = result.totalNumbers / 49;
                 const balanceScore = freq > 0 ? Math.max(0, 30 - Math.abs(freq - avgFreq) * 3) : 0;
                 
-                // 综合预测指数
+                // 模型 A 预测指数
                 const predictionIndex = Math.min(100, Math.round(frequencyScore + coldReboundScore + balanceScore));
                 
                 predictions.push({
@@ -2151,6 +2702,17 @@
             csv += `Expected Frequency,${chiSquareData.expected.toFixed(2)}\n`;
             csv += `Significance,${chiSquareData.pValue < 0.05 ? 'Non-random' : 'Random'}\n`;
             
+            // 添加综合预测数据
+            const combinedPredictions = calculateCombinedPredictions(analysisResult);
+            const combinedTop10 = combinedPredictions.slice(0, 10);
+            const { weightAPercent, weightBPercent } = getCombinedModelWeights();
+            csv += '\n\nCombined Model Predictions (Top 10)\n';
+            csv += `Weights,Model A ${weightAPercent}%,Model B ${weightBPercent}%\n`;
+            csv += 'Rank,Number,Combined Index,ModelA Index,ModelB Index,ModelA Contribution,ModelB Contribution,Consensus %,Judgement,Dominant Model\n';
+            combinedTop10.forEach((pred, index) => {
+                csv += `${index + 1},${pred.number},${pred.combinedIndex},${pred.modelAIndex},${pred.modelBIndex},${pred.modelAContribution},${pred.modelBContribution},${pred.consensusPercent}%,${pred.judgement.text},${pred.dominantModel}\n`;
+            });
+
             // 添加模型 A 预测数据
             csv += '\n\nModel A - Frequency Predictions (Top 10)\n';
             csv += 'Rank,Number,Prediction Index,Frequency,Draws Since Last Seen\n';
@@ -2177,7 +2739,9 @@
             const predictions = calculatePredictions(analysisResult);
             const chiSquareData = calculateChiSquare(analysisResult);
             const chiSquarePredictions = calculateChiSquarePredictions(analysisResult);
-            
+            const combinedPredictions = calculateCombinedPredictions(analysisResult);
+            const { weightAPercent, weightBPercent } = getCombinedModelWeights();
+
             const exportData = {
                 ...analysisResult,
                 chiSquareTest: {
@@ -2186,6 +2750,23 @@
                     pValue: chiSquareData.pValue,
                     expected: chiSquareData.expected,
                     significance: chiSquareData.pValue < 0.05 ? 'non-random' : 'random'
+                },
+                combinedModel: {
+                    weights: {
+                        modelA: weightAPercent,
+                        modelB: weightBPercent
+                    },
+                    top10: combinedPredictions.slice(0, 10).map(pred => ({
+                        number: pred.number,
+                        combinedIndex: pred.combinedIndex,
+                        modelAIndex: pred.modelAIndex,
+                        modelBIndex: pred.modelBIndex,
+                        modelAContribution: pred.modelAContribution,
+                        modelBContribution: pred.modelBContribution,
+                        consensusPercent: pred.consensusPercent,
+                        judgement: pred.judgement.text,
+                        dominantModel: pred.dominantModel
+                    }))
                 },
                 modelA_frequencyPredictions: predictions.slice(0, 10),
                 modelB_chiSquarePredictions: chiSquarePredictions.slice(0, 10)
@@ -2204,6 +2785,9 @@
             const chiSquareData = calculateChiSquare(analysisResult);
             const chiSquarePredictions = calculateChiSquarePredictions(analysisResult);
             const chiSquareTop10 = chiSquarePredictions.slice(0, 10);
+            const combinedPredictions = calculateCombinedPredictions(analysisResult);
+            const combinedTop10 = combinedPredictions.slice(0, 10);
+            const { weightAPercent, weightBPercent } = getCombinedModelWeights();
             
             const printWindow = window.open('', '_blank');
             printWindow.document.write(`
@@ -2221,6 +2805,7 @@
                         th { background-color: #f5f5f5; }
                         .prediction-warning { background: #fff3cd; border: 1px solid #ffc107; padding: 10px; border-radius: 5px; margin-bottom: 15px; }
                         .chi-square-box { background: #f3e8ff; border: 1px solid #8b5cf6; padding: 15px; border-radius: 5px; margin-bottom: 15px; }
+                        .combined-box { background: #ecfdf5; border: 1px solid #10b981; padding: 15px; border-radius: 5px; margin-bottom: 15px; }
                         .significance-badge { display: inline-block; padding: 5px 10px; border-radius: 15px; font-size: 12px; font-weight: bold; margin-top: 10px; }
                         .random { background: #d1fae5; color: #065f46; }
                         .non-random { background: #fee2e2; color: #991b1b; }
@@ -2275,6 +2860,44 @@
                                     ? 'p < 0.05: 数据显著偏离随机分布，某些号码可能存在规律。' 
                                     : 'p > 0.05: 数据符合随机分布，彩票看起来是公平的。'}
                             </p>
+                        </div>
+                    </div>
+                    
+                    <div class="section">
+                        <h2>🧩 综合预测 Top 10 / Combined Predictions</h2>
+                        <div class="combined-box">
+                            <div class="prediction-warning">
+                                ⚠️ 免责声明：综合预测仅供参考娱乐，不构成投注建议。彩票结果完全随机。
+                            </div>
+                            <p style="font-size: 14px; color: #065f46; margin-bottom: 10px;">
+                                <strong>权重 / Weights:</strong> Model A = ${weightAPercent}% ，Model B = ${weightBPercent}%
+                            </p>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>预测排名 / Rank</th>
+                                        <th>号码 / Number</th>
+                                        <th>综合指数 / Combined</th>
+                                        <th>模型A / A</th>
+                                        <th>模型B / B</th>
+                                        <th>共识度 / Consensus</th>
+                                        <th>判断 / Judgement</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${combinedTop10.map((pred, index) => `
+                                        <tr>
+                                            <td>#${index + 1}</td>
+                                            <td><strong>${pred.number}</strong></td>
+                                            <td>${pred.combinedIndex}/100</td>
+                                            <td>${pred.modelAIndex} → ${pred.modelAContribution}</td>
+                                            <td>${pred.modelBIndex} → ${pred.modelBContribution}</td>
+                                            <td>${pred.consensusPercent}%</td>
+                                            <td>${pred.judgement.text}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                     
@@ -2397,6 +3020,17 @@
         // 初始化
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('lottery-input').addEventListener('input', handleInputChange);
+
+            const weightSliderA = document.getElementById('combined-weight-a');
+            if (weightSliderA) {
+                getCombinedModelWeights();
+                weightSliderA.addEventListener('input', function() {
+                    getCombinedModelWeights();
+                    if (analysisResult) {
+                        displayCombinedPredictions(analysisResult);
+                    }
+                });
+            }
         });
     </script>
 </body>
