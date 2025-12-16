@@ -556,6 +556,220 @@
         .quick-stats-value {
             font-weight: 600;
         }
+
+        /* 预测部分样式 */
+        .prediction-section {
+            background: linear-gradient(135deg, #fefce8, #fef3c7);
+            border: 2px solid #f59e0b;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .prediction-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #92400e;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .prediction-subtitle {
+            font-size: 0.875rem;
+            color: #78350f;
+            margin-bottom: 1rem;
+        }
+
+        .prediction-disclaimer {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            font-size: 0.75rem;
+            color: #92400e;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .prediction-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .prediction-card {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .prediction-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .prediction-card.rank-1,
+        .prediction-card.rank-2,
+        .prediction-card.rank-3 {
+            border-color: #ef4444;
+            background: linear-gradient(135deg, #ffffff, #fef2f2);
+        }
+
+        .prediction-card.rank-4,
+        .prediction-card.rank-5,
+        .prediction-card.rank-6 {
+            border-color: #f97316;
+            background: linear-gradient(135deg, #ffffff, #fff7ed);
+        }
+
+        .prediction-card.rank-7,
+        .prediction-card.rank-8,
+        .prediction-card.rank-9,
+        .prediction-card.rank-10 {
+            border-color: #fbbf24;
+            background: linear-gradient(135deg, #ffffff, #fefce8);
+        }
+
+        .prediction-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .prediction-number {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .prediction-number-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 1.25rem;
+            background: linear-gradient(135deg, #fef2f2, #fecaca);
+            color: #991b1b;
+            border: 2px solid #ef4444;
+        }
+
+        .prediction-rank-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.75rem;
+            height: 1.75rem;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 0.75rem;
+            background: #f59e0b;
+            color: white;
+        }
+
+        .prediction-index {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .prediction-index-bar {
+            flex: 1;
+            height: 1rem;
+            background: #f3f4f6;
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+
+        .prediction-index-fill {
+            height: 100%;
+            border-radius: 9999px;
+            transition: width 0.5s ease-out;
+        }
+
+        .prediction-index-fill.hot {
+            background: linear-gradient(90deg, #ef4444, #dc2626);
+        }
+
+        .prediction-index-fill.warm {
+            background: linear-gradient(90deg, #f97316, #ea580c);
+        }
+
+        .prediction-index-fill.mild {
+            background: linear-gradient(90deg, #fbbf24, #f59e0b);
+        }
+
+        .prediction-index-score {
+            font-weight: 700;
+            font-size: 0.875rem;
+            color: #18181b;
+            min-width: 2rem;
+        }
+
+        .prediction-details {
+            font-size: 0.75rem;
+            color: #6b7280;
+            line-height: 1.5;
+        }
+
+        .prediction-detail-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.25rem;
+        }
+
+        .prediction-explanation {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-top: 1rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .prediction-explanation-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #18181b;
+            margin-bottom: 0.5rem;
+        }
+
+        .prediction-explanation-list {
+            font-size: 0.75rem;
+            color: #6b7280;
+            line-height: 1.6;
+        }
+
+        .prediction-explanation-item {
+            margin-bottom: 0.5rem;
+            padding-left: 1rem;
+            position: relative;
+        }
+
+        .prediction-explanation-item::before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #f59e0b;
+            font-weight: 700;
+        }
+
+        @media (max-width: 768px) {
+            .prediction-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
@@ -735,6 +949,31 @@
                     </div>
                 </div>
 
+                <!-- 下一期预测 -->
+                <div class="prediction-section" id="prediction-section">
+                    <div class="prediction-title">
+                        <span style="font-size: 1.5rem;">🔮</span>
+                        下一期预测 Top 10 / Next Draw Predictions
+                    </div>
+                    <div class="prediction-subtitle">
+                        基于历史数据的智能预测分析 / AI-powered predictions based on historical data
+                    </div>
+                    <div class="prediction-disclaimer">
+                        ⚠️ 免责声明：此预测仅供参考娱乐，不构成投注建议。彩票结果完全随机。/ Disclaimer: For reference only, not betting advice.
+                    </div>
+                    <div class="prediction-grid" id="prediction-grid">
+                        <!-- 将通过JavaScript动态生成 -->
+                    </div>
+                    <div class="prediction-explanation" id="prediction-explanation">
+                        <div class="prediction-explanation-title">
+                            📊 预测说明 / Prediction Methodology
+                        </div>
+                        <div class="prediction-explanation-list" id="prediction-explanation-list">
+                            <!-- 将通过JavaScript动态生成 -->
+                        </div>
+                    </div>
+                </div>
+
                 <!-- 快速统计 -->
                 <div class="quick-stats" id="quick-stats">
                     <h3>快速统计 / Quick Stats</h3>
@@ -800,14 +1039,16 @@
             const validDraws = [];
             const invalidEntries = [];
             const frequency = {};
+            const lastAppearance = {};
             let totalNumbers = 0;
 
-            // 初始化频率
+            // 初始化频率和最后出现位置
             for (let i = 1; i <= 49; i++) {
                 frequency[i] = 0;
+                lastAppearance[i] = -1;
             }
 
-            lines.forEach((line) => {
+            lines.forEach((line, lineIndex) => {
                 if (!line.trim()) return;
 
                 // 分割非数字字符
@@ -821,6 +1062,7 @@
                         if (num >= 1 && num <= 49) {
                             draw.push(num);
                             frequency[num] = (frequency[num] || 0) + 1;
+                            lastAppearance[num] = lineIndex;
                             totalNumbers++;
                         } else {
                             invalidEntries.push(token);
@@ -891,6 +1133,7 @@
                 leastFrequent,
                 neverDrawn,
                 invalidEntries,
+                lastAppearance,
             };
         }
 
@@ -959,6 +1202,7 @@
         function displayResults(result) {
             displayStatsCards(result);
             displayHotColdNumbers(result);
+            displayPredictions(result);
             displayQuickStats(result);
             displayChart(result);
             displayTable(result);
@@ -991,6 +1235,172 @@
             coldContainer.innerHTML = result.coldNumbers.map(num => 
                 `<span class="number-tag cold-tag">${num}</span>`
             ).join('');
+        }
+
+        // 计算预测指数
+        function calculatePredictions(result) {
+            const predictions = [];
+            const maxFreq = Math.max(...Object.values(result.frequency));
+            const totalDraws = result.totalDraws;
+            
+            for (let i = 1; i <= 49; i++) {
+                const freq = result.frequency[i];
+                const lastSeen = result.lastAppearance[i];
+                const drawsSinceLastSeen = lastSeen >= 0 ? (totalDraws - lastSeen - 1) : totalDraws;
+                
+                // 计算各项指标
+                // 1. 频率分数 (0-40分): 基于历史出现频率
+                const frequencyScore = maxFreq > 0 ? (freq / maxFreq) * 40 : 0;
+                
+                // 2. 冷号反弹分数 (0-30分): 长期未出现的号码可能反弹
+                let coldReboundScore = 0;
+                if (freq > 0) {
+                    // 超过平均间隔的号码获得反弹分数
+                    const avgInterval = totalDraws / (freq || 1);
+                    if (drawsSinceLastSeen > avgInterval) {
+                        coldReboundScore = Math.min(30, (drawsSinceLastSeen / avgInterval) * 15);
+                    }
+                } else {
+                    // 从未出现的号码给予中等反弹分数
+                    coldReboundScore = 15;
+                }
+                
+                // 3. 均衡分数 (0-30分): 中等频率的号码获得额外分数
+                const avgFreq = result.totalNumbers / 49;
+                const balanceScore = freq > 0 ? Math.max(0, 30 - Math.abs(freq - avgFreq) * 3) : 0;
+                
+                // 综合预测指数
+                const predictionIndex = Math.min(100, Math.round(frequencyScore + coldReboundScore + balanceScore));
+                
+                predictions.push({
+                    number: i,
+                    predictionIndex,
+                    frequency: freq,
+                    drawsSinceLastSeen,
+                    frequencyScore: Math.round(frequencyScore),
+                    coldReboundScore: Math.round(coldReboundScore),
+                    balanceScore: Math.round(balanceScore),
+                });
+            }
+            
+            // 按预测指数降序排序
+            predictions.sort((a, b) => {
+                if (b.predictionIndex !== a.predictionIndex) {
+                    return b.predictionIndex - a.predictionIndex;
+                }
+                return a.number - b.number;
+            });
+            
+            return predictions;
+        }
+
+        // 显示预测结果
+        function displayPredictions(result) {
+            const predictions = calculatePredictions(result);
+            const top10 = predictions.slice(0, 10);
+            
+            const gridContainer = document.getElementById('prediction-grid');
+            const explanationContainer = document.getElementById('prediction-explanation-list');
+            
+            // 生成预测卡片
+            gridContainer.innerHTML = top10.map((pred, index) => {
+                const rank = index + 1;
+                let heatClass = 'mild';
+                if (rank <= 3) heatClass = 'hot';
+                else if (rank <= 6) heatClass = 'warm';
+                
+                const lastSeenText = pred.drawsSinceLastSeen === 0 
+                    ? '最近出现 / Just appeared'
+                    : pred.drawsSinceLastSeen === 1
+                    ? '1 期前 / 1 draw ago'
+                    : `${pred.drawsSinceLastSeen} 期前 / ${pred.drawsSinceLastSeen} draws ago`;
+                
+                return `
+                    <div class="prediction-card rank-${rank}">
+                        <div class="prediction-header">
+                            <div class="prediction-number">
+                                <div class="prediction-number-badge">${pred.number}</div>
+                                <div style="font-size: 0.875rem; font-weight: 600; color: #18181b;">
+                                    号码 ${pred.number}
+                                </div>
+                            </div>
+                            <div class="prediction-rank-badge">#${rank}</div>
+                        </div>
+                        <div class="prediction-index">
+                            <div class="prediction-index-bar">
+                                <div class="prediction-index-fill ${heatClass}" style="width: ${pred.predictionIndex}%"></div>
+                            </div>
+                            <div class="prediction-index-score">${pred.predictionIndex}</div>
+                        </div>
+                        <div class="prediction-details">
+                            <div class="prediction-detail-item">
+                                <span>预测指数 / Index:</span>
+                                <span style="font-weight: 600;">${pred.predictionIndex}/100</span>
+                            </div>
+                            <div class="prediction-detail-item">
+                                <span>历史频率 / Frequency:</span>
+                                <span style="font-weight: 600;">${pred.frequency} 次</span>
+                            </div>
+                            <div class="prediction-detail-item">
+                                <span>最后出现 / Last seen:</span>
+                                <span style="font-weight: 600;">${lastSeenText}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            // 生成预测说明
+            const explanations = [];
+            
+            // 热号说明
+            const hotPredictions = top10.filter(p => p.frequencyScore >= 25);
+            if (hotPredictions.length > 0) {
+                const nums = hotPredictions.slice(0, 3).map(p => p.number).join(', ');
+                explanations.push(
+                    `<div class="prediction-explanation-item">` +
+                    `<strong>热号延续：</strong>数字 ${nums} 等是预测热号，因为它们的历史出现频率最高（频率分数 ≥25）。` +
+                    `</div>`
+                );
+            }
+            
+            // 冷号反弹说明
+            const coldRebound = top10.filter(p => p.coldReboundScore >= 15);
+            if (coldRebound.length > 0) {
+                const nums = coldRebound.slice(0, 3).map(p => p.number).join(', ');
+                const maxDraws = Math.max(...coldRebound.map(p => p.drawsSinceLastSeen));
+                explanations.push(
+                    `<div class="prediction-explanation-item">` +
+                    `<strong>冷号反弹：</strong>数字 ${nums} 等是冷号反弹候选，已有 ${maxDraws} 期未出现，有爆发可能。` +
+                    `</div>`
+                );
+            }
+            
+            // 均衡号说明
+            const balanced = top10.filter(p => p.balanceScore >= 20);
+            if (balanced.length > 0) {
+                const nums = balanced.slice(0, 3).map(p => p.number).join(', ');
+                explanations.push(
+                    `<div class="prediction-explanation-item">` +
+                    `<strong>均衡号码：</strong>数字 ${nums} 等频率适中且分布均匀（均衡分数 ≥20），是稳健选择。` +
+                    `</div>`
+                );
+            }
+            
+            // 算法说明
+            explanations.push(
+                `<div class="prediction-explanation-item">` +
+                `<strong>算法说明：</strong>预测指数由三部分组成：频率分数（40%权重）、冷号反弹分数（30%权重）、均衡分数（30%权重）。` +
+                `</div>`
+            );
+            
+            explanations.push(
+                `<div class="prediction-explanation-item">` +
+                `<strong>重要提示：</strong>彩票结果完全随机，历史数据不能预测未来。此功能仅作统计分析参考。` +
+                `</div>`
+            );
+            
+            explanationContainer.innerHTML = explanations.join('');
         }
 
         // 显示快速统计
@@ -1136,6 +1546,13 @@
                     csv += `${data.rank},${data.number},${data.count},${data.percentage.toFixed(1)}%,${status}\n`;
                 });
             
+            // 添加预测数据
+            csv += '\n\nPrediction Rank,Number,Prediction Index,Frequency,Draws Since Last Seen\n';
+            const predictions = calculatePredictions(analysisResult);
+            predictions.slice(0, 10).forEach((pred, index) => {
+                csv += `${index + 1},${pred.number},${pred.predictionIndex},${pred.frequency},${pred.drawsSinceLastSeen}\n`;
+            });
+            
             downloadFile('lottery-analysis.csv', csv, 'text/csv');
         }
 
@@ -1143,13 +1560,22 @@
         function exportJSON() {
             if (!analysisResult) return;
             
-            const json = JSON.stringify(analysisResult, null, 2);
+            const predictions = calculatePredictions(analysisResult);
+            const exportData = {
+                ...analysisResult,
+                predictions: predictions.slice(0, 10)
+            };
+            
+            const json = JSON.stringify(exportData, null, 2);
             downloadFile('lottery-analysis.json', json, 'application/json');
         }
 
         // 打印结果
         function printResults() {
             if (!analysisResult) return;
+            
+            const predictions = calculatePredictions(analysisResult);
+            const top10 = predictions.slice(0, 10);
             
             const printWindow = window.open('', '_blank');
             printWindow.document.write(`
@@ -1165,6 +1591,7 @@
                         table { width: 100%; border-collapse: collapse; }
                         th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
                         th { background-color: #f5f5f5; }
+                        .prediction-warning { background: #fff3cd; border: 1px solid #ffc107; padding: 10px; border-radius: 5px; margin-bottom: 15px; }
                     </style>
                 </head>
                 <body>
@@ -1189,6 +1616,35 @@
                         <h2>热号/冷号 / Hot/Cold Numbers</h2>
                         <p><strong>热号 / Hot:</strong> ${analysisResult.hotNumbers.join(', ')}</p>
                         <p><strong>冷号 / Cold:</strong> ${analysisResult.coldNumbers.join(', ')}</p>
+                    </div>
+                    
+                    <div class="section">
+                        <h2>下一期预测 Top 10 / Next Draw Predictions</h2>
+                        <div class="prediction-warning">
+                            ⚠️ 免责声明：此预测仅供参考娱乐，不构成投注建议。彩票结果完全随机。
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>预测排名 / Rank</th>
+                                    <th>号码 / Number</th>
+                                    <th>预测指数 / Index</th>
+                                    <th>历史频率 / Frequency</th>
+                                    <th>最后出现 / Last Seen</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${top10.map((pred, index) => `
+                                    <tr>
+                                        <td>#${index + 1}</td>
+                                        <td><strong>${pred.number}</strong></td>
+                                        <td>${pred.predictionIndex}/100</td>
+                                        <td>${pred.frequency} 次</td>
+                                        <td>${pred.drawsSinceLastSeen} 期前</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
                     </div>
                     
                     <div class="section">
