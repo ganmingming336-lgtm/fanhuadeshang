@@ -1,0 +1,1337 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>12生肖预测工具 - Zodiac Predictor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-1: #667eea;
+            --bg-2: #764ba2;
+            --primary: #2563eb;
+            --primary-2: #1d4ed8;
+            --text: #18181b;
+            --muted: #6b7280;
+            --border: #e4e4e7;
+            --card: #ffffff;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --success: #10b981;
+            --shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background: linear-gradient(135deg, var(--bg-1) 0%, var(--bg-2) 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--card);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            padding: 32px;
+            animation: slideIn 0.25s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .title {
+            font-size: 2.4rem;
+            font-weight: 800;
+            color: var(--bg-1);
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: var(--muted);
+            max-width: 48rem;
+            margin: 0 auto;
+        }
+
+        .grid {
+            display: grid;
+            gap: 18px;
+        }
+
+        .grid-cols-2 {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .grid-cols-3 {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .card {
+            background: white;
+            border-radius: 14px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border);
+        }
+
+        .card-header {
+            padding: 18px 18px 0;
+        }
+
+        .card-body {
+            padding: 18px;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .card-subtitle {
+            font-size: 0.9rem;
+            color: var(--muted);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-weight: 700;
+            text-align: center;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-2);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background-color: #f3f4f6;
+            color: #374151;
+            border: 1px solid #d1d5db;
+        }
+
+        .btn-secondary:hover {
+            background-color: #e5e7eb;
+        }
+
+        .btn-danger {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        .btn-danger:hover {
+            background-color: #fecaca;
+        }
+
+        .btn-success {
+            background-color: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        .btn-success:hover {
+            background-color: #bbf7d0;
+        }
+
+        .row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .input-group {
+            margin-bottom: 12px;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 6px;
+        }
+
+        .textarea {
+            width: 100%;
+            min-height: 160px;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 12px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.9rem;
+            resize: vertical;
+            background-color: #f9fafb;
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+
+        .textarea:focus,
+        .input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        }
+
+        .input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            background: #fff;
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+
+        .help {
+            font-size: 0.85rem;
+            color: var(--muted);
+            margin-top: 8px;
+        }
+
+        .alert {
+            padding: 10px 12px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .alert-info {
+            background-color: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #93c5fd;
+        }
+
+        .alert-warning {
+            background-color: #fef3c7;
+            color: #92400e;
+            border: 1px solid #f59e0b;
+        }
+
+        .alert-error {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #eff6ff, #e0e7ff);
+            border: 1px solid #93c5fd;
+            border-radius: 14px;
+            padding: 14px;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #1e40af;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .stat-value {
+            margin-top: 6px;
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: #111827;
+        }
+
+        .table-container {
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            overflow: hidden;
+            background: white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.92rem;
+        }
+
+        th {
+            background: #f9fafb;
+            padding: 10px 12px;
+            text-align: left;
+            font-weight: 700;
+            color: #6b7280;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #f3f4f6;
+            vertical-align: top;
+        }
+
+        tr:hover {
+            background: #fafafa;
+        }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-weight: 800;
+            font-size: 0.85rem;
+            border: 1px solid;
+        }
+
+        .tag-primary {
+            background: #dbeafe;
+            color: #1e40af;
+            border-color: #93c5fd;
+        }
+
+        .tag-success {
+            background: #dcfce7;
+            color: #166534;
+            border-color: #bbf7d0;
+        }
+
+        .tag-warning {
+            background: #fef3c7;
+            color: #92400e;
+            border-color: #f59e0b;
+        }
+
+        .tag-danger {
+            background: #fee2e2;
+            color: #991b1b;
+            border-color: #fecaca;
+        }
+
+        .tag-muted {
+            background: #f3f4f6;
+            color: #374151;
+            border-color: #d1d5db;
+        }
+
+        .progress {
+            height: 10px;
+            background: #f3f4f6;
+            border-radius: 999px;
+            overflow: hidden;
+            border: 1px solid #e5e7eb;
+        }
+
+        .progress > div {
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+            transition: width 0.35s ease;
+        }
+
+        .method-card {
+            border-left: 4px solid #93c5fd;
+        }
+
+        .method-card.method-frequency { border-left-color: #2563eb; }
+        .method-card.method-cold { border-left-color: #06b6d4; }
+        .method-card.method-period { border-left-color: #f59e0b; }
+        .method-card.method-combo { border-left-color: #10b981; }
+        .method-card.method-ma { border-left-color: #8b5cf6; }
+
+        .method-top {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .muted {
+            color: var(--muted);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .nowrap {
+            white-space: nowrap;
+        }
+
+        @media (max-width: 900px) {
+            .grid-cols-2 {
+                grid-template-columns: repeat(1, minmax(0, 1fr));
+            }
+
+            .grid-cols-3 {
+                grid-template-columns: repeat(1, minmax(0, 1fr));
+            }
+
+            .stat-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .container {
+                padding: 18px;
+            }
+
+            .title {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stat-grid {
+                grid-template-columns: repeat(1, minmax(0, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1 class="title">12生肖预测工具</h1>
+            <p class="subtitle">支持历史数据管理与多算法综合预测（频率分析 / 冷热号 / 周期性 / 组合概率 / 移动平均）。数据保存在本地浏览器（localStorage），完全离线可用。</p>
+        </header>
+
+        <div id="alertArea" class="hidden"></div>
+
+        <section class="grid grid-cols-2">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">数据输入区</div>
+                    <div class="card-subtitle">支持批量粘贴，多行输入；每行代表一期结果。</div>
+                </div>
+                <div class="card-body">
+                    <div class="input-group">
+                        <label class="input-label" for="historyInput">历史开奖数据</label>
+                        <textarea id="historyInput" class="textarea" placeholder="示例：\n1 2 3\n鼠 牛 虎\n1,2,3\n\n支持：空格/逗号/中文逗号/顿号 分隔；编号 1-12 或生肖名称"></textarea>
+                        <div class="help">
+                            生肖对应：1-鼠, 2-牛, 3-虎, 4-兔, 5-龙, 6-蛇, 7-马, 8-羊, 9-猴, 10-鸡, 11-狗, 12-猪
+                        </div>
+                    </div>
+
+                    <div class="grid" style="gap: 10px;">
+                        <div class="row">
+                            <button id="btnAdd" class="btn btn-primary" type="button">添加到历史数据</button>
+                            <button id="btnAnalyze" class="btn btn-success" type="button">立即分析预测</button>
+                            <button id="btnClearInput" class="btn btn-secondary" type="button">清空输入框</button>
+                        </div>
+                        <div class="row">
+                            <button id="btnLoadExample" class="btn btn-secondary" type="button">填充示例数据</button>
+                            <button id="btnClearHistory" class="btn btn-danger" type="button">清空历史数据</button>
+                            <button id="btnExportHistory" class="btn btn-secondary" type="button">导出历史数据</button>
+                        </div>
+
+                        <div class="grid grid-cols-3" style="gap: 10px;">
+                            <div>
+                                <label class="input-label" for="recentN">冷热号：最近 N 期</label>
+                                <input id="recentN" class="input" type="number" min="1" max="9999" value="20" />
+                            </div>
+                            <div>
+                                <label class="input-label" for="decayAlpha">移动平均：衰减系数 α</label>
+                                <input id="decayAlpha" class="input" type="number" min="0.7" max="0.999" step="0.001" value="0.95" />
+                                <div class="help">越接近 1 越“看重长期”，越小越“偏近期”。</div>
+                            </div>
+                            <div>
+                                <label class="input-label" for="topK">输出：Top K</label>
+                                <input id="topK" class="input" type="number" min="3" max="12" value="12" />
+                            </div>
+                        </div>
+
+                        <div class="card" style="border-radius: 14px; border: 1px dashed #d1d5db;">
+                            <div class="card-body">
+                                <div class="card-title" style="font-size: 1rem;">综合权重（加权平均）</div>
+                                <div class="card-subtitle">默认等权，你也可以根据经验微调；将自动归一化。</div>
+                                <div class="grid grid-cols-3" style="margin-top: 12px; gap: 10px;">
+                                    <div>
+                                        <label class="input-label" for="wFreq">频率分析</label>
+                                        <input id="wFreq" class="input" type="number" min="0" step="0.05" value="1" />
+                                    </div>
+                                    <div>
+                                        <label class="input-label" for="wCold">冷热号法</label>
+                                        <input id="wCold" class="input" type="number" min="0" step="0.05" value="1" />
+                                    </div>
+                                    <div>
+                                        <label class="input-label" for="wPeriod">周期性分析</label>
+                                        <input id="wPeriod" class="input" type="number" min="0" step="0.05" value="1" />
+                                    </div>
+                                    <div>
+                                        <label class="input-label" for="wCombo">组合概率</label>
+                                        <input id="wCombo" class="input" type="number" min="0" step="0.05" value="1" />
+                                    </div>
+                                    <div>
+                                        <label class="input-label" for="wMA">移动平均</label>
+                                        <input id="wMA" class="input" type="number" min="0" step="0.05" value="1" />
+                                    </div>
+                                    <div style="display:flex; align-items:flex-end; gap: 10px;">
+                                        <button id="btnResetWeights" class="btn btn-secondary" type="button" style="width: 100%;">重置等权</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">历史数据列表</div>
+                    <div class="card-subtitle">可删除单条记录；数据自动保存在本地浏览器。</div>
+                </div>
+                <div class="card-body">
+                    <div class="stat-grid" style="margin-bottom: 12px;">
+                        <div class="stat-card">
+                            <div class="stat-label">期数</div>
+                            <div id="statPeriods" class="stat-value">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">结果总数</div>
+                            <div id="statItems" class="stat-value">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">最近一期</div>
+                            <div id="statLast" class="stat-value">—</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">存储状态</div>
+                            <div id="statStorage" class="stat-value" style="font-size: 1.05rem;">localStorage</div>
+                        </div>
+                    </div>
+
+                    <div id="historyEmpty" class="alert alert-info">暂无历史数据：请在左侧输入后点击“添加到历史数据”。</div>
+                    <div id="historyTable" class="table-container hidden">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th class="nowrap">#</th>
+                                    <th>结果（已标准化）</th>
+                                    <th class="nowrap">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="historyTbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="card" style="margin-top: 18px;">
+            <div class="card-header">
+                <div class="card-title">分析结果区</div>
+                <div class="card-subtitle">展示 5 种算法各自的 Top 3，并输出综合概率（高亮 Top 3）。</div>
+            </div>
+            <div class="card-body">
+                <div id="analysisEmpty" class="alert alert-info">请先添加历史数据，然后点击“立即分析预测”。</div>
+
+                <div id="analysisArea" class="grid grid-cols-3 hidden" style="margin-top: 10px;">
+                    <div class="card method-card method-frequency">
+                        <div class="card-body">
+                            <div class="card-title">频率分析</div>
+                            <div class="card-subtitle">出现次数越多，概率越高</div>
+                            <div id="topFreq" class="method-top"></div>
+                        </div>
+                    </div>
+                    <div class="card method-card method-cold">
+                        <div class="card-body">
+                            <div class="card-title">冷热号法</div>
+                            <div class="card-subtitle">最近出现越少，相对更“冷”</div>
+                            <div id="topCold" class="method-top"></div>
+                        </div>
+                    </div>
+                    <div class="card method-card method-period">
+                        <div class="card-body">
+                            <div class="card-title">周期性分析</div>
+                            <div class="card-subtitle">根据平均间隔判断“到点”概率</div>
+                            <div id="topPeriod" class="method-top"></div>
+                        </div>
+                    </div>
+                    <div class="card method-card method-combo">
+                        <div class="card-body">
+                            <div class="card-title">组合概率</div>
+                            <div class="card-subtitle">考虑相邻期转移与组合关系</div>
+                            <div id="topCombo" class="method-top"></div>
+                        </div>
+                    </div>
+                    <div class="card method-card method-ma">
+                        <div class="card-body">
+                            <div class="card-title">移动平均</div>
+                            <div class="card-subtitle">近期权重更高（时间加权）</div>
+                            <div id="topMA" class="method-top"></div>
+                        </div>
+                    </div>
+                    <div class="card" style="border-left: 4px solid #111827;">
+                        <div class="card-body">
+                            <div class="card-title">综合预测 Top 3</div>
+                            <div class="card-subtitle">所有算法加权平均后的概率</div>
+                            <div id="topCombined" class="method-top"></div>
+                            <div class="row" style="margin-top: 12px;">
+                                <button id="btnExportJson" class="btn btn-primary" type="button">导出结果 JSON</button>
+                                <button id="btnExportCsv" class="btn btn-secondary" type="button">导出结果 CSV</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="card" style="margin-top: 18px;">
+            <div class="card-header">
+                <div class="card-title">预测输出区</div>
+                <div class="card-subtitle">按综合概率从高到低排序，显示概率百分比与可视化条形图。</div>
+            </div>
+            <div class="card-body">
+                <div id="outputEmpty" class="alert alert-info">暂无预测结果：请先进行分析。</div>
+                <div id="outputArea" class="table-container hidden">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="nowrap">排名</th>
+                                <th class="nowrap">生肖</th>
+                                <th class="nowrap">编号</th>
+                                <th class="nowrap">综合概率</th>
+                                <th>可视化</th>
+                            </tr>
+                        </thead>
+                        <tbody id="outputTbody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <footer class="muted" style="margin-top: 18px; font-size: 0.9rem;">
+            提示：本工具仅做统计与学习用途。预测结果为概率模型输出，不代表实际开奖规律。
+        </footer>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'zodiacPredictorHistory_v1';
+
+        const ZODIAC_TABLE = [
+            null,
+            '鼠', '牛', '虎', '兔', '龙', '蛇',
+            '马', '羊', '猴', '鸡', '狗', '猪'
+        ];
+
+        const NAME_TO_ID = Object.fromEntries(ZODIAC_TABLE
+            .map((name, idx) => name ? [name, idx] : null)
+            .filter(Boolean));
+
+        const state = {
+            history: [],
+            lastAnalysis: null,
+        };
+
+        function showAlert(type, message) {
+            const alertArea = document.getElementById('alertArea');
+            alertArea.className = '';
+            alertArea.innerHTML = `<div class="alert alert-${type}">${escapeHtml(message)}</div>`;
+            alertArea.classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            setTimeout(() => {
+                alertArea.classList.add('hidden');
+            }, 5000);
+        }
+
+        function escapeHtml(str) {
+            return String(str)
+                .replaceAll('&', '&amp;')
+                .replaceAll('<', '&lt;')
+                .replaceAll('>', '&gt;')
+                .replaceAll('"', '&quot;')
+                .replaceAll("'", '&#039;');
+        }
+
+        function clampNumber(value, min, max, fallback) {
+            const n = Number(value);
+            if (!Number.isFinite(n)) return fallback;
+            return Math.min(max, Math.max(min, n));
+        }
+
+        function normalizeToken(token) {
+            return token
+                .trim()
+                .replaceAll('，', ',')
+                .replaceAll('、', ',')
+                .replaceAll('；', ',')
+                .replaceAll(';', ',')
+                .replaceAll('|', ',');
+        }
+
+        function parseTokenToId(token) {
+            if (!token) return null;
+
+            const cleaned = token
+                .trim()
+                .replaceAll(/[\(\)\[\]{}<>]/g, '')
+                .replaceAll(/\s+/g, '');
+
+            if (!cleaned) return null;
+
+            const numMatch = cleaned.match(/\d{1,2}/);
+            if (numMatch) {
+                const id = Number(numMatch[0]);
+                if (id >= 1 && id <= 12) return id;
+            }
+
+            const nameMatch = cleaned.match(/[\u4e00-\u9fa5]/g);
+            if (nameMatch) {
+                for (const ch of nameMatch) {
+                    if (NAME_TO_ID[ch]) return NAME_TO_ID[ch];
+                }
+            }
+
+            return null;
+        }
+
+        function parseLineToItems(line) {
+            const normalized = normalizeToken(line);
+            if (!normalized.trim()) return null;
+
+            const rawTokens = normalized.split(/[\s,]+/).filter(Boolean);
+            const items = [];
+            const invalidTokens = [];
+
+            for (const raw of rawTokens) {
+                const id = parseTokenToId(raw);
+                if (!id) {
+                    invalidTokens.push(raw);
+                    continue;
+                }
+                if (!items.includes(id)) items.push(id);
+            }
+
+            if (!items.length) {
+                return { items: null, invalidTokens: invalidTokens.length ? invalidTokens : rawTokens };
+            }
+
+            return { items, invalidTokens };
+        }
+
+        function formatItems(items) {
+            return items
+                .slice()
+                .sort((a, b) => a - b)
+                .map(id => `${id}-${ZODIAC_TABLE[id]}`)
+                .join(' ');
+        }
+
+        function loadHistory() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                if (!raw) return [];
+                const parsed = JSON.parse(raw);
+                if (!Array.isArray(parsed)) return [];
+
+                return parsed
+                    .filter(x => x && Array.isArray(x.items) && x.items.every(n => Number.isInteger(n) && n >= 1 && n <= 12))
+                    .map(x => ({
+                        id: String(x.id || `${Date.now()}-${Math.random().toString(16).slice(2)}`),
+                        items: x.items,
+                        ts: typeof x.ts === 'number' ? x.ts : Date.now(),
+                    }));
+            } catch {
+                return [];
+            }
+        }
+
+        function saveHistory() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state.history));
+        }
+
+        function computeStats() {
+            const periods = state.history.length;
+            let itemsCount = 0;
+            for (const entry of state.history) itemsCount += entry.items.length;
+            const last = periods ? formatItems(state.history[periods - 1].items) : '—';
+            return { periods, itemsCount, last };
+        }
+
+        function renderHistory() {
+            const { periods, itemsCount, last } = computeStats();
+            document.getElementById('statPeriods').textContent = String(periods);
+            document.getElementById('statItems').textContent = String(itemsCount);
+            document.getElementById('statLast').textContent = last;
+
+            const empty = document.getElementById('historyEmpty');
+            const table = document.getElementById('historyTable');
+            const tbody = document.getElementById('historyTbody');
+
+            if (!periods) {
+                empty.classList.remove('hidden');
+                table.classList.add('hidden');
+                tbody.innerHTML = '';
+                return;
+            }
+
+            empty.classList.add('hidden');
+            table.classList.remove('hidden');
+
+            tbody.innerHTML = state.history
+                .map((entry, idx) => {
+                    const displayIndex = idx + 1;
+                    return `
+                        <tr>
+                            <td class="nowrap">${displayIndex}</td>
+                            <td>${escapeHtml(formatItems(entry.items))}</td>
+                            <td class="nowrap">
+                                <button class="btn btn-danger" type="button" data-action="delete" data-id="${escapeHtml(entry.id)}" style="padding: 6px 10px; border-radius: 10px; font-size: 0.85rem;">删除</button>
+                            </td>
+                        </tr>
+                    `;
+                })
+                .join('');
+        }
+
+        function normalizeProbabilities(arr) {
+            const sum = arr.reduce((acc, v) => acc + (Number.isFinite(v) ? v : 0), 0);
+            if (!sum) {
+                return arr.map(() => 1 / 12);
+            }
+            return arr.map(v => (Number.isFinite(v) ? v : 0) / sum);
+        }
+
+        function computeFrequency(history) {
+            const counts = Array(13).fill(0);
+            let total = 0;
+            for (const entry of history) {
+                for (const id of entry.items) {
+                    counts[id] += 1;
+                    total += 1;
+                }
+            }
+            if (!total) return Array(13).fill(0).map((_, i) => i ? 1 / 12 : 0);
+            const prob = Array(13).fill(0);
+            for (let i = 1; i <= 12; i++) prob[i] = counts[i] / total;
+            return prob;
+        }
+
+        function computeCold(history, recentN) {
+            const n = Math.min(history.length, Math.max(1, recentN));
+            const slice = history.slice(-n);
+            const counts = Array(13).fill(0);
+            for (const entry of slice) {
+                for (const id of entry.items) counts[id] += 1;
+            }
+
+            const raw = Array(13).fill(0);
+            for (let i = 1; i <= 12; i++) {
+                raw[i] = 1 / (1 + counts[i]);
+            }
+            return normalizeProbabilities(raw);
+        }
+
+        function computePeriodicity(history) {
+            const positions = Array.from({ length: 13 }, () => []);
+            history.forEach((entry, idx) => {
+                for (const id of entry.items) positions[id].push(idx);
+            });
+
+            const raw = Array(13).fill(0);
+            for (let id = 1; id <= 12; id++) {
+                const pos = positions[id];
+                if (pos.length < 2) {
+                    raw[id] = 1;
+                    continue;
+                }
+
+                let sumIntervals = 0;
+                for (let i = 1; i < pos.length; i++) sumIntervals += (pos[i] - pos[i - 1]);
+                const avg = sumIntervals / (pos.length - 1);
+                const lastPos = pos[pos.length - 1];
+                const gap = (history.length - 1) - lastPos;
+                const ratio = avg > 0 ? gap / avg : 1;
+                raw[id] = Math.min(2, Math.max(0.05, ratio));
+            }
+            return normalizeProbabilities(raw);
+        }
+
+        function computeCombo(history) {
+            if (history.length < 2) {
+                return Array(13).fill(0).map((_, i) => i ? 1 / 12 : 0);
+            }
+
+            const trans = Array.from({ length: 13 }, () => Array(13).fill(0));
+            const co = Array.from({ length: 13 }, () => Array(13).fill(0));
+
+            // 相邻期转移关系（Markov 近似）
+            for (let i = 0; i < history.length - 1; i++) {
+                const aItems = history[i].items;
+                const bItems = history[i + 1].items;
+
+                for (const a of aItems) {
+                    for (const b of bItems) {
+                        trans[a][b] += 1;
+                    }
+                }
+            }
+
+            // 同期组合（共现）关系
+            for (const entry of history) {
+                const items = entry.items;
+                for (let x = 0; x < items.length; x++) {
+                    for (let y = x + 1; y < items.length; y++) {
+                        const p = items[x];
+                        const q = items[y];
+                        co[p][q] += 1;
+                        co[q][p] += 1;
+                    }
+                }
+            }
+
+            const last = history[history.length - 1].items;
+            const raw = Array(13).fill(0);
+            const smoothing = 0.15;
+
+            for (let cand = 1; cand <= 12; cand++) {
+                let score = smoothing;
+                for (const a of last) {
+                    score += trans[a][cand];
+                    score += 0.5 * co[a][cand];
+                }
+                raw[cand] = score;
+            }
+
+            return normalizeProbabilities(raw);
+        }
+
+        function computeMovingAverage(history, alpha) {
+            const a = clampNumber(alpha, 0.7, 0.999, 0.95);
+            const weighted = Array(13).fill(0);
+            let totalWeight = 0;
+
+            for (let i = history.length - 1; i >= 0; i--) {
+                const age = (history.length - 1) - i;
+                const w = Math.pow(a, age);
+                for (const id of history[i].items) {
+                    weighted[id] += w;
+                    totalWeight += w;
+                }
+            }
+
+            if (!totalWeight) return Array(13).fill(0).map((_, i) => i ? 1 / 12 : 0);
+            const prob = Array(13).fill(0);
+            for (let id = 1; id <= 12; id++) prob[id] = weighted[id] / totalWeight;
+            return prob;
+        }
+
+        function getWeights() {
+            const parseWeight = (inputId) => {
+                const v = Number(document.getElementById(inputId).value);
+                return Number.isFinite(v) && v > 0 ? v : 0;
+            };
+
+            const wFreq = parseWeight('wFreq');
+            const wCold = parseWeight('wCold');
+            const wPeriod = parseWeight('wPeriod');
+            const wCombo = parseWeight('wCombo');
+            const wMA = parseWeight('wMA');
+            const sum = wFreq + wCold + wPeriod + wCombo + wMA;
+
+            if (!sum) {
+                return { wFreq: 0.2, wCold: 0.2, wPeriod: 0.2, wCombo: 0.2, wMA: 0.2 };
+            }
+
+            return {
+                wFreq: wFreq / sum,
+                wCold: wCold / sum,
+                wPeriod: wPeriod / sum,
+                wCombo: wCombo / sum,
+                wMA: wMA / sum,
+            };
+        }
+
+        function combineProbabilities(methods, weights) {
+            const combined = Array(13).fill(0);
+            for (let id = 1; id <= 12; id++) {
+                combined[id] =
+                    weights.wFreq * methods.frequency[id] +
+                    weights.wCold * methods.cold[id] +
+                    weights.wPeriod * methods.period[id] +
+                    weights.wCombo * methods.combo[id] +
+                    weights.wMA * methods.movingAverage[id];
+            }
+            return normalizeProbabilities(combined);
+        }
+
+        function topK(prob, k) {
+            return Array.from({ length: 12 }, (_, i) => i + 1)
+                .map(id => ({ id, p: prob[id] }))
+                .sort((a, b) => b.p - a.p)
+                .slice(0, k);
+        }
+
+        function renderTop(containerId, list, variant) {
+            const el = document.getElementById(containerId);
+            el.innerHTML = list
+                .map((x, idx) => {
+                    const cls = idx === 0
+                        ? 'tag tag-success'
+                        : (idx === 1 ? 'tag tag-primary' : 'tag tag-warning');
+                    const pct = (x.p * 100).toFixed(2);
+                    return `<span class="${cls}">#${idx + 1} ${ZODIAC_TABLE[x.id]} <span class="muted">(${x.id})</span> ${pct}%</span>`;
+                })
+                .join('');
+        }
+
+        function renderOutput(combinedProb, topCount) {
+            const rows = Array.from({ length: 12 }, (_, i) => i + 1)
+                .map(id => ({ id, p: combinedProb[id] }))
+                .sort((a, b) => b.p - a.p)
+                .slice(0, topCount);
+
+            const tbody = document.getElementById('outputTbody');
+            tbody.innerHTML = rows
+                .map((row, idx) => {
+                    const rank = idx + 1;
+                    const pct = row.p * 100;
+                    const topTag = rank === 1 ? 'tag tag-success'
+                        : (rank === 2 ? 'tag tag-primary'
+                            : (rank === 3 ? 'tag tag-warning' : 'tag tag-muted'));
+
+                    return `
+                        <tr>
+                            <td class="nowrap"><span class="${topTag}">#${rank}</span></td>
+                            <td class="nowrap" style="font-weight: 900;">${escapeHtml(ZODIAC_TABLE[row.id])}</td>
+                            <td class="nowrap">${row.id}</td>
+                            <td class="nowrap" style="font-weight: 800;">${pct.toFixed(2)}%</td>
+                            <td>
+                                <div class="progress" aria-label="${escapeHtml(ZODIAC_TABLE[row.id])} 概率条">
+                                    <div style="width:${pct.toFixed(2)}%"></div>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                })
+                .join('');
+        }
+
+        function analyze() {
+            if (!state.history.length) {
+                showAlert('warning', '请先添加历史数据再进行分析。');
+                return;
+            }
+
+            const recentN = clampNumber(document.getElementById('recentN').value, 1, 9999, 20);
+            const alpha = clampNumber(document.getElementById('decayAlpha').value, 0.7, 0.999, 0.95);
+            const topCount = clampNumber(document.getElementById('topK').value, 3, 12, 12);
+            const weights = getWeights();
+
+            const methods = {
+                frequency: computeFrequency(state.history),
+                cold: computeCold(state.history, recentN),
+                period: computePeriodicity(state.history),
+                combo: computeCombo(state.history),
+                movingAverage: computeMovingAverage(state.history, alpha),
+            };
+
+            const combined = combineProbabilities(methods, weights);
+
+            const k = 3;
+            const topFreq = topK(methods.frequency, k);
+            const topCold = topK(methods.cold, k);
+            const topPeriod = topK(methods.period, k);
+            const topCombo = topK(methods.combo, k);
+            const topMA = topK(methods.movingAverage, k);
+            const topCombined = topK(combined, k);
+
+            renderTop('topFreq', topFreq);
+            renderTop('topCold', topCold);
+            renderTop('topPeriod', topPeriod);
+            renderTop('topCombo', topCombo);
+            renderTop('topMA', topMA);
+            renderTop('topCombined', topCombined);
+
+            document.getElementById('analysisEmpty').classList.add('hidden');
+            document.getElementById('analysisArea').classList.remove('hidden');
+
+            document.getElementById('outputEmpty').classList.add('hidden');
+            document.getElementById('outputArea').classList.remove('hidden');
+
+            renderOutput(combined, topCount);
+
+            state.lastAnalysis = {
+                timestamp: Date.now(),
+                recentN,
+                alpha,
+                weights,
+                methods,
+                combined,
+                historyCount: state.history.length,
+            };
+        }
+
+        function downloadText(filename, text) {
+            const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+        }
+
+        function exportResultsJson() {
+            if (!state.lastAnalysis) {
+                showAlert('warning', '暂无可导出的预测结果，请先进行分析。');
+                return;
+            }
+
+            const out = {
+                tool: 'zodiac-predictor',
+                version: 1,
+                exportedAt: new Date(state.lastAnalysis.timestamp).toISOString(),
+                config: {
+                    recentN: state.lastAnalysis.recentN,
+                    alpha: state.lastAnalysis.alpha,
+                    weights: state.lastAnalysis.weights,
+                },
+                history: {
+                    periods: state.lastAnalysis.historyCount,
+                    last: state.history.length ? formatItems(state.history[state.history.length - 1].items) : null,
+                },
+                zodiacs: Array.from({ length: 12 }, (_, i) => i + 1).map(id => ({
+                    id,
+                    name: ZODIAC_TABLE[id],
+                    probability: state.lastAnalysis.combined[id],
+                    methods: {
+                        frequency: state.lastAnalysis.methods.frequency[id],
+                        cold: state.lastAnalysis.methods.cold[id],
+                        period: state.lastAnalysis.methods.period[id],
+                        combo: state.lastAnalysis.methods.combo[id],
+                        movingAverage: state.lastAnalysis.methods.movingAverage[id],
+                    }
+                }))
+            };
+
+            const filename = `zodiac-prediction-${new Date().toISOString().slice(0, 19).replaceAll(':', '-')}.json`;
+            downloadText(filename, JSON.stringify(out, null, 2));
+        }
+
+        function exportResultsCsv() {
+            if (!state.lastAnalysis) {
+                showAlert('warning', '暂无可导出的预测结果，请先进行分析。');
+                return;
+            }
+
+            const lines = [];
+            lines.push(['排名', '生肖名称', '生肖编号', '综合概率(%)', '频率(%)', '冷热(%)', '周期(%)', '组合(%)', '移动平均(%)'].join(','));
+
+            const sorted = Array.from({ length: 12 }, (_, i) => i + 1)
+                .map(id => ({ id, p: state.lastAnalysis.combined[id] }))
+                .sort((a, b) => b.p - a.p);
+
+            sorted.forEach((row, idx) => {
+                const id = row.id;
+                const cells = [
+                    String(idx + 1),
+                    ZODIAC_TABLE[id],
+                    String(id),
+                    (state.lastAnalysis.combined[id] * 100).toFixed(4),
+                    (state.lastAnalysis.methods.frequency[id] * 100).toFixed(4),
+                    (state.lastAnalysis.methods.cold[id] * 100).toFixed(4),
+                    (state.lastAnalysis.methods.period[id] * 100).toFixed(4),
+                    (state.lastAnalysis.methods.combo[id] * 100).toFixed(4),
+                    (state.lastAnalysis.methods.movingAverage[id] * 100).toFixed(4),
+                ];
+                lines.push(cells.map(v => `"${String(v).replaceAll('"', '""')}"`).join(','));
+            });
+
+            const filename = `zodiac-prediction-${new Date().toISOString().slice(0, 19).replaceAll(':', '-')}.csv`;
+            downloadText(filename, lines.join('\n'));
+        }
+
+        function exportHistory() {
+            const out = {
+                tool: 'zodiac-predictor',
+                version: 1,
+                exportedAt: new Date().toISOString(),
+                history: state.history,
+            };
+            const filename = `zodiac-history-${new Date().toISOString().slice(0, 19).replaceAll(':', '-')}.json`;
+            downloadText(filename, JSON.stringify(out, null, 2));
+        }
+
+        function fillExample() {
+            const example = [
+                '鼠 牛 虎',
+                '兔 龙',
+                '蛇 马',
+                '羊 猴',
+                '鸡 狗',
+                '猪 鼠',
+                '牛 兔',
+                '龙 蛇',
+                '马 羊',
+                '猴 鸡',
+                '狗 猪',
+                '1, 5, 9',
+                '2 6 10',
+                '3,7,11',
+                '4 8 12',
+            ].join('\n');
+            document.getElementById('historyInput').value = example;
+        }
+
+        function addHistoryFromInput() {
+            const raw = document.getElementById('historyInput').value || '';
+            const lines = raw
+                .split(/\r?\n/)
+                .map(l => l.trim())
+                .filter(Boolean);
+
+            if (!lines.length) {
+                showAlert('warning', '请输入至少一行数据。');
+                return;
+            }
+
+            const newEntries = [];
+            const errors = [];
+
+            lines.forEach((line, idx) => {
+                const parsed = parseLineToItems(line);
+                if (!parsed || !parsed.items) {
+                    errors.push(`第 ${idx + 1} 行无法解析：${line}`);
+                    return;
+                }
+                if (parsed.invalidTokens && parsed.invalidTokens.length) {
+                    errors.push(`第 ${idx + 1} 行存在无法识别的片段：${parsed.invalidTokens.join('、')}`);
+                }
+
+                newEntries.push({
+                    id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+                    items: parsed.items,
+                    ts: Date.now(),
+                });
+            });
+
+            if (!newEntries.length) {
+                showAlert('error', errors.length ? errors.slice(0, 3).join('；') : '未能解析任何有效数据。');
+                return;
+            }
+
+            state.history = state.history.concat(newEntries);
+            saveHistory();
+            renderHistory();
+
+            const msg = errors.length
+                ? `已添加 ${newEntries.length} 期数据；但有 ${errors.length} 处提示（例如：${errors[0]}）。`
+                : `已添加 ${newEntries.length} 期数据。`;
+            showAlert(errors.length ? 'warning' : 'info', msg);
+        }
+
+        function deleteEntry(id) {
+            const before = state.history.length;
+            state.history = state.history.filter(x => x.id !== id);
+            if (state.history.length === before) return;
+            saveHistory();
+            renderHistory();
+        }
+
+        function clearHistory() {
+            const ok = window.confirm('确定要清空所有历史数据吗？此操作不可撤销。');
+            if (!ok) return;
+            state.history = [];
+            state.lastAnalysis = null;
+            saveHistory();
+            renderHistory();
+            resetAnalysisUI();
+        }
+
+        function resetAnalysisUI() {
+            document.getElementById('analysisEmpty').classList.remove('hidden');
+            document.getElementById('analysisArea').classList.add('hidden');
+            document.getElementById('outputEmpty').classList.remove('hidden');
+            document.getElementById('outputArea').classList.add('hidden');
+            document.getElementById('outputTbody').innerHTML = '';
+        }
+
+        function resetWeights() {
+            document.getElementById('wFreq').value = '1';
+            document.getElementById('wCold').value = '1';
+            document.getElementById('wPeriod').value = '1';
+            document.getElementById('wCombo').value = '1';
+            document.getElementById('wMA').value = '1';
+        }
+
+        function init() {
+            state.history = loadHistory();
+            renderHistory();
+
+            document.getElementById('btnAdd').addEventListener('click', addHistoryFromInput);
+            document.getElementById('btnAnalyze').addEventListener('click', analyze);
+            document.getElementById('btnClearInput').addEventListener('click', () => {
+                document.getElementById('historyInput').value = '';
+            });
+            document.getElementById('btnLoadExample').addEventListener('click', fillExample);
+            document.getElementById('btnClearHistory').addEventListener('click', clearHistory);
+            document.getElementById('btnExportHistory').addEventListener('click', exportHistory);
+            document.getElementById('btnExportJson').addEventListener('click', exportResultsJson);
+            document.getElementById('btnExportCsv').addEventListener('click', exportResultsCsv);
+            document.getElementById('btnResetWeights').addEventListener('click', resetWeights);
+
+            document.getElementById('historyTbody').addEventListener('click', (e) => {
+                const btn = e.target.closest('button');
+                if (!btn) return;
+                if (btn.dataset.action === 'delete') {
+                    deleteEntry(btn.dataset.id);
+                }
+            });
+
+            // Enter to analyze quickly (Ctrl+Enter)
+            document.getElementById('historyInput').addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                    analyze();
+                }
+            });
+
+            if (state.history.length) {
+                showAlert('info', `已加载本地历史数据：${state.history.length} 期。`);
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>
