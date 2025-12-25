@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>49数字历史数据分析与预测工具</title>
+    <title>49数字历史数据分析与预测工具（避开最近N期）</title>
     <style>
         :root {
             --primary: #2563eb;
@@ -16,6 +16,7 @@
             --dark: #1e293b;
             --light: #f8fafc;
             --white: #ffffff;
+            --gray-50: #f8fafc;
             --gray-100: #f1f5f9;
             --gray-200: #e2e8f0;
             --gray-300: #cbd5e1;
@@ -38,8 +39,8 @@
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background-color: #f1f5f9;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--gray-100);
             color: var(--gray-800);
             line-height: 1.5;
             padding-bottom: 3rem;
@@ -54,7 +55,7 @@
         header {
             text-align: center;
             margin-bottom: 2rem;
-            padding: 2rem 0;
+            padding: 2rem 1rem;
             background: linear-gradient(135deg, #1e293b, #334155);
             color: white;
             border-radius: var(--radius-lg);
@@ -69,8 +70,10 @@
         }
 
         header p {
-            font-size: 1.125rem;
+            font-size: 1.05rem;
             opacity: 0.9;
+            max-width: 840px;
+            margin: 0 auto;
         }
 
         .grid {
@@ -83,6 +86,23 @@
             .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
             .grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
             .grid-cols-12 { grid-template-columns: repeat(12, minmax(0, 1fr)); }
+        }
+
+        /* Tailwind-like small utilities (only what we actually use in this page) */
+        .flex { display: flex; }
+        .gap-2 { gap: 0.5rem; }
+        .gap-4 { gap: 1rem; }
+        .gap-8 { gap: 2rem; }
+        .col-span-12 { grid-column: span 12 / span 12; }
+
+        @media (min-width: 768px) {
+            .md\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+
+        @media (min-width: 1024px) {
+            .lg\:col-span-5 { grid-column: span 5 / span 5; }
+            .lg\:col-span-7 { grid-column: span 7 / span 7; }
+            .lg\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
         }
 
         .card {
@@ -103,6 +123,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 0.75rem;
         }
 
         .card-title {
@@ -130,7 +151,7 @@
 
         textarea {
             width: 100%;
-            height: 200px;
+            height: 220px;
             padding: 0.75rem;
             border: 1px solid var(--gray-300);
             border-radius: var(--radius-md);
@@ -172,6 +193,12 @@
             border: none;
             font-size: 0.875rem;
             gap: 0.5rem;
+            user-select: none;
+        }
+
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
         }
 
         .btn-primary { background-color: var(--primary); color: white; }
@@ -199,10 +226,11 @@
         .badge {
             display: inline-flex;
             align-items: center;
-            padding: 0.125rem 0.625rem;
+            padding: 0.2rem 0.5rem;
             border-radius: 9999px;
             font-size: 0.75rem;
-            font-weight: 600;
+            font-weight: 700;
+            line-height: 1.3;
         }
 
         .badge-primary { background-color: #dbeafe; color: #1e40af; }
@@ -210,250 +238,7 @@
         .badge-warning { background-color: #fef3c7; color: #92400e; }
         .badge-danger { background-color: #fee2e2; color: #991b1b; }
         .badge-info { background-color: #e0f2fe; color: #075985; }
-
-        /* Prediction Results */
-        .top-10-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1rem;
-        }
-
-        .prediction-card {
-            background: var(--white);
-            border: 1px solid var(--gray-200);
-            border-radius: var(--radius-md);
-            padding: 1rem;
-            position: relative;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .prediction-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
-        }
-
-        .rank-badge {
-            position: absolute;
-            top: 0.5rem;
-            left: 0.5rem;
-            width: 1.5rem;
-            height: 1.5rem;
-            background: var(--dark);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
-            font-weight: 800;
-        }
-
-        .prediction-number {
-            font-size: 2.5rem;
-            font-weight: 800;
-            text-align: center;
-            color: var(--primary);
-            margin: 0.5rem 0;
-        }
-
-        .prediction-score {
-            text-align: center;
-            font-size: 0.875rem;
-            color: var(--gray-500);
-            margin-bottom: 0.5rem;
-        }
-
-        .prediction-reason {
-            font-size: 0.75rem;
-            color: var(--gray-600);
-            border-top: 1px solid var(--gray-100);
-            padding-top: 0.5rem;
-            margin-top: 0.5rem;
-        }
-
-        /* Number Grid / Heatmap */
-        .number-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 0.5rem;
-        }
-
-        .number-cell {
-            aspect-ratio: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: var(--radius-sm);
-            font-weight: 700;
-            font-size: 0.875rem;
-            border: 1px solid var(--gray-200);
-            position: relative;
-            cursor: default;
-        }
-
-        .number-cell.excluded {
-            background-color: var(--gray-200);
-            color: var(--gray-400);
-            text-decoration: line-through;
-        }
-
-        .number-cell.predicted {
-            border: 2px solid var(--primary);
-            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
-        }
-
-        .number-cell .tooltip {
-            position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--dark);
-            color: white;
-            padding: 0.25rem 0.5rem;
-            border-radius: var(--radius-sm);
-            font-size: 0.75rem;
-            white-space: nowrap;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.2s;
-            z-index: 10;
-        }
-
-        .number-cell:hover .tooltip {
-            opacity: 1;
-        }
-
-        /* Table */
-        .table-responsive {
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.875rem;
-        }
-
-        th {
-            background-color: var(--gray-50);
-            font-weight: 600;
-            text-align: left;
-            padding: 0.75rem 1rem;
-            border-bottom: 1px solid var(--gray-200);
-            color: var(--gray-700);
-            white-space: nowrap;
-        }
-
-        td {
-            padding: 0.75rem 1rem;
-            border-bottom: 1px solid var(--gray-100);
-            color: var(--gray-600);
-        }
-
-        tr:hover td {
-            background-color: var(--gray-50);
-        }
-
-        /* Charts */
-        .chart-bar-container {
-            height: 300px;
-            display: flex;
-            align-items: flex-end;
-            gap: 4px;
-            padding: 1rem 0;
-            border-bottom: 1px solid var(--gray-200);
-        }
-
-        .chart-bar-item {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            height: 100%;
-            justify-content: flex-end;
-        }
-
-        .chart-bar {
-            width: 100%;
-            background-color: var(--primary);
-            border-radius: 2px 2px 0 0;
-            transition: height 0.5s ease-out;
-            min-height: 2px;
-            position: relative;
-        }
-
-        .chart-bar:hover {
-            opacity: 0.8;
-        }
-
-        .chart-bar-label {
-            font-size: 0.7rem;
-            margin-top: 0.5rem;
-            font-weight: 600;
-            transform: rotate(-45deg);
-            white-space: nowrap;
-        }
-
-        .chart-bar-value {
-            position: absolute;
-            top: -1.25rem;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 0.7rem;
-            font-weight: 700;
-        }
-
-        .tabs {
-            display: flex;
-            border-bottom: 1px solid var(--gray-200);
-            margin-bottom: 1rem;
-        }
-
-        .tab {
-            padding: 0.75rem 1.5rem;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.875rem;
-            color: var(--gray-500);
-            border-bottom: 2px solid transparent;
-        }
-
-        .tab.active {
-            color: var(--primary);
-            border-bottom-color: var(--primary);
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        .hidden { display: none; }
-
-        .progress-bar {
-            height: 8px;
-            background-color: var(--gray-200);
-            border-radius: 4px;
-            overflow: hidden;
-            width: 100px;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background-color: var(--primary);
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 640px) {
-            .number-grid {
-                grid-template-columns: repeat(7, 1fr);
-            }
-            .header h1 { font-size: 1.5rem; }
-            .container { padding: 0.75rem; }
-        }
+        .badge-secondary { background-color: var(--gray-200); color: var(--gray-700); }
 
         .help-text {
             font-size: 0.75rem;
@@ -466,6 +251,56 @@
             flex-wrap: wrap;
             gap: 0.75rem;
             margin-top: 1rem;
+        }
+
+        .preview-box {
+            background: var(--gray-50);
+            border: 1px dashed var(--gray-300);
+            border-radius: var(--radius-md);
+            padding: 0.75rem;
+            margin-top: 0.75rem;
+        }
+
+        .preview-title {
+            font-weight: 700;
+            font-size: 0.875rem;
+            color: var(--gray-700);
+            margin-bottom: 0.5rem;
+        }
+
+        .preview-periods {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .preview-period {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.35rem;
+            align-items: center;
+            font-size: 0.75rem;
+            color: var(--gray-600);
+        }
+
+        .preview-period strong {
+            min-width: 5.5rem;
+            color: var(--gray-700);
+        }
+
+        .number-chip {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.2rem;
+            height: 1.6rem;
+            border-radius: 0.5rem;
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            font-weight: 700;
+            color: var(--gray-800);
+            letter-spacing: 0.02em;
         }
 
         .stats-summary {
@@ -490,7 +325,7 @@
         }
 
         .stat-box-value {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             font-weight: 800;
             color: var(--gray-900);
         }
@@ -499,7 +334,309 @@
             font-size: 0.75rem;
             color: var(--gray-500);
             text-transform: uppercase;
-            font-weight: 600;
+            font-weight: 700;
+        }
+
+        .top-10-grid {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .top-10-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .top-10-grid {
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
+
+        .prediction-card {
+            position: relative;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            padding: 1rem;
+            background: var(--white);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            min-height: 210px;
+        }
+
+        .prediction-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .rank-badge {
+            position: absolute;
+            top: 0.75rem;
+            left: 0.75rem;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 0.875rem;
+        }
+
+        .prediction-number {
+            font-size: 2.25rem;
+            font-weight: 900;
+            text-align: center;
+            margin: 0.5rem 0;
+            color: var(--gray-900);
+            letter-spacing: 0.05em;
+        }
+
+        .prediction-score {
+            text-align: center;
+            font-size: 0.875rem;
+            color: var(--gray-600);
+            margin-bottom: 0.5rem;
+        }
+
+        .prediction-reason {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+            margin-top: 0.5rem;
+            line-height: 1.4;
+        }
+
+        .number-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .number-grid {
+                grid-template-columns: repeat(10, 1fr);
+            }
+        }
+
+        .number-cell {
+            position: relative;
+            aspect-ratio: 1 / 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-md);
+            font-weight: 800;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            cursor: default;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            background: var(--white);
+        }
+
+        .number-cell:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+            z-index: 2;
+        }
+
+        .number-cell.predicted {
+            border: 2px solid var(--success);
+            background: var(--white);
+        }
+
+        .number-cell.excluded {
+            background: var(--gray-200);
+            color: var(--gray-400);
+            text-decoration: line-through;
+        }
+
+        .number-cell.hot {
+            box-shadow: inset 0 0 0 2px rgba(245, 158, 11, 0.9);
+        }
+
+        .number-cell.cold {
+            box-shadow: inset 0 0 0 2px rgba(59, 130, 246, 0.9);
+        }
+
+        .tooltip {
+            position: absolute;
+            bottom: 110%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(15, 23, 42, 0.95);
+            color: white;
+            font-size: 0.75rem;
+            padding: 0.4rem 0.6rem;
+            border-radius: 0.4rem;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.15s ease;
+            z-index: 3;
+        }
+
+        .number-cell:hover .tooltip {
+            opacity: 1;
+        }
+
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            border-bottom: 1px solid var(--gray-200);
+            margin-bottom: 1rem;
+        }
+
+        .tab {
+            padding: 0.75rem 1.25rem;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.875rem;
+            color: var(--gray-500);
+            border-bottom: 2px solid transparent;
+            user-select: none;
+        }
+
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .hidden { display: none; }
+
+        .table-responsive {
+            overflow-x: auto;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-md);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+        }
+
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--gray-200);
+            white-space: nowrap;
+        }
+
+        th {
+            background: var(--gray-50);
+            font-weight: 800;
+            color: var(--gray-700);
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        tr:hover {
+            background: var(--gray-50);
+        }
+
+        .progress-bar {
+            height: 8px;
+            background-color: var(--gray-200);
+            border-radius: 4px;
+            overflow: hidden;
+            width: 100px;
+            min-height: 2px;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--primary);
+        }
+
+        .chart-bar-container {
+            height: 250px;
+            display: flex;
+            align-items: flex-end;
+            gap: 0.6rem;
+            padding: 1rem;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-md);
+            background: var(--gray-50);
+            overflow-x: auto;
+        }
+
+        .chart-bar-item {
+            flex: 0 0 60px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .chart-bar {
+            width: 100%;
+            background: linear-gradient(to top, var(--primary), #60a5fa);
+            border-radius: 6px;
+            position: relative;
+            min-height: 2px;
+            transition: opacity 0.2s;
+        }
+
+        .chart-bar:hover {
+            opacity: 0.85;
+        }
+
+        .chart-bar-label {
+            font-size: 0.7rem;
+            margin-top: 0.5rem;
+            font-weight: 700;
+            transform: rotate(-45deg);
+            white-space: nowrap;
+        }
+
+        .chart-bar-value {
+            position: absolute;
+            top: -1.35rem;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.7rem;
+            font-weight: 800;
+            color: var(--gray-700);
+        }
+
+        .algo-card {
+            border: 1px dashed var(--gray-300);
+            border-radius: var(--radius-lg);
+            padding: 1rem;
+            background: var(--white);
+        }
+
+        .algo-card h5 {
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+            font-size: 0.95rem;
+        }
+
+        .algo-numbers {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 640px) {
+            header h1 { font-size: 1.6rem; }
+            .container { padding: 0.75rem; }
         }
     </style>
 </head>
@@ -508,7 +645,10 @@
 <div class="container">
     <header>
         <h1>49数字历史数据分析与预测</h1>
-        <p>基于多算法综合评分，自动避开近期热号，推选下期高概率数字</p>
+        <p>
+            支持粘贴历史开奖数据（1-49），系统将自动识别期数并进行统计分析。预测阶段会<strong>自动避开最近 N 期出现过的所有数字</strong>，
+            再从剩余数字中，基于 5 种算法综合推算下一期概率最高的 Top K。
+        </p>
     </header>
 
     <div class="grid grid-cols-12">
@@ -517,35 +657,51 @@
             <div class="card">
                 <div class="card-header">
                     <span class="card-title">数据录入</span>
-                    <button id="btnLoadExample" class="btn btn-secondary btn-sm" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">加载示例数据</button>
+                    <button id="btnLoadExample" class="btn btn-secondary btn-sm">加载示例</button>
                 </div>
                 <div class="card-body">
                     <div class="form-group">
                         <label for="historyInput">粘贴历史中奖号码（1-49）</label>
-                        <textarea id="historyInput" placeholder="支持多种格式：&#10;1, 2, 3, 4, 5, 6&#10;01 02 03 04 05 06&#10;每行代表一期，或者全部数字用空格/逗号分隔"></textarea>
-                        <p class="help-text">支持空格、逗号、换行、顿号分隔。系统将自动过滤非数字及超出1-49范围的内容。</p>
+                        <textarea id="historyInput" placeholder="支持多种格式：
+1, 2, 3, 4, 5, 6
+01 02 03 04 05 06
+每行代表一期（推荐）。也支持把所有数字粘到一行，系统会尽量自动分期。"></textarea>
+                        <p class="help-text">支持空格、逗号、换行、中文逗号、顿号等分隔。默认认为<strong>最后一行（或最后一组）是最新一期</strong>。</p>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-4">
+                    <div id="inputWarning" class="alert alert-warning hidden"></div>
+                    <div id="inputError" class="alert alert-danger hidden"></div>
+
+                    <div class="preview-box">
+                        <div class="preview-title">数据预览（实时识别）</div>
+                        <div id="previewSummary" class="help-text">尚未识别到有效数据</div>
+                        <div id="previewPeriods" class="preview-periods"></div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4" style="margin-top: 1rem;">
                         <div class="form-group">
                             <label for="excludePeriods">避开最近几期出现过的数字</label>
-                            <input type="number" id="excludePeriods" class="input" value="7" min="0" max="20">
-                            <p class="help-text">默认为最近 7 期</p>
+                            <input type="number" id="excludePeriods" class="input" value="7" min="0" max="30">
+                            <p class="help-text">默认避开最近 7 期（可自行调整）</p>
                         </div>
                         <div class="form-group">
-                            <label for="predictCount">推选数字个数</label>
+                            <label for="predictCount">推选数字个数（Top K）</label>
                             <input type="number" id="predictCount" class="input" value="10" min="1" max="20">
-                            <p class="help-text">默认为 Top 10</p>
+                            <p class="help-text">默认 Top 10（仅从未排除数字中选择）</p>
                         </div>
                     </div>
 
                     <div class="action-row">
                         <button id="btnAnalyze" class="btn btn-primary">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M6 1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h3zM3 2v3h3V2H3zm6-1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h3zm0 1v3h3V2H9zM5 8a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1h2zm-2 1v3h3V9H3zm10-1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-3a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1h3zm-3 1v3h3V9h-3z"/></svg>
-                            开始分析预测
+                            立即分析预测
                         </button>
-                        <button id="btnClear" class="btn btn-secondary">清空数据</button>
+                        <button id="btnClear" class="btn btn-secondary">清空</button>
                     </div>
+
+                    <p class="help-text" style="margin-top: 0.75rem;">
+                        快捷键：<strong>Ctrl + Enter</strong> 立即分析。
+                    </p>
                 </div>
             </div>
         </div>
@@ -553,10 +709,13 @@
         <!-- Result Overview Section -->
         <div class="col-span-12 lg:col-span-7">
             <div id="welcomeMessage" class="card">
-                <div class="card-body" style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 400px;">
+                <div class="card-body" style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 420px;">
                     <div style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.2;">📊</div>
                     <h2 class="card-title" style="font-size: 1.5rem; margin-bottom: 0.5rem;">准备就绪</h2>
-                    <p style="color: var(--gray-500); max-width: 400px;">请在左侧输入历史中奖数据，然后点击“开始分析预测”按钮。系统将基于多种统计模型为您计算结果。</p>
+                    <p style="color: var(--gray-500); max-width: 520px;">
+                        在左侧粘贴历史数据后点击“立即分析预测”。工具会输出 Top K 推荐、避开数字说明、全局热力图、详细统计表、
+                        以及多算法对比。
+                    </p>
                 </div>
             </div>
 
@@ -564,7 +723,9 @@
                 <div class="card">
                     <div class="card-header">
                         <span class="card-title">分析结果概览</span>
-                        <div id="analysisTime" class="badge badge-info"></div>
+                        <div class="flex gap-2" style="align-items: center;">
+                            <div id="analysisTime" class="badge badge-info"></div>
+                        </div>
                     </div>
                     <div class="card-body">
                         <div class="stats-summary">
@@ -574,27 +735,28 @@
                             </div>
                             <div class="stat-box">
                                 <div id="statTotalNumbers" class="stat-box-value">0</div>
-                                <div class="stat-box-label">识别数字数</div>
+                                <div class="stat-box-label">有效数字</div>
                             </div>
                             <div class="stat-box">
                                 <div id="statExcludedCount" class="stat-box-value">0</div>
                                 <div class="stat-box-label">排除数字</div>
                             </div>
                             <div class="stat-box">
-                                <div id="statAvgFreq" class="stat-box-value">0</div>
-                                <div class="stat-box-label">平均频率</div>
+                                <div id="statAvgCount" class="stat-box-value">0</div>
+                                <div class="stat-box-label">平均出现次数</div>
                             </div>
                         </div>
 
                         <div id="excludedNumbersSection" class="alert alert-warning">
                             <strong>已避开最后 <span id="displayExcludeN">7</span> 期数字：</strong>
                             <div id="excludedList" style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem;"></div>
+                            <div class="help-text" style="margin-top: 0.5rem;">
+                                避开原因：近期刚出现过的数字短期内重复出现的概率通常较低（策略性过滤，非数学定律）。
+                            </div>
                         </div>
 
-                        <h3 class="card-title" style="margin: 1.5rem 0 1rem;">🏆 Top <span id="displayPredictK">10</span> 强力推荐</h3>
-                        <div id="top10Results" class="top-10-grid">
-                            <!-- Cards will be inserted here -->
-                        </div>
+                        <h3 class="card-title" style="margin: 1.5rem 0 1rem;">🏆 Top <span id="displayPredictK">10</span> 推荐（已排除最近N期）</h3>
+                        <div id="topResults" class="top-10-grid"></div>
                     </div>
                 </div>
             </div>
@@ -607,12 +769,13 @@
                     <div class="tabs" style="margin-bottom: 0;">
                         <div class="tab active" data-tab="tab-heatmap">全局热力图</div>
                         <div class="tab" data-tab="tab-stats">详细统计表</div>
-                        <div class="tab" data-tab="tab-charts">趋势分析图</div>
-                        <div class="tab" data-tab="tab-algorithms">预测算法对比</div>
+                        <div class="tab" data-tab="tab-charts">可视化图表</div>
+                        <div class="tab" data-tab="tab-algorithms">算法对比</div>
+                        <div class="tab" data-tab="tab-history">历史记录</div>
                     </div>
-                    <div class="flex gap-2">
-                        <button id="btnExportJSON" class="btn btn-secondary btn-sm" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">导出 JSON</button>
-                        <button id="btnExportCSV" class="btn btn-secondary btn-sm" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">导出 CSV</button>
+                    <div class="flex gap-2" style="flex-wrap: wrap; justify-content: flex-end;">
+                        <button id="btnExportJSON" class="btn btn-secondary btn-sm">导出 JSON</button>
+                        <button id="btnExportCSV" class="btn btn-secondary btn-sm">导出 CSV</button>
                     </div>
                 </div>
                 <div class="card-body">
@@ -620,35 +783,38 @@
                     <div id="tab-heatmap" class="tab-content active">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                             <div>
-                                <h4 class="card-title" style="font-size: 1rem; margin-bottom: 1rem;">49数字热冷分布（颜色越深越频繁）</h4>
-                                <div id="heatmapGrid" class="number-grid">
-                                    <!-- 49 cells will be inserted here -->
-                                </div>
+                                <h4 class="card-title" style="font-size: 1rem; margin-bottom: 1rem;">49数字热冷分布（颜色越深出现越频繁）</h4>
+                                <div id="heatmapGrid" class="number-grid"></div>
                                 <div style="display: flex; justify-content: space-between; margin-top: 1rem; font-size: 0.75rem; color: var(--gray-500);">
-                                    <span>冷 (Rare)</span>
+                                    <span>冷</span>
                                     <div style="flex: 1; margin: 0 1rem; height: 10px; background: linear-gradient(to right, #f1f5f9, var(--primary)); border-radius: 5px;"></div>
-                                    <span>热 (Frequent)</span>
+                                    <span>热</span>
                                 </div>
                             </div>
-                            <div style="background: var(--gray-50); padding: 1.5rem; border-radius: var(--radius-md);">
+                            <div style="background: var(--gray-50); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--gray-200);">
                                 <h4 class="card-title" style="font-size: 1rem; margin-bottom: 1rem;">图例说明</h4>
                                 <ul style="list-style: none; font-size: 0.875rem; color: var(--gray-600);">
                                     <li style="display: flex; align-items: center; margin-bottom: 0.5rem;">
-                                        <div style="width: 20px; height: 20px; background: var(--white); border: 2px solid var(--primary); border-radius: 4px; margin-right: 10px;"></div>
-                                        <span>预测推选的数字 (Top 10)</span>
+                                        <div style="width: 20px; height: 20px; background: var(--white); border: 2px solid var(--success); border-radius: 4px; margin-right: 10px;"></div>
+                                        <span>预测推选的数字（Top K）</span>
                                     </li>
                                     <li style="display: flex; align-items: center; margin-bottom: 0.5rem;">
-                                        <div style="width: 20px; height: 20px; background: var(--gray-200); border: 1px solid var(--gray-300); border-radius: 4px; margin-right: 10px; text-decoration: line-through; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; color: #94a3b8;">49</div>
-                                        <span>避开的数字 (最近 7 期已出)</span>
+                                        <div style="width: 20px; height: 20px; background: var(--gray-200); border: 1px solid var(--gray-300); border-radius: 4px; margin-right: 10px;"></div>
+                                        <span>避开的数字（最近 N 期出现过）</span>
                                     </li>
                                     <li style="display: flex; align-items: center; margin-bottom: 0.5rem;">
-                                        <div style="width: 20px; height: 20px; background: #3b82f6; border-radius: 4px; margin-right: 10px; opacity: 0.8;"></div>
-                                        <span>常规出现数字 (深浅代表频率)</span>
+                                        <div style="width: 20px; height: 20px; background: var(--white); border: 2px solid rgba(245, 158, 11, 0.9); border-radius: 4px; margin-right: 10px;"></div>
+                                        <span>热号（出现次数明显高于平均）</span>
+                                    </li>
+                                    <li style="display: flex; align-items: center; margin-bottom: 0.5rem;">
+                                        <div style="width: 20px; height: 20px; background: var(--white); border: 2px solid rgba(59, 130, 246, 0.9); border-radius: 4px; margin-right: 10px;"></div>
+                                        <span>冷号（出现次数明显低于平均）</span>
                                     </li>
                                 </ul>
-                                <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--gray-200);">
+                                <div style="margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--gray-200);">
                                     <p style="font-size: 0.875rem; color: var(--gray-500);">
-                                        <strong>分析逻辑：</strong> 我们首先收集所有历史数据并计算每个数字的出现指标。然后，我们从最后几期数据中提取所有出现过的数字，并将它们从预测名单中剔除。最后，在剩余的数字中，根据 5 种算法的综合得分选出最高的 10 个数字。
+                                        <strong>分析流程：</strong> 先统计每个数字的出现次数、遗漏期数、平均间隔、卡方偏差；
+                                        再根据综合评分选出 Top K，并根据“避开最近 N 期”策略剔除近期已出现数字。
                                     </p>
                                 </div>
                             </div>
@@ -657,6 +823,17 @@
 
                     <!-- Statistics Table -->
                     <div id="tab-stats" class="tab-content">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4" style="margin-bottom: 1rem;">
+                            <div class="algo-card" style="border-style: solid;">
+                                <h5 style="margin: 0; color: var(--gray-900); font-size: 1rem;">最常出现 Top 10</h5>
+                                <div id="mostFrequentList" class="algo-numbers"></div>
+                            </div>
+                            <div class="algo-card" style="border-style: solid;">
+                                <h5 style="margin: 0; color: var(--gray-900); font-size: 1rem;">最少出现 Top 10</h5>
+                                <div id="leastFrequentList" class="algo-numbers"></div>
+                            </div>
+                        </div>
+
                         <div class="table-responsive">
                             <table id="statsTable">
                                 <thead>
@@ -667,62 +844,89 @@
                                         <th>最后出现 (期)</th>
                                         <th>平均间隔</th>
                                         <th>频率分</th>
-                                        <th>遗漏分</th>
+                                        <th>冷号分</th>
                                         <th>周期分</th>
-                                        <th>离散分</th>
-                                        <th>综合评分</th>
+                                        <th>综合分</th>
+                                        <th>卡方分</th>
+                                        <th>最终分</th>
                                         <th>状态</th>
                                     </tr>
                                 </thead>
-                                <tbody id="statsTableBody">
-                                    <!-- Rows will be inserted here -->
-                                </tbody>
+                                <tbody id="statsTableBody"></tbody>
                             </table>
                         </div>
+                        <p class="help-text" style="margin-top: 0.75rem;">
+                            说明：频率分=出现次数归一化；冷号分=遗漏期数归一化；周期分=当前间隔与平均间隔越接近越高；综合分=频率/冷号/周期加权；卡方分=偏离均匀分布程度；最终分=综合分与卡方分加权。
+                        </p>
                     </div>
 
                     <!-- Charts -->
                     <div id="tab-charts" class="tab-content">
-                        <h4 class="card-title" style="font-size: 1rem; margin-bottom: 1.5rem;">预测推选 Top 10 数字的综合评分对比</h4>
-                        <div id="topChart" class="chart-bar-container">
-                            <!-- Bars will be inserted here -->
-                        </div>
+                        <h4 class="card-title" style="font-size: 1rem; margin-bottom: 1.25rem;">Top K 推荐数字的“最终分”柱状图</h4>
+                        <div id="topChart" class="chart-bar-container"></div>
                     </div>
 
                     <!-- Algorithms -->
                     <div id="tab-algorithms" class="tab-content">
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            <div class="card" style="box-shadow: none; border-style: dashed;">
-                                <div class="card-body">
-                                    <h5 style="font-weight: 700; margin-bottom: 0.5rem; color: var(--primary);">1. 频率分析 (Frequency)</h5>
-                                    <p style="font-size: 0.875rem; color: var(--gray-600);">基于历史数据中每个数字出现的总次数。出现次数越多，在统计学上其“热度”越高。</p>
+                        <h4 class="card-title" style="font-size: 1rem; margin-bottom: 1rem;">不同算法 Top <span id="displayPredictK2">10</span> 对比（同样已排除最近 N 期）</h4>
+                        <div id="algorithmCompareGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+
+                        <div style="margin-top: 1.5rem;">
+                            <h4 class="card-title" style="font-size: 1rem; margin-bottom: 1rem;">算法说明（5种）</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <div class="algo-card">
+                                    <h5>1. 频率分析（Frequency）</h5>
+                                    <p style="font-size: 0.875rem; color: var(--gray-600);">统计每个数字在全部历史数据中的出现次数。出现越多，频率分越高。</p>
                                 </div>
-                            </div>
-                            <div class="card" style="box-shadow: none; border-style: dashed;">
-                                <div class="card-body">
-                                    <h5 style="font-weight: 700; margin-bottom: 0.5rem; color: var(--primary);">2. 冷号反弹 (Gap Analysis)</h5>
-                                    <p style="font-size: 0.875rem; color: var(--gray-600);">分析数字距离上次出现的间隔。根据反弹理论，长期未出的数字在未来几期出现的概率会逐渐增大。</p>
+                                <div class="algo-card">
+                                    <h5>2. 冷号反弹（Cold Rebound）</h5>
+                                    <p style="font-size: 0.875rem; color: var(--gray-600);">计算距离上次出现已过去多少期。遗漏越久，冷号分越高（反弹潜力）。</p>
                                 </div>
-                            </div>
-                            <div class="card" style="box-shadow: none; border-style: dashed;">
-                                <div class="card-body">
-                                    <h5 style="font-weight: 700; margin-bottom: 0.5rem; color: var(--primary);">3. 周期性分析 (Periodicity)</h5>
-                                    <p style="font-size: 0.875rem; color: var(--gray-600);">计算每个数字出现的平均间隔时间。当当前间隔接近平均间隔时，其权重会相应提升。</p>
+                                <div class="algo-card">
+                                    <h5>3. 时间间隔（Periodicity）</h5>
+                                    <p style="font-size: 0.875rem; color: var(--gray-600);">计算平均间隔。当当前遗漏期数接近平均间隔时，周期分更高。</p>
                                 </div>
-                            </div>
-                            <div class="card" style="box-shadow: none; border-style: dashed;">
-                                <div class="card-body">
-                                    <h5 style="font-weight: 700; margin-bottom: 0.5rem; color: var(--primary);">4. 卡方偏差 (Chi-Square)</h5>
-                                    <p style="font-size: 0.875rem; color: var(--gray-600);">利用卡方检验原理，分析哪些数字明显偏离了均匀分布，用于识别潜在的统计异常趋势。</p>
+                                <div class="algo-card">
+                                    <h5>4. 综合评分（Comprehensive）</h5>
+                                    <p style="font-size: 0.875rem; color: var(--gray-600);">综合分=频率分、冷号分、周期分的加权平均（强调平衡与稳定性）。</p>
                                 </div>
-                            </div>
-                            <div class="card" style="box-shadow: none; border-style: dashed;">
-                                <div class="card-body">
-                                    <h5 style="font-weight: 700; margin-bottom: 0.5rem; color: var(--primary);">5. 综合加权 (Comprehensive)</h5>
-                                    <p style="font-size: 0.875rem; color: var(--gray-600);">结合以上所有因素进行加权评分，并在最终步骤排除最后 N 期的干扰，生成最终建议。</p>
+                                <div class="algo-card">
+                                    <h5>5. 卡方偏差（Chi-Square）</h5>
+                                    <p style="font-size: 0.875rem; color: var(--gray-600);">衡量数字出现次数相对均匀分布的偏离程度，用于捕捉统计异常趋势（仅作参考）。</p>
                                 </div>
                             </div>
                         </div>
+                    </div>
+
+                    <!-- History -->
+                    <div id="tab-history" class="tab-content">
+                        <div class="action-row" style="justify-content: space-between; align-items: center;">
+                            <div style="font-size: 0.875rem; color: var(--gray-600);">
+                                已保存 <strong id="historyCount">0</strong> 条分析记录（仅保留最近 30 条）
+                            </div>
+                            <div class="flex gap-2" style="flex-wrap: wrap;">
+                                <button id="btnClearHistory" class="btn btn-danger btn-sm">清空历史</button>
+                            </div>
+                        </div>
+                        <div class="table-responsive" style="margin-top: 1rem;">
+                            <table id="historyTable">
+                                <thead>
+                                    <tr>
+                                        <th>时间</th>
+                                        <th>期数</th>
+                                        <th>避开N期</th>
+                                        <th>TopK</th>
+                                        <th>排除数</th>
+                                        <th>TopK结果</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="historyTableBody"></tbody>
+                            </table>
+                        </div>
+                        <p class="help-text" style="margin-top: 0.75rem;">
+                            点击“加载”会将该次分析的原始数据与参数载入输入框并重新计算，方便你对比不同时刻的预测结果。
+                        </p>
                     </div>
                 </div>
             </div>
@@ -730,29 +934,32 @@
     </div>
 
     <footer style="margin-top: 3rem; text-align: center; color: var(--gray-500); font-size: 0.875rem;">
-        <p>© 2024 49数字历史数据分析与预测工具 - 仅供学习参考，请勿用于非法用途</p>
+        <p>© 2024-2025 49数字历史数据分析与预测工具 - 仅供学习参考</p>
     </footer>
 </div>
 
 <script>
-    /**
-     * Logic Core
-     */
-    const STORAGE_KEY = 'numberPredictorData_v1';
+    const STORAGE_KEY_CURRENT = 'numberPredictorCurrent_v2';
+    const STORAGE_KEY_CURRENT_LEGACY = 'numberPredictorData_v1';
+    const STORAGE_KEY_HISTORY = 'numberPredictorHistory_v1';
+    const HISTORY_LIMIT = 30;
+
     const state = {
         rawData: '',
-        processedData: [], // Array of periods, each is an array of numbers
-        flatData: [], // All numbers in one array
-        stats: {}, // Map of number -> { count, freq, lastSeen, gaps, avgGap, score }
+        processedData: [],
+        flatData: [],
+        stats: {},
         predictions: [],
         excludedNumbers: [],
+        algorithmResults: null,
+        diagnostics: null,
         settings: {
             excludeN: 7,
             predictCount: 10
-        }
+        },
+        history: []
     };
 
-    // DOM Elements
     const elements = {
         historyInput: document.getElementById('historyInput'),
         excludePeriods: document.getElementById('excludePeriods'),
@@ -760,327 +967,655 @@
         btnAnalyze: document.getElementById('btnAnalyze'),
         btnClear: document.getElementById('btnClear'),
         btnLoadExample: document.getElementById('btnLoadExample'),
+        inputWarning: document.getElementById('inputWarning'),
+        inputError: document.getElementById('inputError'),
+        previewSummary: document.getElementById('previewSummary'),
+        previewPeriods: document.getElementById('previewPeriods'),
         welcomeMessage: document.getElementById('welcomeMessage'),
         resultsContainer: document.getElementById('resultsContainer'),
         detailsContainer: document.getElementById('detailsContainer'),
         statTotalPeriods: document.getElementById('statTotalPeriods'),
         statTotalNumbers: document.getElementById('statTotalNumbers'),
         statExcludedCount: document.getElementById('statExcludedCount'),
-        statAvgFreq: document.getElementById('statAvgFreq'),
+        statAvgCount: document.getElementById('statAvgCount'),
         analysisTime: document.getElementById('analysisTime'),
         displayExcludeN: document.getElementById('displayExcludeN'),
         displayPredictK: document.getElementById('displayPredictK'),
+        displayPredictK2: document.getElementById('displayPredictK2'),
         excludedList: document.getElementById('excludedList'),
-        top10Results: document.getElementById('top10Results'),
+        topResults: document.getElementById('topResults'),
         heatmapGrid: document.getElementById('heatmapGrid'),
+        mostFrequentList: document.getElementById('mostFrequentList'),
+        leastFrequentList: document.getElementById('leastFrequentList'),
         statsTableBody: document.getElementById('statsTableBody'),
         topChart: document.getElementById('topChart'),
-        tabs: document.querySelectorAll('.tab'),
-        tabContents: document.querySelectorAll('.tab-content'),
+        algorithmCompareGrid: document.getElementById('algorithmCompareGrid'),
+        historyCount: document.getElementById('historyCount'),
+        historyTableBody: document.getElementById('historyTableBody'),
+        btnClearHistory: document.getElementById('btnClearHistory'),
         btnExportJSON: document.getElementById('btnExportJSON'),
-        btnExportCSV: document.getElementById('btnExportCSV')
+        btnExportCSV: document.getElementById('btnExportCSV'),
+        tabs: document.querySelectorAll('.tab'),
+        tabContents: document.querySelectorAll('.tab-content')
     };
 
-    /**
-     * Persistence
-     */
-    function saveToLocal() {
-        const data = {
-            rawData: elements.historyInput.value,
-            settings: {
-                excludeN: elements.excludePeriods.value,
-                predictCount: elements.predictCount.value
-            }
+    function debounce(fn, delay) {
+        let timer = null;
+        return (...args) => {
+            clearTimeout(timer);
+            timer = setTimeout(() => fn(...args), delay);
         };
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     }
 
-    function loadFromLocal() {
-        const saved = localStorage.getItem(STORAGE_KEY);
-        if (saved) {
-            try {
-                const data = JSON.parse(saved);
-                elements.historyInput.value = data.rawData || '';
-                if (data.settings) {
-                    elements.excludePeriods.value = data.settings.excludeN || 7;
-                    elements.predictCount.value = data.settings.predictCount || 10;
+    function clamp(n, min, max) {
+        return Math.min(max, Math.max(min, n));
+    }
+
+    function pad2(n) {
+        return n.toString().padStart(2, '0');
+    }
+
+    function downloadBlob(blob, filename) {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1500);
+    }
+
+    function simpleHash(str) {
+        // DJB2-like
+        let hash = 5381;
+        for (let i = 0; i < str.length; i++) {
+            hash = ((hash << 5) + hash) + str.charCodeAt(i);
+            hash = hash & 0xffffffff;
+        }
+        return (hash >>> 0).toString(16);
+    }
+
+    function parseInputWithDiagnostics(input) {
+        const diagnostics = {
+            hasNonStandardChars: /[^0-9\s,，、;；|\n\r\t]/.test(input),
+            extractedCount: 0,
+            validCount: 0,
+            outOfRangeCount: 0,
+            duplicateInPeriodCount: 0,
+            emptyLineCount: 0,
+            periodsDetected: 0,
+            periodSizeHint: null,
+            parseMode: '按行识别',
+            warnings: []
+        };
+
+        const normalizedInput = input.replace(/\r/g, '');
+        const lines = normalizedInput.split('\n');
+
+        // 先按“行”提取数字序列（保留顺序与重复），后续再根据规则“分期”，再对每期去重
+        const rawLineNumberGroups = [];
+
+        for (const lineRaw of lines) {
+            const line = lineRaw.trim();
+            if (!line) {
+                diagnostics.emptyLineCount++;
+                continue;
+            }
+
+            const tokens = line.match(/\d+/g) || [];
+            diagnostics.extractedCount += tokens.length;
+
+            const nums = [];
+            for (const t of tokens) {
+                const n = parseInt(t, 10);
+                if (Number.isNaN(n)) continue;
+                if (n >= 1 && n <= 49) nums.push(n);
+                else diagnostics.outOfRangeCount++;
+            }
+
+            if (nums.length > 0) rawLineNumberGroups.push(nums);
+        }
+
+        function mode(arr) {
+            const counts = new Map();
+            for (const v of arr) counts.set(v, (counts.get(v) || 0) + 1);
+            let best = null;
+            let bestCount = 0;
+            for (const [k, c] of counts.entries()) {
+                if (c > bestCount || (c === bestCount && k > best)) {
+                    best = k;
+                    bestCount = c;
                 }
-                if (elements.historyInput.value) {
-                    performAnalysis();
+            }
+            return { value: best, count: bestCount };
+        }
+
+        // 分期（候选期，尚未去重）
+        let periodCandidates = [];
+
+        if (rawLineNumberGroups.length > 1) {
+            const lengths = rawLineNumberGroups.map(p => p.length).filter(len => len > 0);
+            const { value: modeLen, count: modeCount } = mode(lengths);
+
+            const useChunking = modeLen && modeLen >= 5 && modeLen <= 20 && modeCount >= 2;
+            if (useChunking) {
+                diagnostics.periodSizeHint = modeLen;
+                for (const group of rawLineNumberGroups) {
+                    if (group.length > modeLen && group.length % modeLen === 0) {
+                        for (let i = 0; i < group.length; i += modeLen) {
+                            periodCandidates.push(group.slice(i, i + modeLen));
+                        }
+                        diagnostics.parseMode = `按行识别 + 自动切分（每期约 ${modeLen} 个）`;
+                    } else {
+                        periodCandidates.push(group);
+                    }
                 }
-            } catch (e) {
-                console.error('Failed to load saved data', e);
+            } else {
+                periodCandidates = rawLineNumberGroups;
+            }
+        } else if (rawLineNumberGroups.length === 1) {
+            const only = rawLineNumberGroups[0];
+            periodCandidates = [only];
+
+            // 如果只有一行但数字很多，尝试自动分期（优先 7，其次 6）
+            if (only.length >= 12) {
+                const trySizes = [7, 6];
+                const size = trySizes.find(s => only.length % s === 0 && only.length / s >= 2);
+                if (size) {
+                    periodCandidates = [];
+                    for (let i = 0; i < only.length; i += size) {
+                        periodCandidates.push(only.slice(i, i + size));
+                    }
+                    diagnostics.parseMode = `自动分期（每期 ${size} 个）`;
+                    diagnostics.periodSizeHint = size;
+                } else {
+                    diagnostics.warnings.push('检测到单行输入且数字较多，但无法稳定分期：建议每行代表一期，以获得更准确的“避开最近N期/间隔”结果。');
+                }
             }
         }
-    }
 
-    /**
-     * Data Processing Functions
-     */
-    function parseInput(input) {
-        const lines = input.split('\n').filter(line => line.trim() !== '');
+        // 每期去重（保持分析稳定性，避免“同一期重复数字”干扰）
         const periods = [];
-        let allNumbers = [];
-
-        lines.forEach(line => {
-            // Replace common separators with space
-            const normalized = line.replace(/[，、,;；|]/g, ' ');
-            const numbers = normalized.split(/\s+/)
-                .map(n => parseInt(n))
-                .filter(n => !isNaN(n) && n >= 1 && n <= 49);
-            
-            if (numbers.length > 0) {
-                periods.push(numbers);
-                allNumbers = allNumbers.concat(numbers);
+        for (const cand of periodCandidates) {
+            const seen = new Set();
+            const unique = [];
+            let dup = 0;
+            for (const n of cand) {
+                if (seen.has(n)) {
+                    dup++;
+                    continue;
+                }
+                seen.add(n);
+                unique.push(n);
             }
-        });
+            diagnostics.duplicateInPeriodCount += dup;
 
-        // Fallback: If no lines were recognized but input has numbers, try parsing everything
-        if (periods.length === 0) {
-            const normalized = input.replace(/[，、,;；|\n]/g, ' ');
-            const numbers = normalized.split(/\s+/)
-                .map(n => parseInt(n))
-                .filter(n => !isNaN(n) && n >= 1 && n <= 49);
-            
-            if (numbers.length > 0) {
-                // If we have many numbers but no lines, we might treat it as one period or try to chunk it
-                // For simplicity, we'll treat it as one period for stats, or user should use lines
-                periods.push(numbers);
-                allNumbers = numbers;
-            }
+            const sorted = unique.sort((a, b) => a - b);
+            if (sorted.length > 0) periods.push(sorted);
         }
 
-        return { periods, allNumbers };
+        const allNumbers = periods.flat();
+        diagnostics.validCount = allNumbers.length;
+        diagnostics.periodsDetected = periods.length;
+
+        // 补充提示
+        if (diagnostics.hasNonStandardChars) diagnostics.warnings.push('发现非数字字符（将被忽略）。');
+        if (diagnostics.outOfRangeCount > 0) diagnostics.warnings.push(`发现 ${diagnostics.outOfRangeCount} 个超出 1-49 的数字（已忽略）。`);
+        if (diagnostics.duplicateInPeriodCount > 0) diagnostics.warnings.push(`发现 ${diagnostics.duplicateInPeriodCount} 个“同一期内重复数字”（已自动去重）。`);
+
+        return { periods, allNumbers, diagnostics };
     }
 
     function calculateStats(periods, allNumbers) {
-        const stats = {};
         const totalPeriods = periods.length;
         const totalNumCount = allNumbers.length;
 
-        // Initialize 1-49
+        const stats = {};
         for (let i = 1; i <= 49; i++) {
             stats[i] = {
                 num: i,
                 count: 0,
                 freq: 0,
-                lastSeen: -1, // Periods ago
+                lastSeen: totalPeriods, // default as never seen
                 gaps: [],
-                avgGap: 0,
+                avgGap: totalPeriods,
                 chiSquare: 0,
+                flags: {
+                    hot: false,
+                    cold: false
+                },
                 scores: {
                     freq: 0,
                     gap: 0,
                     period: 0,
+                    comprehensive: 0,
                     chi: 0
                 },
                 totalScore: 0
             };
         }
 
-        // Count frequencies
-        allNumbers.forEach(n => {
+        for (const n of allNumbers) {
             if (stats[n]) stats[n].count++;
-        });
+        }
 
-        // Calculate gaps
+        // build period sets for O(1) contains
+        const periodSets = periods.map(p => new Set(p));
+
         for (let i = 1; i <= 49; i++) {
-            let lastIdx = -1;
-            periods.forEach((period, pIdx) => {
-                if (period.includes(i)) {
-                    if (lastIdx !== -1) {
-                        stats[i].gaps.push(pIdx - lastIdx);
-                    }
-                    lastIdx = pIdx;
-                }
-            });
+            const s = stats[i];
+            s.freq = totalNumCount > 0 ? (s.count / totalNumCount) * 100 : 0;
 
-            stats[i].freq = (stats[i].count / totalNumCount * 100) || 0;
-            
-            // Last seen (how many periods since last appearance)
-            // periods[0] is the oldest, periods[last] is the newest
+            // last seen from newest backward
             let foundAt = -1;
-            for (let j = periods.length - 1; j >= 0; j--) {
-                if (periods[j].includes(i)) {
+            for (let j = totalPeriods - 1; j >= 0; j--) {
+                if (periodSets[j].has(i)) {
                     foundAt = j;
                     break;
                 }
             }
-            
-            if (foundAt !== -1) {
-                stats[i].lastSeen = (periods.length - 1) - foundAt;
-            } else {
-                stats[i].lastSeen = periods.length; // Never seen
+            s.lastSeen = foundAt !== -1 ? (totalPeriods - 1) - foundAt : totalPeriods;
+
+            // gaps
+            let lastIdx = -1;
+            for (let pIdx = 0; pIdx < totalPeriods; pIdx++) {
+                if (periodSets[pIdx].has(i)) {
+                    if (lastIdx !== -1) {
+                        s.gaps.push(pIdx - lastIdx);
+                    }
+                    lastIdx = pIdx;
+                }
             }
 
-            if (stats[i].gaps.length > 0) {
-                stats[i].avgGap = stats[i].gaps.reduce((a, b) => a + b, 0) / stats[i].gaps.length;
+            if (s.gaps.length > 0) {
+                s.avgGap = s.gaps.reduce((a, b) => a + b, 0) / s.gaps.length;
             } else {
-                stats[i].avgGap = periods.length;
+                s.avgGap = totalPeriods;
             }
         }
 
-        // Chi-Square Deviation
-        // Expected frequency for each number if uniform: totalNumCount / 49
-        const expected = totalNumCount / 49;
-        for (let i = 1; i <= 49; i++) {
-            stats[i].chiSquare = Math.pow(stats[i].count - expected, 2) / expected;
-        }
-
-        // Normalize scores (0-100)
-        // 1. Freq Score: Higher count = higher score
-        const maxCount = Math.max(...Object.values(stats).map(s => s.count));
-        // 2. Gap Score: Higher lastSeen (cold number) = higher score (rebound potential)
-        const maxLastSeen = Math.max(...Object.values(stats).map(s => s.lastSeen));
-        // 3. Period Score: When lastSeen is close to avgGap, higher score
-        // 4. Chi Score: Higher deviation = higher score (anomaly detection)
-        const maxChi = Math.max(...Object.values(stats).map(s => s.chiSquare));
-
+        // chi-square component
+        const expected = totalNumCount > 0 ? totalNumCount / 49 : 0;
         for (let i = 1; i <= 49; i++) {
             const s = stats[i];
-            
-            // Frequency score
+            s.chiSquare = expected > 0 ? Math.pow(s.count - expected, 2) / expected : 0;
+        }
+
+        const values = Object.values(stats);
+        const maxCount = Math.max(...values.map(v => v.count), 0);
+        const maxLastSeen = Math.max(...values.map(v => v.lastSeen), 0);
+        const maxChi = Math.max(...values.map(v => v.chiSquare), 0);
+        const avgCount = expected;
+
+        for (const s of values) {
+            s.flags.hot = avgCount > 0 ? s.count >= avgCount * 1.2 : false;
+            s.flags.cold = avgCount > 0 ? s.count <= avgCount * 0.6 : false;
+
             s.scores.freq = maxCount > 0 ? (s.count / maxCount) * 100 : 0;
-            
-            // Gap rebound score
             s.scores.gap = maxLastSeen > 0 ? (s.lastSeen / maxLastSeen) * 100 : 0;
-            
-            // Periodicity score (bell curve centered at avgGap)
+
             if (s.avgGap > 0) {
                 const diff = Math.abs(s.lastSeen - s.avgGap);
-                s.scores.period = Math.max(0, 100 - (diff / s.avgGap) * 100);
+                s.scores.period = clamp(100 - (diff / s.avgGap) * 100, 0, 100);
             } else {
                 s.scores.period = 0;
             }
-            
-            // Chi-Square score
+
+            s.scores.comprehensive = (s.scores.freq * 0.4) + (s.scores.gap * 0.35) + (s.scores.period * 0.25);
             s.scores.chi = maxChi > 0 ? (s.chiSquare / maxChi) * 100 : 0;
 
-            // Combined Score (Weights: Freq: 30%, Gap: 30%, Period: 20%, Chi: 20%)
-            s.totalScore = (s.scores.freq * 0.3) + (s.scores.gap * 0.3) + (s.scores.period * 0.2) + (s.scores.chi * 0.2);
+            // final score: comprehensive + chi-square
+            s.totalScore = (s.scores.comprehensive * 0.75) + (s.scores.chi * 0.25);
         }
 
-        return stats;
+        return { stats, expectedAvgCount: avgCount };
+    }
+
+    function getExcludedNumbers(periods, excludeN) {
+        const total = periods.length;
+        const n = clamp(excludeN, 0, total);
+        const set = new Set();
+
+        for (let i = total - 1; i >= Math.max(0, total - n); i--) {
+            for (const num of periods[i]) set.add(num);
+        }
+
+        return Array.from(set).sort((a, b) => a - b);
+    }
+
+    function getTopK(statsObj, excludedSet, k, scoreGetter) {
+        return Object.values(statsObj)
+            .filter(s => !excludedSet.has(s.num))
+            .sort((a, b) => scoreGetter(b) - scoreGetter(a))
+            .slice(0, k);
+    }
+
+    function buildAlgorithmResults(statsObj, excludedNumbers, k) {
+        const excludedSet = new Set(excludedNumbers);
+        const by = (getter) => getTopK(statsObj, excludedSet, k, getter).map(s => s.num);
+
+        const freq = by(s => s.scores.freq);
+        const gap = by(s => s.scores.gap);
+        const period = by(s => s.scores.period);
+        const comprehensive = by(s => s.scores.comprehensive);
+        const chi = by(s => s.scores.chi);
+        const final = by(s => s.totalScore);
+
+        return {
+            freq,
+            gap,
+            period,
+            comprehensive,
+            chi,
+            final
+        };
+    }
+
+    function showError(msg) {
+        elements.inputError.textContent = msg;
+        elements.inputError.classList.remove('hidden');
+    }
+
+    function clearError() {
+        elements.inputError.textContent = '';
+        elements.inputError.classList.add('hidden');
+    }
+
+    function showWarnings(diagnostics) {
+        const warns = diagnostics?.warnings || [];
+        if (warns.length === 0) {
+            elements.inputWarning.textContent = '';
+            elements.inputWarning.classList.add('hidden');
+            return;
+        }
+        elements.inputWarning.innerHTML = `<strong>提示：</strong> ${warns.join(' ')}<div class="help-text" style="margin-top: 0.5rem;">解析模式：${diagnostics.parseMode}</div>`;
+        elements.inputWarning.classList.remove('hidden');
+    }
+
+    function renderPreview() {
+        const input = elements.historyInput.value.trim();
+        if (!input) {
+            elements.previewSummary.textContent = '尚未识别到有效数据';
+            elements.previewPeriods.innerHTML = '';
+            elements.inputWarning.classList.add('hidden');
+            clearError();
+            return;
+        }
+
+        const { periods, allNumbers, diagnostics } = parseInputWithDiagnostics(input);
+
+        if (periods.length === 0) {
+            elements.previewSummary.textContent = '未识别到有效的 1-49 数字';
+            elements.previewPeriods.innerHTML = '';
+            showWarnings(diagnostics);
+            return;
+        }
+
+        showWarnings(diagnostics);
+        clearError();
+
+        const avgPerPeriod = (allNumbers.length / periods.length).toFixed(2);
+        elements.previewSummary.textContent = `已识别 ${periods.length} 期，共 ${allNumbers.length} 个有效数字（平均每期 ${avgPerPeriod} 个）。`;
+
+        const show = [];
+        const maxShow = 3;
+        for (let i = Math.max(0, periods.length - maxShow); i < periods.length; i++) {
+            show.push({ idx: i, nums: periods[i] });
+        }
+
+        elements.previewPeriods.innerHTML = '';
+        show.forEach((p, index) => {
+            const div = document.createElement('div');
+            div.className = 'preview-period';
+
+            const label = document.createElement('strong');
+            label.textContent = index === show.length - 1 ? `最新一期：` : `第 ${p.idx + 1} 期：`;
+            div.appendChild(label);
+
+            p.nums.forEach(n => {
+                const chip = document.createElement('span');
+                chip.className = 'number-chip';
+                chip.textContent = pad2(n);
+                div.appendChild(chip);
+            });
+
+            elements.previewPeriods.appendChild(div);
+        });
+    }
+
+    function saveCurrentToLocal() {
+        const payload = {
+            rawData: elements.historyInput.value,
+            settings: {
+                excludeN: parseInt(elements.excludePeriods.value, 10) || 0,
+                predictCount: parseInt(elements.predictCount.value, 10) || 10
+            }
+        };
+        localStorage.setItem(STORAGE_KEY_CURRENT, JSON.stringify(payload));
+    }
+
+    function loadCurrentFromLocal() {
+        const raw = localStorage.getItem(STORAGE_KEY_CURRENT) || localStorage.getItem(STORAGE_KEY_CURRENT_LEGACY);
+        if (!raw) return;
+
+        try {
+            const data = JSON.parse(raw);
+            elements.historyInput.value = data.rawData || '';
+            if (data.settings) {
+                elements.excludePeriods.value = data.settings.excludeN ?? 7;
+                elements.predictCount.value = data.settings.predictCount ?? 10;
+            }
+        } catch (e) {
+            console.error('Failed to load saved current data', e);
+        }
+    }
+
+    function loadHistoryFromLocal() {
+        const raw = localStorage.getItem(STORAGE_KEY_HISTORY);
+        if (!raw) return [];
+        try {
+            const list = JSON.parse(raw);
+            return Array.isArray(list) ? list : [];
+        } catch {
+            return [];
+        }
+    }
+
+    function saveHistoryToLocal(list) {
+        localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(list));
+    }
+
+    function addHistoryEntry(entry) {
+        const list = loadHistoryFromLocal();
+
+        const key = `${entry.hash}:${entry.settings.excludeN}:${entry.settings.predictCount}`;
+        const existingIdx = list.findIndex(e => `${e.hash}:${e.settings.excludeN}:${e.settings.predictCount}` === key);
+        if (existingIdx !== -1) {
+            list.splice(existingIdx, 1);
+        }
+
+        list.unshift(entry);
+        const trimmed = list.slice(0, HISTORY_LIMIT);
+        saveHistoryToLocal(trimmed);
+        state.history = trimmed;
+    }
+
+    function renderHistory() {
+        const list = loadHistoryFromLocal();
+        state.history = list;
+        elements.historyCount.textContent = list.length.toString();
+
+        elements.historyTableBody.innerHTML = '';
+        list.forEach(item => {
+            const tr = document.createElement('tr');
+            const topList = (item.predictions || []).map(pad2).join(' ');
+
+            const btnLoad = `<button class="btn btn-primary btn-sm" data-action="load" data-id="${item.id}">加载</button>`;
+            const btnDelete = `<button class="btn btn-secondary btn-sm" data-action="delete" data-id="${item.id}">删除</button>`;
+
+            tr.innerHTML = `
+                <td>${new Date(item.timestamp).toLocaleString()}</td>
+                <td>${item.summary.totalPeriods}</td>
+                <td>${item.settings.excludeN}</td>
+                <td>${item.settings.predictCount}</td>
+                <td>${item.summary.excludedCount}</td>
+                <td style="font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;">${topList}</td>
+                <td>${btnLoad} ${btnDelete}</td>
+            `;
+            elements.historyTableBody.appendChild(tr);
+        });
     }
 
     function performAnalysis() {
+        const start = performance.now();
         const input = elements.historyInput.value.trim();
+
         if (!input) {
-            alert('请输入历史数据！');
+            showError('请输入历史数据后再分析。');
             return;
         }
 
-        const { periods, allNumbers } = parseInput(input);
-        if (periods.length === 0) {
-            alert('未能识别有效数据，请检查格式！');
+        const { periods, allNumbers, diagnostics } = parseInputWithDiagnostics(input);
+        state.diagnostics = diagnostics;
+
+        if (periods.length === 0 || allNumbers.length === 0) {
+            showError('未识别到有效的 1-49 数字，请检查格式。');
             return;
         }
 
+        state.rawData = input;
         state.processedData = periods;
         state.flatData = allNumbers;
-        state.stats = calculateStats(periods, allNumbers);
-        
-        state.settings.excludeN = parseInt(elements.excludePeriods.value) || 0;
-        state.settings.predictCount = parseInt(elements.predictCount.value) || 10;
 
-        // Determine excluded numbers (from last N periods)
-        const excludeN = Math.min(state.settings.excludeN, periods.length);
-        const excludedSet = new Set();
-        for (let i = periods.length - 1; i >= Math.max(0, periods.length - excludeN); i--) {
-            periods[i].forEach(n => excludedSet.add(n));
-        }
-        state.excludedNumbers = Array.from(excludedSet).sort((a, b) => a - b);
+        state.settings.excludeN = parseInt(elements.excludePeriods.value, 10) || 0;
+        state.settings.predictCount = parseInt(elements.predictCount.value, 10) || 10;
 
-        // Filter and Sort for predictions
-        state.predictions = Object.values(state.stats)
+        const excluded = getExcludedNumbers(periods, state.settings.excludeN);
+        state.excludedNumbers = excluded;
+
+        const { stats, expectedAvgCount } = calculateStats(periods, allNumbers);
+        state.stats = stats;
+
+        const excludedSet = new Set(excluded);
+        const predictions = Object.values(stats)
             .filter(s => !excludedSet.has(s.num))
             .sort((a, b) => b.totalScore - a.totalScore)
             .slice(0, state.settings.predictCount);
 
-        saveToLocal();
-        renderResults();
+        state.predictions = predictions;
+        state.algorithmResults = buildAlgorithmResults(stats, excluded, state.settings.predictCount);
+
+        saveCurrentToLocal();
+
+        // save to history
+        const hash = simpleHash(input);
+        addHistoryEntry({
+            id: `${Date.now()}_${Math.random().toString(16).slice(2)}`,
+            timestamp: new Date().toISOString(),
+            hash,
+            rawData: input,
+            settings: { ...state.settings },
+            summary: {
+                totalPeriods: periods.length,
+                totalNumbers: allNumbers.length,
+                excludedCount: excluded.length,
+                expectedAvgCount
+            },
+            predictions: predictions.map(p => p.num),
+            excludedNumbers: excluded
+        });
+
+        const end = performance.now();
+        renderResults(end - start);
+        renderHistory();
     }
 
-    /**
-     * UI Rendering Functions
-     */
-    function renderResults() {
+    function renderResults(costMs) {
         elements.welcomeMessage.classList.add('hidden');
         elements.resultsContainer.classList.remove('hidden');
         elements.detailsContainer.classList.remove('hidden');
 
-        // Update stats summary
-        elements.statTotalPeriods.textContent = state.processedData.length;
-        elements.statTotalNumbers.textContent = state.flatData.length;
-        elements.statExcludedCount.textContent = state.excludedNumbers.length;
-        
-        const avgFreq = (state.flatData.length / 49 / state.processedData.length * 100).toFixed(2);
-        elements.statAvgFreq.textContent = avgFreq + '%';
-        
-        elements.analysisTime.textContent = '分析时间: ' + new Date().toLocaleTimeString();
-        elements.displayExcludeN.textContent = state.settings.excludeN;
-        elements.displayPredictK.textContent = state.settings.predictCount;
+        elements.statTotalPeriods.textContent = state.processedData.length.toString();
+        elements.statTotalNumbers.textContent = state.flatData.length.toString();
+        elements.statExcludedCount.textContent = state.excludedNumbers.length.toString();
 
-        // Render Excluded List
+        const avgCount = state.flatData.length / 49;
+        elements.statAvgCount.textContent = avgCount.toFixed(2);
+
+        elements.analysisTime.textContent = `耗时 ${(costMs).toFixed(0)}ms / ${new Date().toLocaleTimeString()}`;
+        elements.displayExcludeN.textContent = state.settings.excludeN.toString();
+        elements.displayPredictK.textContent = state.settings.predictCount.toString();
+        elements.displayPredictK2.textContent = state.settings.predictCount.toString();
+
+        // excluded list
         elements.excludedList.innerHTML = '';
-        state.excludedNumbers.forEach(n => {
-            const span = document.createElement('span');
-            span.className = 'badge badge-secondary';
-            span.textContent = n.toString().padStart(2, '0');
-            elements.excludedList.appendChild(span);
-        });
         if (state.excludedNumbers.length === 0) {
             elements.excludedList.textContent = '无（未设置避开期数或数据不足）';
+        } else {
+            state.excludedNumbers.forEach(n => {
+                const span = document.createElement('span');
+                span.className = 'badge badge-secondary';
+                span.textContent = pad2(n);
+                elements.excludedList.appendChild(span);
+            });
         }
 
-        // Render Top 10 Cards
-        elements.top10Results.innerHTML = '';
-        state.predictions.forEach((pred, index) => {
+        // top cards
+        elements.topResults.innerHTML = '';
+        state.predictions.forEach((p, idx) => {
             const card = document.createElement('div');
             card.className = 'prediction-card';
-            
+
             let levelClass = 'badge-info';
             let levelText = '🔵 参考';
-            if (index < 3) {
+            if (idx < 3) {
                 levelClass = 'badge-success';
                 levelText = '🟢 强烈推荐';
-            } else if (index < 6) {
+            } else if (idx < 6) {
                 levelClass = 'badge-warning';
                 levelText = '🟡 中等推荐';
             }
 
             const reasons = [];
-            if (pred.scores.freq > 80) reasons.push('历史高频热号');
-            if (pred.scores.gap > 80) reasons.push('冷号反弹潜力大');
-            if (pred.scores.period > 80) reasons.push('符合出现周期规律');
-            if (pred.scores.chi > 80) reasons.push('统计分布异常偏离');
-            
-            const reasonText = reasons.length > 0 ? reasons.join('、') : '综合多项指标计算';
+            if (p.scores.freq >= 80) reasons.push('历史高频');
+            if (p.scores.gap >= 80) reasons.push('冷号反弹');
+            if (p.scores.period >= 80) reasons.push('周期到点');
+            if (p.scores.chi >= 80) reasons.push('卡方偏差');
+            const reasonText = reasons.length ? reasons.join('、') : '综合多项指标';
 
             card.innerHTML = `
-                <div class="rank-badge">${index + 1}</div>
-                <div style="text-align: right;">
+                <div class="rank-badge">${idx + 1}</div>
+                <div style="display: flex; justify-content: flex-end;">
                     <span class="badge ${levelClass}">${levelText}</span>
                 </div>
-                <div class="prediction-number">${pred.num.toString().padStart(2, '0')}</div>
-                <div class="prediction-score">预测指数: <strong>${pred.totalScore.toFixed(1)}</strong></div>
+                <div class="prediction-number">${pad2(p.num)}</div>
+                <div class="prediction-score">综合预测指数：<strong>${p.totalScore.toFixed(1)}</strong> / 100</div>
                 <div style="font-size: 0.75rem; color: var(--gray-500); display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                    <span>频率: ${pred.freq.toFixed(1)}%</span>
-                    <span>间隔: ${pred.lastSeen} 期</span>
+                    <span>频率：${p.freq.toFixed(1)}%</span>
+                    <span>遗漏：${p.lastSeen} 期</span>
                 </div>
-                <div class="prediction-reason"><strong>分析:</strong> ${reasonText}</div>
+                <div style="font-size: 0.75rem; color: var(--gray-500); display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.25rem;">
+                    <span>频率分：${p.scores.freq.toFixed(0)}</span>
+                    <span>冷号分：${p.scores.gap.toFixed(0)}</span>
+                    <span>周期分：${p.scores.period.toFixed(0)}</span>
+                    <span>卡方分：${p.scores.chi.toFixed(0)}</span>
+                </div>
+                <div class="prediction-reason"><strong>原因：</strong>${reasonText}</div>
             `;
-            elements.top10Results.appendChild(card);
+
+            elements.topResults.appendChild(card);
         });
 
         renderHeatmap();
+        renderFrequencyExtremes();
         renderStatsTable();
         renderChart();
+        renderAlgorithmCompare();
     }
 
     function renderHeatmap() {
         elements.heatmapGrid.innerHTML = '';
-        const maxCount = Math.max(...Object.values(state.stats).map(s => s.count));
+        const statsValues = Object.values(state.stats);
+        const maxCount = Math.max(...statsValues.map(s => s.count), 0);
         const excludedSet = new Set(state.excludedNumbers);
         const predictedSet = new Set(state.predictions.map(p => p.num));
 
@@ -1088,62 +1623,89 @@
             const s = state.stats[i];
             const cell = document.createElement('div');
             cell.className = 'number-cell';
-            cell.textContent = i.toString().padStart(2, '0');
-            
-            // Tooltip
+            cell.textContent = pad2(i);
+
             const tooltip = document.createElement('div');
             tooltip.className = 'tooltip';
-            tooltip.textContent = `出现 ${s.count} 次 (${s.freq.toFixed(1)}%)`;
+            tooltip.textContent = `出现 ${s.count} 次 / 频率 ${s.freq.toFixed(1)}% / 遗漏 ${s.lastSeen} 期 / 最终分 ${s.totalScore.toFixed(1)}`;
             cell.appendChild(tooltip);
 
             if (excludedSet.has(i)) {
                 cell.classList.add('excluded');
-            } else if (predictedSet.has(i)) {
-                cell.classList.add('predicted');
-                cell.style.backgroundColor = 'var(--white)';
             } else {
-                // Background color based on frequency
                 const alpha = maxCount > 0 ? (s.count / maxCount) : 0;
                 cell.style.backgroundColor = `rgba(37, 99, 235, ${Math.max(0.05, alpha * 0.8)})`;
                 if (alpha > 0.6) cell.style.color = 'white';
+
+                if (s.flags.hot) cell.classList.add('hot');
+                if (s.flags.cold) cell.classList.add('cold');
+
+                if (predictedSet.has(i)) {
+                    cell.classList.add('predicted');
+                    cell.style.backgroundColor = 'var(--white)';
+                    cell.style.color = 'var(--gray-900)';
+                }
             }
-            
+
             elements.heatmapGrid.appendChild(cell);
         }
     }
 
+    function renderFrequencyExtremes() {
+        const all = Object.values(state.stats);
+        const most = [...all].sort((a, b) => b.count - a.count).slice(0, 10);
+        const least = [...all].sort((a, b) => a.count - b.count).slice(0, 10);
+
+        function renderList(el, list, tone) {
+            el.innerHTML = '';
+            list.forEach(item => {
+                const b = document.createElement('span');
+                b.className = `badge ${tone}`;
+                b.textContent = `${pad2(item.num)} (${item.count})`;
+                el.appendChild(b);
+            });
+        }
+
+        renderList(elements.mostFrequentList, most, 'badge-info');
+        renderList(elements.leastFrequentList, least, 'badge-secondary');
+    }
+
     function renderStatsTable() {
         elements.statsTableBody.innerHTML = '';
+
         const excludedSet = new Set(state.excludedNumbers);
-        
-        // Show all 49 numbers, sorted by frequency desc
-        const sortedStats = Object.values(state.stats).sort((a, b) => b.count - a.count);
-        
-        sortedStats.forEach(s => {
+        const predictedSet = new Set(state.predictions.map(p => p.num));
+
+        const sorted = Object.values(state.stats).sort((a, b) => b.totalScore - a.totalScore);
+
+        sorted.forEach(s => {
             const tr = document.createElement('tr');
             const isExcluded = excludedSet.has(s.num);
-            const isPredicted = state.predictions.some(p => p.num === s.num);
-            
-            let status = '<span class="badge">常规</span>';
+            const isPredicted = predictedSet.has(s.num);
+
+            let status = '<span class="badge badge-secondary">常规</span>';
             if (isExcluded) status = '<span class="badge badge-danger">排除</span>';
             else if (isPredicted) status = '<span class="badge badge-success">推选</span>';
+            else if (s.flags.hot) status = '<span class="badge badge-warning">热号</span>';
+            else if (s.flags.cold) status = '<span class="badge badge-info">冷号</span>';
 
             tr.innerHTML = `
-                <td style="font-weight: 700;">${s.num.toString().padStart(2, '0')}</td>
+                <td style="font-weight: 800;">${pad2(s.num)}</td>
                 <td>${s.count}</td>
                 <td>
                     <div style="display: flex; align-items: center; gap: 0.5rem;">
-                        <span style="min-width: 40px;">${s.freq.toFixed(1)}%</span>
-                        <div class="progress-bar"><div class="progress-fill" style="width: ${s.freq * 5}%"></div></div>
+                        <span style="min-width: 50px;">${s.freq.toFixed(1)}%</span>
+                        <div class="progress-bar"><div class="progress-fill" style="width: ${clamp(s.freq * 5, 0, 100)}%"></div></div>
                     </div>
                 </td>
                 <td>${s.lastSeen}</td>
                 <td>${s.avgGap.toFixed(1)}</td>
-                <td style="color: var(--gray-400); font-size: 0.75rem;">${s.scores.freq.toFixed(0)}</td>
-                <td style="color: var(--gray-400); font-size: 0.75rem;">${s.scores.gap.toFixed(0)}</td>
-                <td style="color: var(--gray-400); font-size: 0.75rem;">${s.scores.period.toFixed(0)}</td>
-                <td style="color: var(--gray-400); font-size: 0.75rem;">${s.scores.chi.toFixed(0)}</td>
-                <td style="font-weight: 700; color: var(--primary);">${s.totalScore.toFixed(1)}</td>
+                <td style="color: var(--gray-500); font-size: 0.75rem;">${s.scores.freq.toFixed(0)}</td>
+                <td style="color: var(--gray-500); font-size: 0.75rem;">${s.scores.gap.toFixed(0)}</td>
+                <td style="color: var(--gray-500); font-size: 0.75rem;">${s.scores.period.toFixed(0)}</td>
+                <td style="color: var(--gray-500); font-size: 0.75rem;">${s.scores.comprehensive.toFixed(0)}</td>
+                <td style="color: var(--gray-500); font-size: 0.75rem;">${s.scores.chi.toFixed(0)}</td>
+                <td style="font-weight: 900; color: var(--primary);">${s.totalScore.toFixed(1)}</td>
                 <td>${status}</td>
             `;
             elements.statsTableBody.appendChild(tr);
@@ -1157,109 +1719,243 @@
         state.predictions.forEach(p => {
             const item = document.createElement('div');
             item.className = 'chart-bar-item';
-            
             const height = (p.totalScore / maxScore) * 100;
-            
+
             item.innerHTML = `
                 <div class="chart-bar" style="height: ${height}%">
                     <span class="chart-bar-value">${p.totalScore.toFixed(1)}</span>
                 </div>
-                <span class="chart-bar-label">#${p.num.toString().padStart(2, '0')}</span>
+                <span class="chart-bar-label">#${pad2(p.num)}</span>
             `;
             elements.topChart.appendChild(item);
         });
     }
 
-    /**
-     * Tab Handling
-     */
-    elements.tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            elements.tabs.forEach(t => t.classList.remove('active'));
-            elements.tabContents.forEach(c => c.classList.remove('active'));
-            
-            tab.classList.add('active');
-            const contentId = tab.getAttribute('data-tab');
-            document.getElementById(contentId).classList.add('active');
+    function renderAlgorithmCompare() {
+        if (!state.algorithmResults) {
+            elements.algorithmCompareGrid.innerHTML = '<div class="help-text">请先分析数据。</div>';
+            return;
+        }
+
+        const { freq, gap, period, comprehensive, chi, final } = state.algorithmResults;
+        const finalSet = new Set(final);
+
+        const blocks = [
+            { key: 'freq', title: '频率分析 Top K', desc: '出现越多越可能', list: freq },
+            { key: 'gap', title: '冷号反弹 Top K', desc: '遗漏越久越可能', list: gap },
+            { key: 'period', title: '时间间隔 Top K', desc: '接近平均间隔更可能', list: period },
+            { key: 'comprehensive', title: '综合评分 Top K', desc: '频率/冷号/周期加权', list: comprehensive },
+            { key: 'chi', title: '卡方偏差 Top K', desc: '偏离均匀分布更明显', list: chi },
+            { key: 'final', title: '最终推荐 Top K', desc: '综合分 + 卡方加权', list: final }
+        ];
+
+        elements.algorithmCompareGrid.innerHTML = '';
+        blocks.forEach(b => {
+            const div = document.createElement('div');
+            div.className = 'algo-card';
+
+            const overlap = b.key === 'final' ? b.list.length : b.list.filter(n => finalSet.has(n)).length;
+
+            div.innerHTML = `
+                <h5>${b.title}</h5>
+                <div style="font-size: 0.8rem; color: var(--gray-600);">${b.desc} · 与最终推荐重合 <strong>${overlap}</strong> / ${state.settings.predictCount}</div>
+                <div class="algo-numbers" id="algo-${b.key}"></div>
+            `;
+
+            elements.algorithmCompareGrid.appendChild(div);
+
+            const listEl = div.querySelector(`#algo-${b.key}`);
+            b.list.forEach(n => {
+                const chip = document.createElement('span');
+                chip.className = finalSet.has(n) ? 'badge badge-success' : 'badge badge-secondary';
+                chip.textContent = pad2(n);
+                listEl.appendChild(chip);
+            });
         });
-    });
+    }
 
-    /**
-     * Event Listeners
-     */
-    elements.btnAnalyze.addEventListener('click', performAnalysis);
-    
-    elements.btnClear.addEventListener('click', () => {
-        if (confirm('确定要清空输入框和分析结果吗？')) {
-            elements.historyInput.value = '';
-            elements.resultsContainer.classList.add('hidden');
-            elements.detailsContainer.classList.add('hidden');
-            elements.welcomeMessage.classList.remove('hidden');
-            localStorage.removeItem(STORAGE_KEY);
+    function exportJSON() {
+        if (!state.stats || Object.keys(state.stats).length === 0) {
+            showError('请先完成一次分析，再导出。');
+            return;
         }
-    });
 
-    elements.btnLoadExample.addEventListener('click', () => {
-        const examples = [];
-        // Generate some pseudo-random but valid looking data for 20 periods
-        for (let i = 0; i < 20; i++) {
-            const period = [];
-            while (period.length < 7) {
-                const r = Math.floor(Math.random() * 49) + 1;
-                if (!period.includes(r)) period.push(r);
-            }
-            examples.push(period.sort((a, b) => a - b).join(' '));
-        }
-        elements.historyInput.value = examples.join('\n');
-    });
-
-    elements.btnExportJSON.addEventListener('click', () => {
-        const data = {
+        const payload = {
             timestamp: new Date().toISOString(),
+            settings: { ...state.settings },
+            diagnostics: state.diagnostics,
             summary: {
                 totalPeriods: state.processedData.length,
                 totalNumbers: state.flatData.length,
-                excludedCount: state.excludedNumbers.length
+                excludedCount: state.excludedNumbers.length,
+                avgCountPerNumber: state.flatData.length / 49
             },
-            excluded: state.excludedNumbers,
+            excludedNumbers: state.excludedNumbers,
             predictions: state.predictions.map(p => ({
                 number: p.num,
-                score: p.totalScore,
-                freq: p.freq,
-                lastSeen: p.lastSeen
+                finalScore: p.totalScore,
+                frequencyPercent: p.freq,
+                lastSeenPeriods: p.lastSeen,
+                avgGap: p.avgGap,
+                scores: p.scores,
+                chiSquare: p.chiSquare
             })),
+            algorithmResults: state.algorithmResults,
             fullStats: state.stats
         };
-        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `analysis_result_${new Date().getTime()}.json`;
-        a.click();
-    });
 
-    elements.btnExportCSV.addEventListener('click', () => {
-        let csv = 'Number,Count,Frequency,LastSeen,AvgGap,TotalScore,Status\n';
+        downloadBlob(new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' }), `number_prediction_${Date.now()}.json`);
+    }
+
+    function exportCSV() {
+        if (!state.stats || Object.keys(state.stats).length === 0) {
+            showError('请先完成一次分析，再导出。');
+            return;
+        }
+
         const excludedSet = new Set(state.excludedNumbers);
+        const predictedSet = new Set(state.predictions.map(p => p.num));
+
+        let csv = 'Number,Count,FrequencyPercent,LastSeenPeriods,AvgGap,FreqScore,ColdScore,PeriodScore,ComprehensiveScore,ChiScore,FinalScore,ChiSquare,Status\n';
+
         Object.values(state.stats).forEach(s => {
             let status = 'Normal';
             if (excludedSet.has(s.num)) status = 'Excluded';
-            else if (state.predictions.some(p => p.num === s.num)) status = 'Predicted';
-            
-            csv += `${s.num},${s.count},${s.freq.toFixed(2)}%,${s.lastSeen},${s.avgGap.toFixed(2)},${s.totalScore.toFixed(2)},${status}\n`;
+            else if (predictedSet.has(s.num)) status = 'Predicted';
+            else if (s.flags.hot) status = 'Hot';
+            else if (s.flags.cold) status = 'Cold';
+
+            csv += `${s.num},${s.count},${s.freq.toFixed(2)},${s.lastSeen},${s.avgGap.toFixed(2)},${s.scores.freq.toFixed(2)},${s.scores.gap.toFixed(2)},${s.scores.period.toFixed(2)},${s.scores.comprehensive.toFixed(2)},${s.scores.chi.toFixed(2)},${s.totalScore.toFixed(2)},${s.chiSquare.toFixed(6)},${status}\n`;
         });
-        
-        const blob = new Blob([csv], { type: 'text/csv' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `analysis_result_${new Date().getTime()}.csv`;
-        a.click();
-    });
 
-    // Initialize
-    loadFromLocal();
+        downloadBlob(new Blob([csv], { type: 'text/csv' }), `number_prediction_${Date.now()}.csv`);
+    }
 
+    function setupTabs() {
+        elements.tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                elements.tabs.forEach(t => t.classList.remove('active'));
+                elements.tabContents.forEach(c => c.classList.remove('active'));
+
+                tab.classList.add('active');
+                const contentId = tab.getAttribute('data-tab');
+                document.getElementById(contentId).classList.add('active');
+
+                if (contentId === 'tab-history') {
+                    renderHistory();
+                }
+            });
+        });
+    }
+
+    function setupHistoryActions() {
+        elements.historyTableBody.addEventListener('click', (e) => {
+            const btn = e.target.closest('button');
+            if (!btn) return;
+
+            const action = btn.getAttribute('data-action');
+            const id = btn.getAttribute('data-id');
+
+            const list = loadHistoryFromLocal();
+            const idx = list.findIndex(x => x.id === id);
+            if (idx === -1) return;
+
+            if (action === 'load') {
+                const item = list[idx];
+                elements.historyInput.value = item.rawData || elements.historyInput.value;
+                elements.excludePeriods.value = item.settings.excludeN;
+                elements.predictCount.value = item.settings.predictCount;
+                renderPreview();
+                performAnalysis();
+
+                // switch to overview
+                elements.tabs.forEach(t => t.classList.remove('active'));
+                elements.tabContents.forEach(c => c.classList.remove('active'));
+                const heatTab = document.querySelector('.tab[data-tab="tab-heatmap"]');
+                if (heatTab) heatTab.classList.add('active');
+                document.getElementById('tab-heatmap').classList.add('active');
+            }
+
+            if (action === 'delete') {
+                if (!confirm('确定要删除这条历史记录吗？')) return;
+                list.splice(idx, 1);
+                saveHistoryToLocal(list);
+                renderHistory();
+            }
+        });
+
+        elements.btnClearHistory.addEventListener('click', () => {
+            if (!confirm('确定要清空全部历史记录吗？')) return;
+            localStorage.removeItem(STORAGE_KEY_HISTORY);
+            renderHistory();
+        });
+    }
+
+    function attachEvents() {
+        elements.btnAnalyze.addEventListener('click', performAnalysis);
+
+        elements.btnClear.addEventListener('click', () => {
+            if (!confirm('确定要清空输入框和分析结果吗？')) return;
+            elements.historyInput.value = '';
+            localStorage.removeItem(STORAGE_KEY_CURRENT);
+            localStorage.removeItem(STORAGE_KEY_CURRENT_LEGACY);
+            clearError();
+            elements.inputWarning.classList.add('hidden');
+            elements.resultsContainer.classList.add('hidden');
+            elements.detailsContainer.classList.add('hidden');
+            elements.welcomeMessage.classList.remove('hidden');
+            renderPreview();
+        });
+
+        elements.btnLoadExample.addEventListener('click', () => {
+            const examples = [];
+            // pseudo-random, each line as one period with 7 unique numbers
+            for (let i = 0; i < 20; i++) {
+                const period = new Set();
+                while (period.size < 7) {
+                    period.add(Math.floor(Math.random() * 49) + 1);
+                }
+                examples.push(Array.from(period).sort((a, b) => a - b).join(' '));
+            }
+            elements.historyInput.value = examples.join('\n');
+            renderPreview();
+        });
+
+        elements.historyInput.addEventListener('input', debounce(() => {
+            renderPreview();
+            saveCurrentToLocal();
+        }, 200));
+
+        elements.excludePeriods.addEventListener('input', debounce(() => {
+            saveCurrentToLocal();
+        }, 200));
+
+        elements.predictCount.addEventListener('input', debounce(() => {
+            saveCurrentToLocal();
+        }, 200));
+
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 'Enter') {
+                performAnalysis();
+            }
+        });
+
+        elements.btnExportJSON.addEventListener('click', exportJSON);
+        elements.btnExportCSV.addEventListener('click', exportCSV);
+    }
+
+    // Initial
+    loadCurrentFromLocal();
+    renderPreview();
+    setupTabs();
+    attachEvents();
+    setupHistoryActions();
+    renderHistory();
+
+    // If there is existing data, run analysis once
+    if (elements.historyInput.value.trim()) {
+        performAnalysis();
+    }
 </script>
 
 </body>
