@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>49数字历史数据分析与预测工具</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #64748b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #06b6d4;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --white: #ffffff;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f1f5f9;
+            color: var(--gray-800);
+            line-height: 1.5;
+            padding-bottom: 3rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1.5rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 2rem 0;
+            background: linear-gradient(135deg, #1e293b, #334155);
+            color: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+        }
+
+        header h1 {
+            font-size: 2.25rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.025em;
+        }
+
+        header p {
+            font-size: 1.125rem;
+            opacity: 0.9;
+        }
+
+        .grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+        @media (min-width: 768px) {
+            .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+            .grid-cols-12 { grid-template-columns: repeat(12, minmax(0, 1fr)); }
+        }
+
+        .card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--gray-200);
+            overflow: hidden;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-header {
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--gray-200);
+            background-color: var(--gray-50);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+
+        .card-body {
+            padding: 1.25rem;
+            flex: 1;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 0.5rem;
+        }
+
+        textarea {
+            width: 100%;
+            height: 200px;
+            padding: 0.75rem;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius-md);
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-size: 0.875rem;
+            resize: vertical;
+            transition: border-color 0.15s ease-in-out;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .input {
+            width: 100%;
+            padding: 0.625rem 0.75rem;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+        }
+
+        .input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.625rem 1.25rem;
+            font-weight: 600;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            font-size: 0.875rem;
+            gap: 0.5rem;
+        }
+
+        .btn-primary { background-color: var(--primary); color: white; }
+        .btn-primary:hover { background-color: var(--primary-dark); }
+        .btn-secondary { background-color: var(--gray-200); color: var(--gray-700); }
+        .btn-secondary:hover { background-color: var(--gray-300); }
+        .btn-danger { background-color: var(--danger); color: white; }
+        .btn-danger:hover { background-color: #dc2626; }
+        .btn-success { background-color: var(--success); color: white; }
+        .btn-success:hover { background-color: #059669; }
+
+        .btn-block { width: 100%; }
+
+        .alert {
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+        }
+
+        .alert-info { background-color: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+        .alert-warning { background-color: #ffedd5; color: #9a3412; border: 1px solid #fed7aa; }
+        .alert-danger { background-color: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.125rem 0.625rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-primary { background-color: #dbeafe; color: #1e40af; }
+        .badge-success { background-color: #d1fae5; color: #065f46; }
+        .badge-warning { background-color: #fef3c7; color: #92400e; }
+        .badge-danger { background-color: #fee2e2; color: #991b1b; }
+        .badge-info { background-color: #e0f2fe; color: #075985; }
+
+        /* Prediction Results */
+        .top-10-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+
+        .prediction-card {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-md);
+            padding: 1rem;
+            position: relative;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .prediction-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+        }
+
+        .rank-badge {
+            position: absolute;
+            top: 0.5rem;
+            left: 0.5rem;
+            width: 1.5rem;
+            height: 1.5rem;
+            background: var(--dark);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 800;
+        }
+
+        .prediction-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            text-align: center;
+            color: var(--primary);
+            margin: 0.5rem 0;
+        }
+
+        .prediction-score {
+            text-align: center;
+            font-size: 0.875rem;
+            color: var(--gray-500);
+            margin-bottom: 0.5rem;
+        }
+
+        .prediction-reason {
+            font-size: 0.75rem;
+            color: var(--gray-600);
+            border-top: 1px solid var(--gray-100);
+            padding-top: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Number Grid / Heatmap */
+        .number-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.5rem;
+        }
+
+        .number-cell {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-sm);
+            font-weight: 700;
+            font-size: 0.875rem;
+            border: 1px solid var(--gray-200);
+            position: relative;
+            cursor: default;
+        }
+
+        .number-cell.excluded {
+            background-color: var(--gray-200);
+            color: var(--gray-400);
+            text-decoration: line-through;
+        }
+
+        .number-cell.predicted {
+            border: 2px solid var(--primary);
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+        }
+
+        .number-cell .tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--dark);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+            z-index: 10;
+        }
+
+        .number-cell:hover .tooltip {
+            opacity: 1;
+        }
+
+        /* Table */
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+        }
+
+        th {
+            background-color: var(--gray-50);
+            font-weight: 600;
+            text-align: left;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--gray-200);
+            color: var(--gray-700);
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--gray-100);
+            color: var(--gray-600);
+        }
+
+        tr:hover td {
+            background-color: var(--gray-50);
+        }
+
+        /* Charts */
+        .chart-bar-container {
+            height: 300px;
+            display: flex;
+            align-items: flex-end;
+            gap: 4px;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .chart-bar-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100%;
+            justify-content: flex-end;
+        }
+
+        .chart-bar {
+            width: 100%;
+            background-color: var(--primary);
+            border-radius: 2px 2px 0 0;
+            transition: height 0.5s ease-out;
+            min-height: 2px;
+            position: relative;
+        }
+
+        .chart-bar:hover {
+            opacity: 0.8;
+        }
+
+        .chart-bar-label {
+            font-size: 0.7rem;
+            margin-top: 0.5rem;
+            font-weight: 600;
+            transform: rotate(-45deg);
+            white-space: nowrap;
+        }
+
+        .chart-bar-value {
+            position: absolute;
+            top: -1.25rem;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--gray-200);
+            margin-bottom: 1rem;
+        }
+
+        .tab {
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--gray-500);
+            border-bottom: 2px solid transparent;
+        }
+
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .hidden { display: none; }
+
+        .progress-bar {
+            height: 8px;
+            background-color: var(--gray-200);
+            border-radius: 4px;
+            overflow: hidden;
+            width: 100px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--primary);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 640px) {
+            .number-grid {
+                grid-template-columns: repeat(7, 1fr);
+            }
+            .header h1 { font-size: 1.5rem; }
+            .container { padding: 0.75rem; }
+        }
+
+        .help-text {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+            margin-top: 0.25rem;
+        }
+
+        .action-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .stats-summary {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        @media (min-width: 1024px) {
+            .stats-summary {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .stat-box {
+            background: var(--gray-50);
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            text-align: center;
+            border: 1px solid var(--gray-200);
+        }
+
+        .stat-box-value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--gray-900);
+        }
+
+        .stat-box-label {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>49数字历史数据分析与预测</h1>
+        <p>基于多算法综合评分，自动避开近期热号，推选下期高概率数字</p>
+    </header>
+
+    <div class="grid grid-cols-12">
+        <!-- Input Section -->
+        <div class="col-span-12 lg:col-span-5">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">数据录入</span>
+                    <button id="btnLoadExample" class="btn btn-secondary btn-sm" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">加载示例数据</button>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="historyInput">粘贴历史中奖号码（1-49）</label>
+                        <textarea id="historyInput" placeholder="支持多种格式：&#10;1, 2, 3, 4, 5, 6&#10;01 02 03 04 05 06&#10;每行代表一期，或者全部数字用空格/逗号分隔"></textarea>
+                        <p class="help-text">支持空格、逗号、换行、顿号分隔。系统将自动过滤非数字及超出1-49范围的内容。</p>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="form-group">
+                            <label for="excludePeriods">避开最近几期出现过的数字</label>
+                            <input type="number" id="excludePeriods" class="input" value="7" min="0" max="20">
+                            <p class="help-text">默认为最近 7 期</p>
+                        </div>
+                        <div class="form-group">
+                            <label for="predictCount">推选数字个数</label>
+                            <input type="number" id="predictCount" class="input" value="10" min="1" max="20">
+                            <p class="help-text">默认为 Top 10</p>
+                        </div>
+                    </div>
+
+                    <div class="action-row">
+                        <button id="btnAnalyze" class="btn btn-primary">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M6 1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h3zM3 2v3h3V2H3zm6-1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h3zm0 1v3h3V2H9zM5 8a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1h2zm-2 1v3h3V9H3zm10-1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-3a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1h3zm-3 1v3h3V9h-3z"/></svg>
+                            开始分析预测
+                        </button>
+                        <button id="btnClear" class="btn btn-secondary">清空数据</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Result Overview Section -->
+        <div class="col-span-12 lg:col-span-7">
+            <div id="welcomeMessage" class="card">
+                <div class="card-body" style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 400px;">
+                    <div style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.2;">📊</div>
+                    <h2 class="card-title" style="font-size: 1.5rem; margin-bottom: 0.5rem;">准备就绪</h2>
+                    <p style="color: var(--gray-500); max-width: 400px;">请在左侧输入历史中奖数据，然后点击“开始分析预测”按钮。系统将基于多种统计模型为您计算结果。</p>
+                </div>
+            </div>
+
+            <div id="resultsContainer" class="hidden">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">分析结果概览</span>
+                        <div id="analysisTime" class="badge badge-info"></div>
+                    </div>
+                    <div class="card-body">
+                        <div class="stats-summary">
+                            <div class="stat-box">
+                                <div id="statTotalPeriods" class="stat-box-value">0</div>
+                                <div class="stat-box-label">总期数</div>
+                            </div>
+                            <div class="stat-box">
+                                <div id="statTotalNumbers" class="stat-box-value">0</div>
+                                <div class="stat-box-label">识别数字数</div>
+                            </div>
+                            <div class="stat-box">
+                                <div id="statExcludedCount" class="stat-box-value">0</div>
+                                <div class="stat-box-label">排除数字</div>
+                            </div>
+                            <div class="stat-box">
+                                <div id="statAvgFreq" class="stat-box-value">0</div>
+                                <div class="stat-box-label">平均频率</div>
+                            </div>
+                        </div>
+
+                        <div id="excludedNumbersSection" class="alert alert-warning">
+                            <strong>已避开最后 <span id="displayExcludeN">7</span> 期数字：</strong>
+                            <div id="excludedList" style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem;"></div>
+                        </div>
+
+                        <h3 class="card-title" style="margin: 1.5rem 0 1rem;">🏆 Top <span id="displayPredictK">10</span> 强力推荐</h3>
+                        <div id="top10Results" class="top-10-grid">
+                            <!-- Cards will be inserted here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Details Section -->
+        <div class="col-span-12">
+            <div id="detailsContainer" class="card hidden" style="margin-top: 1.5rem;">
+                <div class="card-header">
+                    <div class="tabs" style="margin-bottom: 0;">
+                        <div class="tab active" data-tab="tab-heatmap">全局热力图</div>
+                        <div class="tab" data-tab="tab-stats">详细统计表</div>
+                        <div class="tab" data-tab="tab-charts">趋势分析图</div>
+                        <div class="tab" data-tab="tab-algorithms">预测算法对比</div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button id="btnExportJSON" class="btn btn-secondary btn-sm" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">导出 JSON</button>
+                        <button id="btnExportCSV" class="btn btn-secondary btn-sm" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">导出 CSV</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Global Heatmap -->
+                    <div id="tab-heatmap" class="tab-content active">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div>
+                                <h4 class="card-title" style="font-size: 1rem; margin-bottom: 1rem;">49数字热冷分布（颜色越深越频繁）</h4>
+                                <div id="heatmapGrid" class="number-grid">
+                                    <!-- 49 cells will be inserted here -->
+                                </div>
+                                <div style="display: flex; justify-content: space-between; margin-top: 1rem; font-size: 0.75rem; color: var(--gray-500);">
+                                    <span>冷 (Rare)</span>
+                                    <div style="flex: 1; margin: 0 1rem; height: 10px; background: linear-gradient(to right, #f1f5f9, var(--primary)); border-radius: 5px;"></div>
+                                    <span>热 (Frequent)</span>
+                                </div>
+                            </div>
+                            <div style="background: var(--gray-50); padding: 1.5rem; border-radius: var(--radius-md);">
+                                <h4 class="card-title" style="font-size: 1rem; margin-bottom: 1rem;">图例说明</h4>
+                                <ul style="list-style: none; font-size: 0.875rem; color: var(--gray-600);">
+                                    <li style="display: flex; align-items: center; margin-bottom: 0.5rem;">
+                                        <div style="width: 20px; height: 20px; background: var(--white); border: 2px solid var(--primary); border-radius: 4px; margin-right: 10px;"></div>
+                                        <span>预测推选的数字 (Top 10)</span>
+                                    </li>
+                                    <li style="display: flex; align-items: center; margin-bottom: 0.5rem;">
+                                        <div style="width: 20px; height: 20px; background: var(--gray-200); border: 1px solid var(--gray-300); border-radius: 4px; margin-right: 10px; text-decoration: line-through; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; color: #94a3b8;">49</div>
+                                        <span>避开的数字 (最近 7 期已出)</span>
+                                    </li>
+                                    <li style="display: flex; align-items: center; margin-bottom: 0.5rem;">
+                                        <div style="width: 20px; height: 20px; background: #3b82f6; border-radius: 4px; margin-right: 10px; opacity: 0.8;"></div>
+                                        <span>常规出现数字 (深浅代表频率)</span>
+                                    </li>
+                                </ul>
+                                <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--gray-200);">
+                                    <p style="font-size: 0.875rem; color: var(--gray-500);">
+                                        <strong>分析逻辑：</strong> 我们首先收集所有历史数据并计算每个数字的出现指标。然后，我们从最后几期数据中提取所有出现过的数字，并将它们从预测名单中剔除。最后，在剩余的数字中，根据 5 种算法的综合得分选出最高的 10 个数字。
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Statistics Table -->
+                    <div id="tab-stats" class="tab-content">
+                        <div class="table-responsive">
+                            <table id="statsTable">
+                                <thead>
+                                    <tr>
+                                        <th>数字</th>
+                                        <th>出现次数</th>
+                                        <th>频率 (%)</th>
+                                        <th>最后出现 (期)</th>
+                                        <th>平均间隔</th>
+                                        <th>频率分</th>
+                                        <th>遗漏分</th>
+                                        <th>周期分</th>
+                                        <th>离散分</th>
+                                        <th>综合评分</th>
+                                        <th>状态</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="statsTableBody">
+                                    <!-- Rows will be inserted here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Charts -->
+                    <div id="tab-charts" class="tab-content">
+                        <h4 class="card-title" style="font-size: 1rem; margin-bottom: 1.5rem;">预测推选 Top 10 数字的综合评分对比</h4>
+                        <div id="topChart" class="chart-bar-container">
+                            <!-- Bars will be inserted here -->
+                        </div>
+                    </div>
+
+                    <!-- Algorithms -->
+                    <div id="tab-algorithms" class="tab-content">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <div class="card" style="box-shadow: none; border-style: dashed;">
+                                <div class="card-body">
+                                    <h5 style="font-weight: 700; margin-bottom: 0.5rem; color: var(--primary);">1. 频率分析 (Frequency)</h5>
+                                    <p style="font-size: 0.875rem; color: var(--gray-600);">基于历史数据中每个数字出现的总次数。出现次数越多，在统计学上其“热度”越高。</p>
+                                </div>
+                            </div>
+                            <div class="card" style="box-shadow: none; border-style: dashed;">
+                                <div class="card-body">
+                                    <h5 style="font-weight: 700; margin-bottom: 0.5rem; color: var(--primary);">2. 冷号反弹 (Gap Analysis)</h5>
+                                    <p style="font-size: 0.875rem; color: var(--gray-600);">分析数字距离上次出现的间隔。根据反弹理论，长期未出的数字在未来几期出现的概率会逐渐增大。</p>
+                                </div>
+                            </div>
+                            <div class="card" style="box-shadow: none; border-style: dashed;">
+                                <div class="card-body">
+                                    <h5 style="font-weight: 700; margin-bottom: 0.5rem; color: var(--primary);">3. 周期性分析 (Periodicity)</h5>
+                                    <p style="font-size: 0.875rem; color: var(--gray-600);">计算每个数字出现的平均间隔时间。当当前间隔接近平均间隔时，其权重会相应提升。</p>
+                                </div>
+                            </div>
+                            <div class="card" style="box-shadow: none; border-style: dashed;">
+                                <div class="card-body">
+                                    <h5 style="font-weight: 700; margin-bottom: 0.5rem; color: var(--primary);">4. 卡方偏差 (Chi-Square)</h5>
+                                    <p style="font-size: 0.875rem; color: var(--gray-600);">利用卡方检验原理，分析哪些数字明显偏离了均匀分布，用于识别潜在的统计异常趋势。</p>
+                                </div>
+                            </div>
+                            <div class="card" style="box-shadow: none; border-style: dashed;">
+                                <div class="card-body">
+                                    <h5 style="font-weight: 700; margin-bottom: 0.5rem; color: var(--primary);">5. 综合加权 (Comprehensive)</h5>
+                                    <p style="font-size: 0.875rem; color: var(--gray-600);">结合以上所有因素进行加权评分，并在最终步骤排除最后 N 期的干扰，生成最终建议。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer style="margin-top: 3rem; text-align: center; color: var(--gray-500); font-size: 0.875rem;">
+        <p>© 2024 49数字历史数据分析与预测工具 - 仅供学习参考，请勿用于非法用途</p>
+    </footer>
+</div>
+
+<script>
+    /**
+     * Logic Core
+     */
+    const STORAGE_KEY = 'numberPredictorData_v1';
+    const state = {
+        rawData: '',
+        processedData: [], // Array of periods, each is an array of numbers
+        flatData: [], // All numbers in one array
+        stats: {}, // Map of number -> { count, freq, lastSeen, gaps, avgGap, score }
+        predictions: [],
+        excludedNumbers: [],
+        settings: {
+            excludeN: 7,
+            predictCount: 10
+        }
+    };
+
+    // DOM Elements
+    const elements = {
+        historyInput: document.getElementById('historyInput'),
+        excludePeriods: document.getElementById('excludePeriods'),
+        predictCount: document.getElementById('predictCount'),
+        btnAnalyze: document.getElementById('btnAnalyze'),
+        btnClear: document.getElementById('btnClear'),
+        btnLoadExample: document.getElementById('btnLoadExample'),
+        welcomeMessage: document.getElementById('welcomeMessage'),
+        resultsContainer: document.getElementById('resultsContainer'),
+        detailsContainer: document.getElementById('detailsContainer'),
+        statTotalPeriods: document.getElementById('statTotalPeriods'),
+        statTotalNumbers: document.getElementById('statTotalNumbers'),
+        statExcludedCount: document.getElementById('statExcludedCount'),
+        statAvgFreq: document.getElementById('statAvgFreq'),
+        analysisTime: document.getElementById('analysisTime'),
+        displayExcludeN: document.getElementById('displayExcludeN'),
+        displayPredictK: document.getElementById('displayPredictK'),
+        excludedList: document.getElementById('excludedList'),
+        top10Results: document.getElementById('top10Results'),
+        heatmapGrid: document.getElementById('heatmapGrid'),
+        statsTableBody: document.getElementById('statsTableBody'),
+        topChart: document.getElementById('topChart'),
+        tabs: document.querySelectorAll('.tab'),
+        tabContents: document.querySelectorAll('.tab-content'),
+        btnExportJSON: document.getElementById('btnExportJSON'),
+        btnExportCSV: document.getElementById('btnExportCSV')
+    };
+
+    /**
+     * Persistence
+     */
+    function saveToLocal() {
+        const data = {
+            rawData: elements.historyInput.value,
+            settings: {
+                excludeN: elements.excludePeriods.value,
+                predictCount: elements.predictCount.value
+            }
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+
+    function loadFromLocal() {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+            try {
+                const data = JSON.parse(saved);
+                elements.historyInput.value = data.rawData || '';
+                if (data.settings) {
+                    elements.excludePeriods.value = data.settings.excludeN || 7;
+                    elements.predictCount.value = data.settings.predictCount || 10;
+                }
+                if (elements.historyInput.value) {
+                    performAnalysis();
+                }
+            } catch (e) {
+                console.error('Failed to load saved data', e);
+            }
+        }
+    }
+
+    /**
+     * Data Processing Functions
+     */
+    function parseInput(input) {
+        const lines = input.split('\n').filter(line => line.trim() !== '');
+        const periods = [];
+        let allNumbers = [];
+
+        lines.forEach(line => {
+            // Replace common separators with space
+            const normalized = line.replace(/[，、,;；|]/g, ' ');
+            const numbers = normalized.split(/\s+/)
+                .map(n => parseInt(n))
+                .filter(n => !isNaN(n) && n >= 1 && n <= 49);
+            
+            if (numbers.length > 0) {
+                periods.push(numbers);
+                allNumbers = allNumbers.concat(numbers);
+            }
+        });
+
+        // Fallback: If no lines were recognized but input has numbers, try parsing everything
+        if (periods.length === 0) {
+            const normalized = input.replace(/[，、,;；|\n]/g, ' ');
+            const numbers = normalized.split(/\s+/)
+                .map(n => parseInt(n))
+                .filter(n => !isNaN(n) && n >= 1 && n <= 49);
+            
+            if (numbers.length > 0) {
+                // If we have many numbers but no lines, we might treat it as one period or try to chunk it
+                // For simplicity, we'll treat it as one period for stats, or user should use lines
+                periods.push(numbers);
+                allNumbers = numbers;
+            }
+        }
+
+        return { periods, allNumbers };
+    }
+
+    function calculateStats(periods, allNumbers) {
+        const stats = {};
+        const totalPeriods = periods.length;
+        const totalNumCount = allNumbers.length;
+
+        // Initialize 1-49
+        for (let i = 1; i <= 49; i++) {
+            stats[i] = {
+                num: i,
+                count: 0,
+                freq: 0,
+                lastSeen: -1, // Periods ago
+                gaps: [],
+                avgGap: 0,
+                chiSquare: 0,
+                scores: {
+                    freq: 0,
+                    gap: 0,
+                    period: 0,
+                    chi: 0
+                },
+                totalScore: 0
+            };
+        }
+
+        // Count frequencies
+        allNumbers.forEach(n => {
+            if (stats[n]) stats[n].count++;
+        });
+
+        // Calculate gaps
+        for (let i = 1; i <= 49; i++) {
+            let lastIdx = -1;
+            periods.forEach((period, pIdx) => {
+                if (period.includes(i)) {
+                    if (lastIdx !== -1) {
+                        stats[i].gaps.push(pIdx - lastIdx);
+                    }
+                    lastIdx = pIdx;
+                }
+            });
+
+            stats[i].freq = (stats[i].count / totalNumCount * 100) || 0;
+            
+            // Last seen (how many periods since last appearance)
+            // periods[0] is the oldest, periods[last] is the newest
+            let foundAt = -1;
+            for (let j = periods.length - 1; j >= 0; j--) {
+                if (periods[j].includes(i)) {
+                    foundAt = j;
+                    break;
+                }
+            }
+            
+            if (foundAt !== -1) {
+                stats[i].lastSeen = (periods.length - 1) - foundAt;
+            } else {
+                stats[i].lastSeen = periods.length; // Never seen
+            }
+
+            if (stats[i].gaps.length > 0) {
+                stats[i].avgGap = stats[i].gaps.reduce((a, b) => a + b, 0) / stats[i].gaps.length;
+            } else {
+                stats[i].avgGap = periods.length;
+            }
+        }
+
+        // Chi-Square Deviation
+        // Expected frequency for each number if uniform: totalNumCount / 49
+        const expected = totalNumCount / 49;
+        for (let i = 1; i <= 49; i++) {
+            stats[i].chiSquare = Math.pow(stats[i].count - expected, 2) / expected;
+        }
+
+        // Normalize scores (0-100)
+        // 1. Freq Score: Higher count = higher score
+        const maxCount = Math.max(...Object.values(stats).map(s => s.count));
+        // 2. Gap Score: Higher lastSeen (cold number) = higher score (rebound potential)
+        const maxLastSeen = Math.max(...Object.values(stats).map(s => s.lastSeen));
+        // 3. Period Score: When lastSeen is close to avgGap, higher score
+        // 4. Chi Score: Higher deviation = higher score (anomaly detection)
+        const maxChi = Math.max(...Object.values(stats).map(s => s.chiSquare));
+
+        for (let i = 1; i <= 49; i++) {
+            const s = stats[i];
+            
+            // Frequency score
+            s.scores.freq = maxCount > 0 ? (s.count / maxCount) * 100 : 0;
+            
+            // Gap rebound score
+            s.scores.gap = maxLastSeen > 0 ? (s.lastSeen / maxLastSeen) * 100 : 0;
+            
+            // Periodicity score (bell curve centered at avgGap)
+            if (s.avgGap > 0) {
+                const diff = Math.abs(s.lastSeen - s.avgGap);
+                s.scores.period = Math.max(0, 100 - (diff / s.avgGap) * 100);
+            } else {
+                s.scores.period = 0;
+            }
+            
+            // Chi-Square score
+            s.scores.chi = maxChi > 0 ? (s.chiSquare / maxChi) * 100 : 0;
+
+            // Combined Score (Weights: Freq: 30%, Gap: 30%, Period: 20%, Chi: 20%)
+            s.totalScore = (s.scores.freq * 0.3) + (s.scores.gap * 0.3) + (s.scores.period * 0.2) + (s.scores.chi * 0.2);
+        }
+
+        return stats;
+    }
+
+    function performAnalysis() {
+        const input = elements.historyInput.value.trim();
+        if (!input) {
+            alert('请输入历史数据！');
+            return;
+        }
+
+        const { periods, allNumbers } = parseInput(input);
+        if (periods.length === 0) {
+            alert('未能识别有效数据，请检查格式！');
+            return;
+        }
+
+        state.processedData = periods;
+        state.flatData = allNumbers;
+        state.stats = calculateStats(periods, allNumbers);
+        
+        state.settings.excludeN = parseInt(elements.excludePeriods.value) || 0;
+        state.settings.predictCount = parseInt(elements.predictCount.value) || 10;
+
+        // Determine excluded numbers (from last N periods)
+        const excludeN = Math.min(state.settings.excludeN, periods.length);
+        const excludedSet = new Set();
+        for (let i = periods.length - 1; i >= Math.max(0, periods.length - excludeN); i--) {
+            periods[i].forEach(n => excludedSet.add(n));
+        }
+        state.excludedNumbers = Array.from(excludedSet).sort((a, b) => a - b);
+
+        // Filter and Sort for predictions
+        state.predictions = Object.values(state.stats)
+            .filter(s => !excludedSet.has(s.num))
+            .sort((a, b) => b.totalScore - a.totalScore)
+            .slice(0, state.settings.predictCount);
+
+        saveToLocal();
+        renderResults();
+    }
+
+    /**
+     * UI Rendering Functions
+     */
+    function renderResults() {
+        elements.welcomeMessage.classList.add('hidden');
+        elements.resultsContainer.classList.remove('hidden');
+        elements.detailsContainer.classList.remove('hidden');
+
+        // Update stats summary
+        elements.statTotalPeriods.textContent = state.processedData.length;
+        elements.statTotalNumbers.textContent = state.flatData.length;
+        elements.statExcludedCount.textContent = state.excludedNumbers.length;
+        
+        const avgFreq = (state.flatData.length / 49 / state.processedData.length * 100).toFixed(2);
+        elements.statAvgFreq.textContent = avgFreq + '%';
+        
+        elements.analysisTime.textContent = '分析时间: ' + new Date().toLocaleTimeString();
+        elements.displayExcludeN.textContent = state.settings.excludeN;
+        elements.displayPredictK.textContent = state.settings.predictCount;
+
+        // Render Excluded List
+        elements.excludedList.innerHTML = '';
+        state.excludedNumbers.forEach(n => {
+            const span = document.createElement('span');
+            span.className = 'badge badge-secondary';
+            span.textContent = n.toString().padStart(2, '0');
+            elements.excludedList.appendChild(span);
+        });
+        if (state.excludedNumbers.length === 0) {
+            elements.excludedList.textContent = '无（未设置避开期数或数据不足）';
+        }
+
+        // Render Top 10 Cards
+        elements.top10Results.innerHTML = '';
+        state.predictions.forEach((pred, index) => {
+            const card = document.createElement('div');
+            card.className = 'prediction-card';
+            
+            let levelClass = 'badge-info';
+            let levelText = '🔵 参考';
+            if (index < 3) {
+                levelClass = 'badge-success';
+                levelText = '🟢 强烈推荐';
+            } else if (index < 6) {
+                levelClass = 'badge-warning';
+                levelText = '🟡 中等推荐';
+            }
+
+            const reasons = [];
+            if (pred.scores.freq > 80) reasons.push('历史高频热号');
+            if (pred.scores.gap > 80) reasons.push('冷号反弹潜力大');
+            if (pred.scores.period > 80) reasons.push('符合出现周期规律');
+            if (pred.scores.chi > 80) reasons.push('统计分布异常偏离');
+            
+            const reasonText = reasons.length > 0 ? reasons.join('、') : '综合多项指标计算';
+
+            card.innerHTML = `
+                <div class="rank-badge">${index + 1}</div>
+                <div style="text-align: right;">
+                    <span class="badge ${levelClass}">${levelText}</span>
+                </div>
+                <div class="prediction-number">${pred.num.toString().padStart(2, '0')}</div>
+                <div class="prediction-score">预测指数: <strong>${pred.totalScore.toFixed(1)}</strong></div>
+                <div style="font-size: 0.75rem; color: var(--gray-500); display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                    <span>频率: ${pred.freq.toFixed(1)}%</span>
+                    <span>间隔: ${pred.lastSeen} 期</span>
+                </div>
+                <div class="prediction-reason"><strong>分析:</strong> ${reasonText}</div>
+            `;
+            elements.top10Results.appendChild(card);
+        });
+
+        renderHeatmap();
+        renderStatsTable();
+        renderChart();
+    }
+
+    function renderHeatmap() {
+        elements.heatmapGrid.innerHTML = '';
+        const maxCount = Math.max(...Object.values(state.stats).map(s => s.count));
+        const excludedSet = new Set(state.excludedNumbers);
+        const predictedSet = new Set(state.predictions.map(p => p.num));
+
+        for (let i = 1; i <= 49; i++) {
+            const s = state.stats[i];
+            const cell = document.createElement('div');
+            cell.className = 'number-cell';
+            cell.textContent = i.toString().padStart(2, '0');
+            
+            // Tooltip
+            const tooltip = document.createElement('div');
+            tooltip.className = 'tooltip';
+            tooltip.textContent = `出现 ${s.count} 次 (${s.freq.toFixed(1)}%)`;
+            cell.appendChild(tooltip);
+
+            if (excludedSet.has(i)) {
+                cell.classList.add('excluded');
+            } else if (predictedSet.has(i)) {
+                cell.classList.add('predicted');
+                cell.style.backgroundColor = 'var(--white)';
+            } else {
+                // Background color based on frequency
+                const alpha = maxCount > 0 ? (s.count / maxCount) : 0;
+                cell.style.backgroundColor = `rgba(37, 99, 235, ${Math.max(0.05, alpha * 0.8)})`;
+                if (alpha > 0.6) cell.style.color = 'white';
+            }
+            
+            elements.heatmapGrid.appendChild(cell);
+        }
+    }
+
+    function renderStatsTable() {
+        elements.statsTableBody.innerHTML = '';
+        const excludedSet = new Set(state.excludedNumbers);
+        
+        // Show all 49 numbers, sorted by frequency desc
+        const sortedStats = Object.values(state.stats).sort((a, b) => b.count - a.count);
+        
+        sortedStats.forEach(s => {
+            const tr = document.createElement('tr');
+            const isExcluded = excludedSet.has(s.num);
+            const isPredicted = state.predictions.some(p => p.num === s.num);
+            
+            let status = '<span class="badge">常规</span>';
+            if (isExcluded) status = '<span class="badge badge-danger">排除</span>';
+            else if (isPredicted) status = '<span class="badge badge-success">推选</span>';
+
+            tr.innerHTML = `
+                <td style="font-weight: 700;">${s.num.toString().padStart(2, '0')}</td>
+                <td>${s.count}</td>
+                <td>
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <span style="min-width: 40px;">${s.freq.toFixed(1)}%</span>
+                        <div class="progress-bar"><div class="progress-fill" style="width: ${s.freq * 5}%"></div></div>
+                    </div>
+                </td>
+                <td>${s.lastSeen}</td>
+                <td>${s.avgGap.toFixed(1)}</td>
+                <td style="color: var(--gray-400); font-size: 0.75rem;">${s.scores.freq.toFixed(0)}</td>
+                <td style="color: var(--gray-400); font-size: 0.75rem;">${s.scores.gap.toFixed(0)}</td>
+                <td style="color: var(--gray-400); font-size: 0.75rem;">${s.scores.period.toFixed(0)}</td>
+                <td style="color: var(--gray-400); font-size: 0.75rem;">${s.scores.chi.toFixed(0)}</td>
+                <td style="font-weight: 700; color: var(--primary);">${s.totalScore.toFixed(1)}</td>
+                <td>${status}</td>
+            `;
+            elements.statsTableBody.appendChild(tr);
+        });
+    }
+
+    function renderChart() {
+        elements.topChart.innerHTML = '';
+        const maxScore = Math.max(...state.predictions.map(p => p.totalScore), 1);
+
+        state.predictions.forEach(p => {
+            const item = document.createElement('div');
+            item.className = 'chart-bar-item';
+            
+            const height = (p.totalScore / maxScore) * 100;
+            
+            item.innerHTML = `
+                <div class="chart-bar" style="height: ${height}%">
+                    <span class="chart-bar-value">${p.totalScore.toFixed(1)}</span>
+                </div>
+                <span class="chart-bar-label">#${p.num.toString().padStart(2, '0')}</span>
+            `;
+            elements.topChart.appendChild(item);
+        });
+    }
+
+    /**
+     * Tab Handling
+     */
+    elements.tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            elements.tabs.forEach(t => t.classList.remove('active'));
+            elements.tabContents.forEach(c => c.classList.remove('active'));
+            
+            tab.classList.add('active');
+            const contentId = tab.getAttribute('data-tab');
+            document.getElementById(contentId).classList.add('active');
+        });
+    });
+
+    /**
+     * Event Listeners
+     */
+    elements.btnAnalyze.addEventListener('click', performAnalysis);
+    
+    elements.btnClear.addEventListener('click', () => {
+        if (confirm('确定要清空输入框和分析结果吗？')) {
+            elements.historyInput.value = '';
+            elements.resultsContainer.classList.add('hidden');
+            elements.detailsContainer.classList.add('hidden');
+            elements.welcomeMessage.classList.remove('hidden');
+            localStorage.removeItem(STORAGE_KEY);
+        }
+    });
+
+    elements.btnLoadExample.addEventListener('click', () => {
+        const examples = [];
+        // Generate some pseudo-random but valid looking data for 20 periods
+        for (let i = 0; i < 20; i++) {
+            const period = [];
+            while (period.length < 7) {
+                const r = Math.floor(Math.random() * 49) + 1;
+                if (!period.includes(r)) period.push(r);
+            }
+            examples.push(period.sort((a, b) => a - b).join(' '));
+        }
+        elements.historyInput.value = examples.join('\n');
+    });
+
+    elements.btnExportJSON.addEventListener('click', () => {
+        const data = {
+            timestamp: new Date().toISOString(),
+            summary: {
+                totalPeriods: state.processedData.length,
+                totalNumbers: state.flatData.length,
+                excludedCount: state.excludedNumbers.length
+            },
+            excluded: state.excludedNumbers,
+            predictions: state.predictions.map(p => ({
+                number: p.num,
+                score: p.totalScore,
+                freq: p.freq,
+                lastSeen: p.lastSeen
+            })),
+            fullStats: state.stats
+        };
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `analysis_result_${new Date().getTime()}.json`;
+        a.click();
+    });
+
+    elements.btnExportCSV.addEventListener('click', () => {
+        let csv = 'Number,Count,Frequency,LastSeen,AvgGap,TotalScore,Status\n';
+        const excludedSet = new Set(state.excludedNumbers);
+        Object.values(state.stats).forEach(s => {
+            let status = 'Normal';
+            if (excludedSet.has(s.num)) status = 'Excluded';
+            else if (state.predictions.some(p => p.num === s.num)) status = 'Predicted';
+            
+            csv += `${s.num},${s.count},${s.freq.toFixed(2)}%,${s.lastSeen},${s.avgGap.toFixed(2)},${s.totalScore.toFixed(2)},${status}\n`;
+        });
+        
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `analysis_result_${new Date().getTime()}.csv`;
+        a.click();
+    });
+
+    // Initialize
+    loadFromLocal();
+
+</script>
+
+</body>
+</html>
