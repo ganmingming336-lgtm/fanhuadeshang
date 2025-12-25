@@ -395,6 +395,176 @@
             white-space: nowrap;
         }
 
+        .top3-card {
+            background: white;
+            border-radius: 16px;
+            border: 2px solid;
+            padding: 18px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .top3-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--success));
+        }
+
+        .top3-card.rank-1 {
+            border-color: #10b981;
+            background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+        }
+
+        .top3-card.rank-2 {
+            border-color: #3b82f6;
+            background: linear-gradient(135deg, #eff6ff, #dbeafe);
+        }
+
+        .top3-card.rank-3 {
+            border-color: #f59e0b;
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+        }
+
+        .top3-rank {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+            border-radius: 50%;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        .top3-card.rank-1 .top3-rank {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .top3-card.rank-2 .top3-rank {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+        }
+
+        .top3-card.rank-3 .top3-rank {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+
+        .top3-zodiac {
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin: 10px 0;
+            color: #111827;
+        }
+
+        .top3-prob {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #111827;
+            margin-bottom: 12px;
+        }
+
+        .top3-stats {
+            font-size: 0.85rem;
+            color: #6b7280;
+            line-height: 1.8;
+            margin-bottom: 12px;
+        }
+
+        .top3-reason {
+            font-size: 0.9rem;
+            color: #374151;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 10px;
+            border-radius: 8px;
+            border-left: 3px solid;
+            margin-top: 12px;
+        }
+
+        .top3-card.rank-1 .top3-reason {
+            border-left-color: #10b981;
+        }
+
+        .top3-card.rank-2 .top3-reason {
+            border-left-color: #3b82f6;
+        }
+
+        .top3-card.rank-3 .top3-reason {
+            border-left-color: #f59e0b;
+        }
+
+        .bar-chart {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            gap: 8px;
+            min-height: 280px;
+            padding: 20px 10px;
+            background: linear-gradient(135deg, #f9fafb, #ffffff);
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .bar-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .bar-column {
+            width: 100%;
+            min-height: 10px;
+            background: linear-gradient(180deg, #3b82f6, #2563eb);
+            border-radius: 6px 6px 0 0;
+            transition: all 0.3s ease;
+            position: relative;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+        }
+
+        .bar-column:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.5);
+        }
+
+        .bar-column.hot {
+            background: linear-gradient(180deg, #f59e0b, #d97706);
+            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+        }
+
+        .bar-column.cold {
+            background: linear-gradient(180deg, #6b7280, #4b5563);
+            box-shadow: 0 2px 8px rgba(107, 114, 128, 0.3);
+        }
+
+        .bar-column.top3 {
+            background: linear-gradient(180deg, #10b981, #059669);
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+        }
+
+        .bar-value {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #111827;
+            white-space: nowrap;
+        }
+
+        .bar-label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #374151;
+            text-align: center;
+        }
+
         @media (max-width: 900px) {
             .grid-cols-2 {
                 grid-template-columns: repeat(1, minmax(0, 1fr));
@@ -446,6 +616,7 @@
                         <div class="help">
                             生肖对应：1-鼠, 2-牛, 3-虎, 4-兔, 5-龙, 6-蛇, 7-马, 8-羊, 9-猴, 10-鸡, 11-狗, 12-猪
                         </div>
+                        <div id="inputValidation" class="alert alert-info" style="margin-top: 10px;">请粘贴历史数据（支持逗号/空格/换行分隔），工具将自动校验生肖有效性。</div>
                     </div>
 
                     <div class="grid" style="gap: 10px;">
@@ -453,6 +624,12 @@
                             <button id="btnAdd" class="btn btn-primary" type="button">添加到历史数据</button>
                             <button id="btnAnalyze" class="btn btn-success" type="button">立即分析预测</button>
                             <button id="btnClearInput" class="btn btn-secondary" type="button">清空输入框</button>
+                        </div>
+                        <div class="row" style="align-items: center;">
+                            <label style="display:flex; gap: 8px; align-items:center; font-size: 0.9rem; color: #374151; font-weight: 600;">
+                                <input id="includeInputOnAnalyze" type="checkbox" checked />
+                                分析时包含输入框内容（不保存到历史）
+                            </label>
                         </div>
                         <div class="row">
                             <button id="btnLoadExample" class="btn btn-secondary" type="button">填充示例数据</button>
@@ -616,7 +793,61 @@
 
         <section class="card" style="margin-top: 18px;">
             <div class="card-header">
-                <div class="card-title">预测输出区</div>
+                <div class="card-title">综合预测详情（Top 3 推荐）</div>
+                <div class="card-subtitle">显示最可能出现的前3个生肖，包含详细分析指标和预测原因。</div>
+            </div>
+            <div class="card-body">
+                <div id="top3Empty" class="alert alert-info">暂无预测结果：请先进行分析。</div>
+                <div id="top3Area" class="hidden">
+                    <div id="top3Cards" class="grid grid-cols-3" style="gap: 14px; margin-bottom: 18px;"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="card" style="margin-top: 18px;">
+            <div class="card-header">
+                <div class="card-title">12生肖完整统计表</div>
+                <div class="card-subtitle">展示所有生肖的出现次数、频率、最后间隔等详细数据。</div>
+            </div>
+            <div class="card-body">
+                <div id="statsEmpty" class="alert alert-info">暂无统计结果：请先进行分析。</div>
+                <div id="statsSummary" class="hidden" style="margin-bottom: 12px;"></div>
+                <div id="statsArea" class="table-container hidden">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="nowrap">生肖</th>
+                                <th class="nowrap">编号</th>
+                                <th class="nowrap">出现次数</th>
+                                <th class="nowrap">出现频率</th>
+                                <th class="nowrap">最后间隔</th>
+                                <th class="nowrap">平均间隔</th>
+                                <th class="nowrap">冷热状态</th>
+                            </tr>
+                        </thead>
+                        <tbody id="statsTbody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section class="card" style="margin-top: 18px;">
+            <div class="card-header">
+                <div class="card-title">频率柱状图（12生肖）</div>
+                <div class="card-subtitle">柱状图基于“出现次数”，用于直观观察热号 / 冷号。</div>
+            </div>
+            <div class="card-body">
+                <div id="chartEmpty" class="alert alert-info">暂无统计结果：请先进行分析。</div>
+                <div id="chartArea" class="hidden">
+                    <div id="barChart" class="bar-chart" aria-label="12生肖出现次数柱状图"></div>
+                    <div class="help" style="margin-top: 10px;">说明：柱高按最大出现次数归一化；颜色标记：Top 3 推荐 / 热号 / 冷号。</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="card" style="margin-top: 18px;">
+            <div class="card-header">
+                <div class="card-title">预测输出区（完整排名）</div>
                 <div class="card-subtitle">按综合概率从高到低排序，显示概率百分比与可视化条形图。</div>
             </div>
             <div class="card-body">
@@ -628,7 +859,10 @@
                                 <th class="nowrap">排名</th>
                                 <th class="nowrap">生肖</th>
                                 <th class="nowrap">编号</th>
-                                <th class="nowrap">综合概率</th>
+                                <th class="nowrap">预测指数</th>
+                                <th class="nowrap">出现频率</th>
+                                <th class="nowrap">最后间隔</th>
+                                <th class="nowrap">预测等级</th>
                                 <th>可视化</th>
                             </tr>
                         </thead>
@@ -745,6 +979,49 @@
             }
 
             return { items, invalidTokens };
+        }
+
+        function updateInputValidation() {
+            const el = document.getElementById('inputValidation');
+            if (!el) return;
+
+            const raw = document.getElementById('historyInput').value || '';
+            const lines = raw.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+
+            if (!lines.length) {
+                el.className = 'alert alert-info';
+                el.textContent = '请粘贴历史数据（支持逗号/空格/换行分隔），工具将自动校验生肖有效性。';
+                return;
+            }
+
+            let validLines = 0;
+            let totalItems = 0;
+            const unique = new Set();
+            const warnings = [];
+
+            lines.forEach((line, idx) => {
+                const parsed = parseLineToItems(line);
+                if (!parsed || !parsed.items) {
+                    warnings.push(`第 ${idx + 1} 行无法解析`);
+                    return;
+                }
+                validLines += 1;
+                totalItems += parsed.items.length;
+                parsed.items.forEach(id => unique.add(id));
+                if (parsed.invalidTokens && parsed.invalidTokens.length) {
+                    warnings.push(`第 ${idx + 1} 行包含无法识别片段：${parsed.invalidTokens.slice(0, 6).join('、')}`);
+                }
+            });
+
+            const summary = `已识别 ${validLines}/${lines.length} 行，共 ${totalItems} 个结果，覆盖 ${unique.size}/12 个生肖。`;
+
+            if (warnings.length) {
+                el.className = 'alert alert-warning';
+                el.textContent = `${summary} 提示：${warnings.slice(0, 2).join('；')}${warnings.length > 2 ? '…' : ''}`;
+            } else {
+                el.className = 'alert alert-info';
+                el.textContent = summary;
+            }
         }
 
         function formatItems(items) {
@@ -1013,7 +1290,195 @@
                 .join('');
         }
 
-        function renderOutput(combinedProb, topCount) {
+        function computeZodiacStats(history) {
+            const counts = Array(13).fill(0);
+            const positions = Array.from({ length: 13 }, () => []);
+            
+            history.forEach((entry, idx) => {
+                for (const id of entry.items) {
+                    counts[id] += 1;
+                    positions[id].push(idx);
+                }
+            });
+
+            const stats = [];
+            let totalCount = 0;
+            for (let i = 1; i <= 12; i++) totalCount += counts[i];
+
+            for (let id = 1; id <= 12; id++) {
+                const count = counts[id];
+                const freq = totalCount > 0 ? count / totalCount : 0;
+                const pos = positions[id];
+                let lastGap = 0;
+                let avgGap = 0;
+
+                if (pos.length > 0) {
+                    const lastPos = pos[pos.length - 1];
+                    lastGap = (history.length - 1) - lastPos;
+                    
+                    if (pos.length >= 2) {
+                        let sumIntervals = 0;
+                        for (let i = 1; i < pos.length; i++) {
+                            sumIntervals += (pos[i] - pos[i - 1]);
+                        }
+                        avgGap = sumIntervals / (pos.length - 1);
+                    }
+                } else {
+                    lastGap = history.length;
+                }
+
+                stats.push({ id, count, freq, lastGap, avgGap });
+            }
+
+            return stats;
+        }
+
+        function getPredictionReason(id, stats, methods, combined, rank) {
+            const zodiacStats = stats.find(s => s.id === id);
+            const reasons = [];
+
+            if (combined[id] > 0.1) {
+                reasons.push(`综合概率达 ${(combined[id] * 100).toFixed(1)}%，高于平均`);
+            }
+
+            if (methods.frequency[id] > 0.1) {
+                reasons.push(`历史出现频率高（${(methods.frequency[id] * 100).toFixed(1)}%）`);
+            }
+
+            if (zodiacStats && zodiacStats.lastGap >= 3) {
+                reasons.push(`已 ${zodiacStats.lastGap} 期未出，可能反弹`);
+            }
+
+            if (methods.period[id] > 0.1) {
+                reasons.push(`周期性分析显示"到点"概率高`);
+            }
+
+            if (methods.combo[id] > 0.1) {
+                reasons.push(`与最近一期组合关系强`);
+            }
+
+            if (reasons.length === 0) {
+                reasons.push('多算法综合评分优秀');
+            }
+
+            return reasons.slice(0, 2).join('；');
+        }
+
+        function renderTop3Cards(combinedProb, stats, methods) {
+            const top3 = Array.from({ length: 12 }, (_, i) => i + 1)
+                .map(id => ({ id, p: combinedProb[id] }))
+                .sort((a, b) => b.p - a.p)
+                .slice(0, 3);
+
+            const container = document.getElementById('top3Cards');
+            container.innerHTML = top3.map((item, idx) => {
+                const rank = idx + 1;
+                const zodiacStats = stats.find(s => s.id === item.id);
+                const reason = getPredictionReason(item.id, stats, methods, combinedProb, rank);
+                
+                return `
+                    <div class="top3-card rank-${rank}">
+                        <div class="top3-rank">${rank}</div>
+                        <div class="top3-zodiac">${escapeHtml(ZODIAC_TABLE[item.id])}</div>
+                        <div class="top3-prob">${(item.p * 100).toFixed(2)}%</div>
+                        <div class="top3-stats">
+                            <div>出现 ${zodiacStats.count} 次（频率 ${(zodiacStats.freq * 100).toFixed(1)}%）</div>
+                            <div>最后间隔 ${zodiacStats.lastGap} 期</div>
+                            ${zodiacStats.avgGap > 0 ? `<div>平均间隔 ${zodiacStats.avgGap.toFixed(1)} 期</div>` : ''}
+                        </div>
+                        <div class="top3-reason">
+                            <strong>预测原因：</strong>${escapeHtml(reason)}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('top3Empty').classList.add('hidden');
+            document.getElementById('top3Area').classList.remove('hidden');
+        }
+
+        function renderStatsTable(stats) {
+            const sortedStats = stats.slice().sort((a, b) => b.count - a.count);
+            const maxCount = Math.max(...stats.map(s => s.count));
+            const minCount = Math.min(...stats.map(s => s.count));
+
+            const tbody = document.getElementById('statsTbody');
+            tbody.innerHTML = sortedStats.map(s => {
+                let statusTag = 'tag tag-muted';
+                let statusText = '常规';
+
+                if (s.count === maxCount && maxCount > 0) {
+                    statusTag = 'tag tag-danger';
+                    statusText = '热号';
+                } else if (s.count === minCount && s.count < maxCount * 0.6) {
+                    statusTag = 'tag tag-primary';
+                    statusText = '冷号';
+                }
+
+                return `
+                    <tr>
+                        <td class="nowrap" style="font-weight: 900; font-size: 1.05rem;">${escapeHtml(ZODIAC_TABLE[s.id])}</td>
+                        <td class="nowrap">${s.id}</td>
+                        <td class="nowrap" style="font-weight: 700;">${s.count}</td>
+                        <td class="nowrap">${(s.freq * 100).toFixed(2)}%</td>
+                        <td class="nowrap">${s.lastGap} 期</td>
+                        <td class="nowrap">${s.avgGap > 0 ? s.avgGap.toFixed(1) + ' 期' : '—'}</td>
+                        <td class="nowrap"><span class="${statusTag}">${statusText}</span></td>
+                    </tr>
+                `;
+            }).join('');
+
+            const maxName = ZODIAC_TABLE[sortedStats[0].id];
+            const minName = ZODIAC_TABLE[sortedStats[sortedStats.length - 1].id];
+            
+            document.getElementById('statsSummary').innerHTML = `
+                <div class="alert alert-info">
+                    <strong>统计概览：</strong>
+                    最常出现：${escapeHtml(maxName)}（${sortedStats[0].count}次）｜
+                    最少出现：${escapeHtml(minName)}（${sortedStats[sortedStats.length - 1].count}次）
+                </div>
+            `;
+            document.getElementById('statsSummary').classList.remove('hidden');
+
+            document.getElementById('statsEmpty').classList.add('hidden');
+            document.getElementById('statsArea').classList.remove('hidden');
+        }
+
+        function renderBarChart(stats, top3Ids) {
+            const maxCount = Math.max(...stats.map(s => s.count));
+            if (maxCount === 0) return;
+
+            const sortedStats = stats.slice().sort((a, b) => a.id - b.id);
+            const avgCount = stats.reduce((sum, s) => sum + s.count, 0) / 12;
+
+            const chartHtml = sortedStats.map(s => {
+                const heightPct = (s.count / maxCount) * 100;
+                let cssClass = '';
+                
+                if (top3Ids.includes(s.id)) {
+                    cssClass = 'top3';
+                } else if (s.count >= avgCount * 1.2) {
+                    cssClass = 'hot';
+                } else if (s.count <= avgCount * 0.6) {
+                    cssClass = 'cold';
+                }
+
+                return `
+                    <div class="bar-item">
+                        <div class="bar-column ${cssClass}" style="height: ${Math.max(heightPct, 5)}%;" title="${escapeHtml(ZODIAC_TABLE[s.id])}：${s.count}次">
+                            <div class="bar-value">${s.count}</div>
+                        </div>
+                        <div class="bar-label">${escapeHtml(ZODIAC_TABLE[s.id])}<br><span class="muted" style="font-size: 0.75rem;">(${s.id})</span></div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('barChart').innerHTML = chartHtml;
+            document.getElementById('chartEmpty').classList.add('hidden');
+            document.getElementById('chartArea').classList.remove('hidden');
+        }
+
+        function renderOutput(combinedProb, topCount, stats) {
             const rows = Array.from({ length: 12 }, (_, i) => i + 1)
                 .map(id => ({ id, p: combinedProb[id] }))
                 .sort((a, b) => b.p - a.p)
@@ -1027,13 +1492,34 @@
                     const topTag = rank === 1 ? 'tag tag-success'
                         : (rank === 2 ? 'tag tag-primary'
                             : (rank === 3 ? 'tag tag-warning' : 'tag tag-muted'));
+                    
+                    const zodiacStats = stats.find(s => s.id === row.id);
+                    
+                    let gradeTag = 'tag tag-muted';
+                    let gradeText = '常规';
+                    if (rank <= 3) {
+                        gradeTag = 'tag tag-success';
+                        gradeText = '强推荐';
+                    } else if (pct >= 10) {
+                        gradeTag = 'tag tag-primary';
+                        gradeText = '推荐';
+                    } else if (pct >= 7) {
+                        gradeTag = 'tag tag-warning';
+                        gradeText = '一般';
+                    } else {
+                        gradeTag = 'tag tag-muted';
+                        gradeText = '不推荐';
+                    }
 
                     return `
                         <tr>
                             <td class="nowrap"><span class="${topTag}">#${rank}</span></td>
-                            <td class="nowrap" style="font-weight: 900;">${escapeHtml(ZODIAC_TABLE[row.id])}</td>
+                            <td class="nowrap" style="font-weight: 900; font-size: 1.05rem;">${escapeHtml(ZODIAC_TABLE[row.id])}</td>
                             <td class="nowrap">${row.id}</td>
-                            <td class="nowrap" style="font-weight: 800;">${pct.toFixed(2)}%</td>
+                            <td class="nowrap" style="font-weight: 800; color: ${rank <= 3 ? '#10b981' : '#111827'};">${pct.toFixed(2)}%</td>
+                            <td class="nowrap">${(zodiacStats.freq * 100).toFixed(1)}%</td>
+                            <td class="nowrap">${zodiacStats.lastGap} 期</td>
+                            <td class="nowrap"><span class="${gradeTag}">${gradeText}</span></td>
                             <td>
                                 <div class="progress" aria-label="${escapeHtml(ZODIAC_TABLE[row.id])} 概率条">
                                     <div style="width:${pct.toFixed(2)}%"></div>
@@ -1046,8 +1532,31 @@
         }
 
         function analyze() {
-            if (!state.history.length) {
-                showAlert('warning', '请先添加历史数据再进行分析。');
+            let historyToUse = state.history.slice();
+            
+            const includeInput = document.getElementById('includeInputOnAnalyze').checked;
+            if (includeInput) {
+                const raw = document.getElementById('historyInput').value || '';
+                const lines = raw.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+                
+                if (lines.length > 0) {
+                    const tempEntries = [];
+                    lines.forEach(line => {
+                        const parsed = parseLineToItems(line);
+                        if (parsed && parsed.items) {
+                            tempEntries.push({
+                                id: `temp-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+                                items: parsed.items,
+                                ts: Date.now(),
+                            });
+                        }
+                    });
+                    historyToUse = historyToUse.concat(tempEntries);
+                }
+            }
+
+            if (!historyToUse.length) {
+                showAlert('warning', '请先添加历史数据或在输入框中输入数据再进行分析。');
                 return;
             }
 
@@ -1057,11 +1566,11 @@
             const weights = getWeights();
 
             const methods = {
-                frequency: computeFrequency(state.history),
-                cold: computeCold(state.history, recentN),
-                period: computePeriodicity(state.history),
-                combo: computeCombo(state.history),
-                movingAverage: computeMovingAverage(state.history, alpha),
+                frequency: computeFrequency(historyToUse),
+                cold: computeCold(historyToUse, recentN),
+                period: computePeriodicity(historyToUse),
+                combo: computeCombo(historyToUse),
+                movingAverage: computeMovingAverage(historyToUse, alpha),
             };
 
             const combined = combineProbabilities(methods, weights);
@@ -1087,7 +1596,14 @@
             document.getElementById('outputEmpty').classList.add('hidden');
             document.getElementById('outputArea').classList.remove('hidden');
 
-            renderOutput(combined, topCount);
+            const stats = computeZodiacStats(historyToUse);
+            renderOutput(combined, topCount, stats);
+
+
+            const top3Ids = topCombined.map(x => x.id);
+            renderTop3Cards(combined, stats, methods);
+            renderStatsTable(stats);
+            renderBarChart(stats, top3Ids);
 
             state.lastAnalysis = {
                 timestamp: Date.now(),
@@ -1096,8 +1612,11 @@
                 weights,
                 methods,
                 combined,
-                historyCount: state.history.length,
+                historyCount: historyToUse.length,
+                stats,
             };
+
+            showAlert('info', `分析完成！基于 ${historyToUse.length} 期数据，推荐 Top 3 生肖已高亮显示。`);
         }
 
         function downloadText(filename, text) {
@@ -1285,6 +1804,13 @@
             document.getElementById('outputEmpty').classList.remove('hidden');
             document.getElementById('outputArea').classList.add('hidden');
             document.getElementById('outputTbody').innerHTML = '';
+            document.getElementById('top3Empty').classList.remove('hidden');
+            document.getElementById('top3Area').classList.add('hidden');
+            document.getElementById('statsEmpty').classList.remove('hidden');
+            document.getElementById('statsArea').classList.add('hidden');
+            document.getElementById('statsSummary').classList.add('hidden');
+            document.getElementById('chartEmpty').classList.remove('hidden');
+            document.getElementById('chartArea').classList.add('hidden');
         }
 
         function resetWeights() {
@@ -1298,13 +1824,18 @@
         function init() {
             state.history = loadHistory();
             renderHistory();
+            updateInputValidation();
 
             document.getElementById('btnAdd').addEventListener('click', addHistoryFromInput);
             document.getElementById('btnAnalyze').addEventListener('click', analyze);
             document.getElementById('btnClearInput').addEventListener('click', () => {
                 document.getElementById('historyInput').value = '';
+                updateInputValidation();
             });
-            document.getElementById('btnLoadExample').addEventListener('click', fillExample);
+            document.getElementById('btnLoadExample').addEventListener('click', () => {
+                fillExample();
+                updateInputValidation();
+            });
             document.getElementById('btnClearHistory').addEventListener('click', clearHistory);
             document.getElementById('btnExportHistory').addEventListener('click', exportHistory);
             document.getElementById('btnExportJson').addEventListener('click', exportResultsJson);
@@ -1319,7 +1850,10 @@
                 }
             });
 
-            // Enter to analyze quickly (Ctrl+Enter)
+            document.getElementById('historyInput').addEventListener('input', () => {
+                updateInputValidation();
+            });
+
             document.getElementById('historyInput').addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
                     analyze();
