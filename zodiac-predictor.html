@@ -375,6 +375,26 @@
         .method-card.method-period { border-left-color: #f59e0b; }
         .method-card.method-combo { border-left-color: #10b981; }
         .method-card.method-ma { border-left-color: #8b5cf6; }
+        .method-card.method-chi2 { border-left-color: #ef4444; }
+        .method-card.method-mc { border-left-color: #0ea5e9; }
+        .method-card.method-ts { border-left-color: #22c55e; }
+
+        details {
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 10px 12px;
+            background: #f9fafb;
+        }
+
+        details + details {
+            margin-top: 10px;
+        }
+
+        summary {
+            cursor: pointer;
+            font-weight: 800;
+            color: #111827;
+        }
 
         .method-top {
             display: flex;
@@ -598,7 +618,7 @@
     <div class="container">
         <header class="header">
             <h1 class="title">12生肖预测工具</h1>
-            <p class="subtitle">支持历史数据管理与多算法综合预测（频率分析 / 冷热号 / 周期性 / 组合概率 / 移动平均）。数据保存在本地浏览器（localStorage），完全离线可用。</p>
+            <p class="subtitle">支持历史数据管理与 8 种算法综合预测（频率分析 / 冷热号 / 周期性 / 组合概率 / 移动平均 / 卡方检验 / 蒙特卡洛 / 时间序列）。数据保存在本地浏览器（localStorage），完全离线可用。</p>
         </header>
 
         <div id="alertArea" class="hidden"></div>
@@ -656,7 +676,7 @@
                         <div class="card" style="border-radius: 14px; border: 1px dashed #d1d5db;">
                             <div class="card-body">
                                 <div class="card-title" style="font-size: 1rem;">综合权重（加权平均）</div>
-                                <div class="card-subtitle">默认等权，你也可以根据经验微调；将自动归一化。</div>
+                                <div class="card-subtitle">默认 8 项等权（每项 12.5%）；你也可以根据经验微调，系统将自动归一化。</div>
                                 <div class="grid grid-cols-3" style="margin-top: 12px; gap: 10px;">
                                     <div>
                                         <label class="input-label" for="wFreq">频率分析</label>
@@ -678,8 +698,20 @@
                                         <label class="input-label" for="wMA">移动平均</label>
                                         <input id="wMA" class="input" type="number" min="0" step="0.05" value="1" />
                                     </div>
+                                    <div>
+                                        <label class="input-label" for="wChi2">卡方检验</label>
+                                        <input id="wChi2" class="input" type="number" min="0" step="0.05" value="1" />
+                                    </div>
+                                    <div>
+                                        <label class="input-label" for="wMC">蒙特卡洛</label>
+                                        <input id="wMC" class="input" type="number" min="0" step="0.05" value="1" />
+                                    </div>
+                                    <div>
+                                        <label class="input-label" for="wTS">时间序列</label>
+                                        <input id="wTS" class="input" type="number" min="0" step="0.05" value="1" />
+                                    </div>
                                     <div style="display:flex; align-items:flex-end; gap: 10px;">
-                                        <button id="btnResetWeights" class="btn btn-secondary" type="button" style="width: 100%;">重置等权</button>
+                                        <button id="btnResetWeights" class="btn btn-secondary" type="button" style="width: 100%;">重置等权（12.5%）</button>
                                     </div>
                                 </div>
                             </div>
@@ -734,7 +766,7 @@
         <section class="card" style="margin-top: 18px;">
             <div class="card-header">
                 <div class="card-title">分析结果区</div>
-                <div class="card-subtitle">展示 5 种算法各自的 Top 3，并输出综合概率（高亮 Top 3）。</div>
+                <div class="card-subtitle">展示 8 种算法各自的 Top 3，并输出综合概率（高亮 Top 3）。</div>
             </div>
             <div class="card-body">
                 <div id="analysisEmpty" class="alert alert-info">请先添加历史数据，然后点击“立即分析预测”。</div>
@@ -775,10 +807,31 @@
                             <div id="topMA" class="method-top"></div>
                         </div>
                     </div>
+                    <div class="card method-card method-chi2">
+                        <div class="card-body">
+                            <div class="card-title">卡方检验</div>
+                            <div class="card-subtitle">检验偏离均匀分布的程度</div>
+                            <div id="topChi2" class="method-top"></div>
+                        </div>
+                    </div>
+                    <div class="card method-card method-mc">
+                        <div class="card-body">
+                            <div class="card-title">蒙特卡洛模拟</div>
+                            <div class="card-subtitle">基于历史分布随机抽样（1000次）</div>
+                            <div id="topMC" class="method-top"></div>
+                        </div>
+                    </div>
+                    <div class="card method-card method-ts">
+                        <div class="card-body">
+                            <div class="card-title">时间序列分析</div>
+                            <div class="card-subtitle">趋势 + 自相关 + 多窗口滑动平均</div>
+                            <div id="topTS" class="method-top"></div>
+                        </div>
+                    </div>
                     <div class="card" style="border-left: 4px solid #111827;">
                         <div class="card-body">
                             <div class="card-title">综合预测 Top 3</div>
-                            <div class="card-subtitle">所有算法加权平均后的概率</div>
+                            <div class="card-subtitle">8 种算法加权平均后的概率</div>
                             <div id="topCombined" class="method-top"></div>
                             <div class="row" style="margin-top: 12px;">
                                 <button id="btnExportJson" class="btn btn-primary" type="button">导出结果 JSON</button>
@@ -869,6 +922,86 @@
                         <tbody id="outputTbody"></tbody>
                     </table>
                 </div>
+            </div>
+        </section>
+
+        <section class="card" style="margin-top: 18px;">
+            <div class="card-header">
+                <div class="card-title">算法说明文档（8种方法）</div>
+                <div class="card-subtitle">用于理解各算法输出含义与公式；综合预测为 8 种方法加权平均（默认每项 12.5%）。</div>
+            </div>
+            <div class="card-body">
+                <details open>
+                    <summary>1) 频率分析（Frequency）</summary>
+                    <div class="help">
+                        思路：历史出现越多，未来再次出现的概率越高。<br />
+                        公式：P(i) = count(i) / 总出现次数；随后对 12 个生肖归一化。
+                    </div>
+                </details>
+
+                <details>
+                    <summary>2) 冷热号法（Cold/Hot）</summary>
+                    <div class="help">
+                        思路：在最近 N 期内出现越少的生肖越“冷”，可能反弹。<br />
+                        公式：score(i) = 1 / (1 + 最近N期出现次数)；对 12 个生肖归一化。
+                    </div>
+                </details>
+
+                <details>
+                    <summary>3) 周期性分析（Periodicity）</summary>
+                    <div class="help">
+                        思路：根据历史平均间隔与当前间隔，判断是否“到点”。<br />
+                        计算：ratio = 当前未出间隔 / 历史平均间隔（截断到 [0.05, 2]）；对 12 个生肖归一化。
+                    </div>
+                </details>
+
+                <details>
+                    <summary>4) 组合概率（Combo/Markov 近似）</summary>
+                    <div class="help">
+                        思路：同时考虑相邻期转移（Markov 近似）与同期共现（组合关系）。<br />
+                        计算：对“最近一期”中的每个生肖，累加它到候选生肖的转移次数与共现次数，得到 score(i)，再归一化。
+                    </div>
+                </details>
+
+                <details>
+                    <summary>5) 移动平均（Moving Average）</summary>
+                    <div class="help">
+                        思路：越近期的数据权重越高（指数衰减）。<br />
+                        计算：weight = α^age（age=距离当前的期数）；对出现过的生肖累加权重并归一化。
+                    </div>
+                </details>
+
+                <details>
+                    <summary>6) 卡方检验（Chi-Square Test）</summary>
+                    <div class="help">
+                        思路：检验各生肖出现次数是否显著偏离“均匀分布”，偏离越大代表模式越明显。<br />
+                        期望次数：E = 总出现次数 / 12；卡方贡献：χ²(i) = (O(i) - E)² / E。<br />
+                        将 χ²(i) 作为 score(i)，对 12 个生肖归一化为预测概率。
+                    </div>
+                </details>
+
+                <details>
+                    <summary>7) 蒙特卡洛模拟（Monte Carlo Simulation）</summary>
+                    <div class="help">
+                        思路：根据历史频率分布随机抽样，模拟大量“下一期”。<br />
+                        本工具默认运行 1000 次；每次按历史频率加权抽取 K 个不同生肖（K 为历史每期平均个数的四舍五入，最少 1）。<br />
+                        统计各生肖被抽中的次数，得到预测概率（出现次数/总抽样次数）。
+                    </div>
+                </details>
+
+                <details>
+                    <summary>8) 时间序列分析（Time Series Analysis）</summary>
+                    <div class="help">
+                        思路：把“是否出现”视为 0/1 时间序列，综合趋势、自相关与多窗口滑动平均。<br />
+                        组件：
+                        <ul style="margin-left: 18px;">
+                            <li>趋势：最近窗口出现率 vs 全局平均出现率（比值后映射到 0~1）</li>
+                            <li>自相关：基于相邻期，估计 P(出现|上期出现) 与 P(出现|上期未出现)，并以“上期状态”预测下一期</li>
+                            <li>滑动平均：窗口 3/5/10 期的近期均值（可用则参与）</li>
+                        </ul>
+                        最终将三部分加权形成 score(i)，再对 12 个生肖归一化。
+                    </div>
+                </details>
             </div>
         </section>
 
@@ -1231,9 +1364,159 @@
             return prob;
         }
 
+        function computeChiSquare(history) {
+            const counts = Array(13).fill(0);
+            let total = 0;
+            for (const entry of history) {
+                for (const id of entry.items) {
+                    counts[id] += 1;
+                    total += 1;
+                }
+            }
+
+            if (!total) return Array(13).fill(0).map((_, i) => i ? 1 / 12 : 0);
+
+            const expected = total / 12;
+            const raw = Array(13).fill(0);
+            for (let id = 1; id <= 12; id++) {
+                const diff = counts[id] - expected;
+                raw[id] = expected > 0 ? (diff * diff) / expected : 0;
+            }
+            return normalizeProbabilities(raw);
+        }
+
+        function getAverageItemsPerPeriod(history) {
+            if (!history.length) return 1;
+            let total = 0;
+            for (const entry of history) total += entry.items.length;
+            const avg = total / history.length;
+            if (!Number.isFinite(avg) || avg <= 0) return 1;
+            return Math.max(1, Math.min(12, Math.round(avg)));
+        }
+
+        function pickWeightedIndex(weights) {
+            const sum = weights.reduce((acc, v) => acc + (Number.isFinite(v) ? v : 0), 0);
+            if (!sum) return -1;
+            let r = Math.random() * sum;
+            for (let i = 0; i < weights.length; i++) {
+                const w = Number.isFinite(weights[i]) ? weights[i] : 0;
+                if (w <= 0) continue;
+                r -= w;
+                if (r <= 0) return i;
+            }
+            return weights.findIndex(w => w > 0);
+        }
+
+        function weightedSampleWithoutReplacement(prob, k) {
+            const ids = Array.from({ length: 12 }, (_, i) => i + 1);
+            const weights = ids.map(id => prob[id] || 0);
+            const result = [];
+
+            for (let t = 0; t < k; t++) {
+                const idx = pickWeightedIndex(weights);
+                if (idx < 0) break;
+                const pickedId = ids[idx];
+                result.push(pickedId);
+                weights[idx] = 0;
+            }
+
+            return result;
+        }
+
+        function computeMonteCarlo(history, runs = 1000) {
+            const totalRuns = Math.max(1, Math.floor(Number(runs) || 1000));
+            if (!history.length) return Array(13).fill(0).map((_, i) => i ? 1 / 12 : 0);
+
+            const baseProb = computeFrequency(history);
+            const k = getAverageItemsPerPeriod(history);
+
+            const counts = Array(13).fill(0);
+            const totalDraws = totalRuns * k;
+
+            for (let i = 0; i < totalRuns; i++) {
+                const picked = weightedSampleWithoutReplacement(baseProb, k);
+                for (const id of picked) counts[id] += 1;
+            }
+
+            if (!totalDraws) return Array(13).fill(0).map((_, i) => i ? 1 / 12 : 0);
+
+            const prob = Array(13).fill(0);
+            for (let id = 1; id <= 12; id++) prob[id] = counts[id] / totalDraws;
+            return normalizeProbabilities(prob);
+        }
+
+        function computeTimeSeries(history) {
+            const T = history.length;
+            if (!T) return Array(13).fill(0).map((_, i) => i ? 1 / 12 : 0);
+
+            const clamp = (n, min, max) => Math.min(max, Math.max(min, n));
+            const eps = 1e-9;
+            const recentWindow = Math.min(T, Math.max(5, Math.round(T * 0.3)));
+            const windowSizes = [3, 5, 10].filter(w => w <= T);
+
+            const seriesById = Array.from({ length: 13 }, () => Array(T).fill(0));
+            history.forEach((entry, idx) => {
+                for (const id of entry.items) seriesById[id][idx] = 1;
+            });
+
+            const raw = Array(13).fill(0);
+
+            for (let id = 1; id <= 12; id++) {
+                const s = seriesById[id];
+                const prefix = Array(T + 1).fill(0);
+                for (let t = 0; t < T; t++) prefix[t + 1] = prefix[t] + s[t];
+
+                const total = prefix[T];
+                const overallRate = total / T;
+
+                const recentCount = prefix[T] - prefix[T - recentWindow];
+                const recentRate = recentCount / recentWindow;
+
+                let trendRatio = (recentRate + eps) / (overallRate + eps);
+                trendRatio = clamp(trendRatio, 0.2, 3);
+                const trendNorm = (trendRatio - 0.2) / (3 - 0.2);
+
+                let prev1 = 0;
+                let next1Given1 = 0;
+                let prev0 = 0;
+                let next1Given0 = 0;
+
+                for (let t = 1; t < T; t++) {
+                    if (s[t - 1] === 1) {
+                        prev1 += 1;
+                        if (s[t] === 1) next1Given1 += 1;
+                    } else {
+                        prev0 += 1;
+                        if (s[t] === 1) next1Given0 += 1;
+                    }
+                }
+
+                const p1 = prev1 ? next1Given1 / prev1 : overallRate;
+                const p0 = prev0 ? next1Given0 / prev0 : overallRate;
+                const autoNext = s[T - 1] === 1 ? p1 : p0;
+
+                let maAvg = overallRate;
+                if (windowSizes.length) {
+                    let sumAvg = 0;
+                    for (const w of windowSizes) {
+                        sumAvg += (prefix[T] - prefix[T - w]) / w;
+                    }
+                    maAvg = sumAvg / windowSizes.length;
+                }
+
+                const evidenceFactor = Math.sqrt(overallRate + 0.01);
+                const score = evidenceFactor * (0.45 * trendNorm + 0.35 * autoNext + 0.2 * maAvg) + 0.001;
+                raw[id] = Number.isFinite(score) ? score : 0;
+            }
+
+            return normalizeProbabilities(raw);
+        }
+
         function getWeights() {
             const parseWeight = (inputId) => {
-                const v = Number(document.getElementById(inputId).value);
+                const el = document.getElementById(inputId);
+                if (!el) return 0;
+                const v = Number(el.value);
                 return Number.isFinite(v) && v > 0 ? v : 0;
             };
 
@@ -1242,10 +1525,23 @@
             const wPeriod = parseWeight('wPeriod');
             const wCombo = parseWeight('wCombo');
             const wMA = parseWeight('wMA');
-            const sum = wFreq + wCold + wPeriod + wCombo + wMA;
+            const wChi2 = parseWeight('wChi2');
+            const wMC = parseWeight('wMC');
+            const wTS = parseWeight('wTS');
+
+            const sum = wFreq + wCold + wPeriod + wCombo + wMA + wChi2 + wMC + wTS;
 
             if (!sum) {
-                return { wFreq: 0.2, wCold: 0.2, wPeriod: 0.2, wCombo: 0.2, wMA: 0.2 };
+                return {
+                    wFreq: 0.125,
+                    wCold: 0.125,
+                    wPeriod: 0.125,
+                    wCombo: 0.125,
+                    wMA: 0.125,
+                    wChi2: 0.125,
+                    wMC: 0.125,
+                    wTS: 0.125,
+                };
             }
 
             return {
@@ -1254,6 +1550,9 @@
                 wPeriod: wPeriod / sum,
                 wCombo: wCombo / sum,
                 wMA: wMA / sum,
+                wChi2: wChi2 / sum,
+                wMC: wMC / sum,
+                wTS: wTS / sum,
             };
         }
 
@@ -1265,7 +1564,10 @@
                     weights.wCold * methods.cold[id] +
                     weights.wPeriod * methods.period[id] +
                     weights.wCombo * methods.combo[id] +
-                    weights.wMA * methods.movingAverage[id];
+                    weights.wMA * methods.movingAverage[id] +
+                    weights.wChi2 * methods.chiSquare[id] +
+                    weights.wMC * methods.monteCarlo[id] +
+                    weights.wTS * methods.timeSeries[id];
             }
             return normalizeProbabilities(combined);
         }
@@ -1349,12 +1651,28 @@
                 reasons.push(`已 ${zodiacStats.lastGap} 期未出，可能反弹`);
             }
 
-            if (methods.period[id] > 0.1) {
+            if (methods.period && methods.period[id] > 0.1) {
                 reasons.push(`周期性分析显示"到点"概率高`);
             }
 
-            if (methods.combo[id] > 0.1) {
+            if (methods.combo && methods.combo[id] > 0.1) {
                 reasons.push(`与最近一期组合关系强`);
+            }
+
+            if (methods.movingAverage && methods.movingAverage[id] > 0.1) {
+                reasons.push('移动平均显示近期权重更高');
+            }
+
+            if (methods.chiSquare && methods.chiSquare[id] > 0.1) {
+                reasons.push('卡方检验显示偏离均匀分布明显');
+            }
+
+            if (methods.timeSeries && methods.timeSeries[id] > 0.1) {
+                reasons.push('时间序列趋势/自相关评分较高');
+            }
+
+            if (methods.monteCarlo && methods.monteCarlo[id] > 0.1) {
+                reasons.push('蒙特卡洛模拟命中率较高');
             }
 
             if (reasons.length === 0) {
@@ -1564,6 +1882,7 @@
             const alpha = clampNumber(document.getElementById('decayAlpha').value, 0.7, 0.999, 0.95);
             const topCount = clampNumber(document.getElementById('topK').value, 3, 12, 12);
             const weights = getWeights();
+            const monteCarloRuns = 1000;
 
             const methods = {
                 frequency: computeFrequency(historyToUse),
@@ -1571,6 +1890,9 @@
                 period: computePeriodicity(historyToUse),
                 combo: computeCombo(historyToUse),
                 movingAverage: computeMovingAverage(historyToUse, alpha),
+                chiSquare: computeChiSquare(historyToUse),
+                monteCarlo: computeMonteCarlo(historyToUse, monteCarloRuns),
+                timeSeries: computeTimeSeries(historyToUse),
             };
 
             const combined = combineProbabilities(methods, weights);
@@ -1581,6 +1903,9 @@
             const topPeriod = topK(methods.period, k);
             const topCombo = topK(methods.combo, k);
             const topMA = topK(methods.movingAverage, k);
+            const topChi2 = topK(methods.chiSquare, k);
+            const topMC = topK(methods.monteCarlo, k);
+            const topTS = topK(methods.timeSeries, k);
             const topCombined = topK(combined, k);
 
             renderTop('topFreq', topFreq);
@@ -1588,6 +1913,9 @@
             renderTop('topPeriod', topPeriod);
             renderTop('topCombo', topCombo);
             renderTop('topMA', topMA);
+            renderTop('topChi2', topChi2);
+            renderTop('topMC', topMC);
+            renderTop('topTS', topTS);
             renderTop('topCombined', topCombined);
 
             document.getElementById('analysisEmpty').classList.add('hidden');
@@ -1614,6 +1942,9 @@
                 combined,
                 historyCount: historyToUse.length,
                 stats,
+                meta: {
+                    monteCarloRuns,
+                },
             };
 
             showAlert('info', `分析完成！基于 ${historyToUse.length} 期数据，推荐 Top 3 生肖已高亮显示。`);
@@ -1639,12 +1970,13 @@
 
             const out = {
                 tool: 'zodiac-predictor',
-                version: 1,
+                version: 2,
                 exportedAt: new Date(state.lastAnalysis.timestamp).toISOString(),
                 config: {
                     recentN: state.lastAnalysis.recentN,
                     alpha: state.lastAnalysis.alpha,
                     weights: state.lastAnalysis.weights,
+                    meta: state.lastAnalysis.meta || {},
                 },
                 history: {
                     periods: state.lastAnalysis.historyCount,
@@ -1660,6 +1992,9 @@
                         period: state.lastAnalysis.methods.period[id],
                         combo: state.lastAnalysis.methods.combo[id],
                         movingAverage: state.lastAnalysis.methods.movingAverage[id],
+                        chiSquare: state.lastAnalysis.methods.chiSquare[id],
+                        monteCarlo: state.lastAnalysis.methods.monteCarlo[id],
+                        timeSeries: state.lastAnalysis.methods.timeSeries[id],
                     }
                 }))
             };
@@ -1675,7 +2010,7 @@
             }
 
             const lines = [];
-            lines.push(['排名', '生肖名称', '生肖编号', '综合概率(%)', '频率(%)', '冷热(%)', '周期(%)', '组合(%)', '移动平均(%)'].join(','));
+            lines.push(['排名', '生肖名称', '生肖编号', '综合概率(%)', '频率(%)', '冷热(%)', '周期(%)', '组合(%)', '移动平均(%)', '卡方检验(%)', '蒙特卡洛(%)', '时间序列(%)'].join(','));
 
             const sorted = Array.from({ length: 12 }, (_, i) => i + 1)
                 .map(id => ({ id, p: state.lastAnalysis.combined[id] }))
@@ -1693,6 +2028,9 @@
                     (state.lastAnalysis.methods.period[id] * 100).toFixed(4),
                     (state.lastAnalysis.methods.combo[id] * 100).toFixed(4),
                     (state.lastAnalysis.methods.movingAverage[id] * 100).toFixed(4),
+                    (state.lastAnalysis.methods.chiSquare[id] * 100).toFixed(4),
+                    (state.lastAnalysis.methods.monteCarlo[id] * 100).toFixed(4),
+                    (state.lastAnalysis.methods.timeSeries[id] * 100).toFixed(4),
                 ];
                 lines.push(cells.map(v => `"${String(v).replaceAll('"', '""')}"`).join(','));
             });
@@ -1819,6 +2157,9 @@
             document.getElementById('wPeriod').value = '1';
             document.getElementById('wCombo').value = '1';
             document.getElementById('wMA').value = '1';
+            document.getElementById('wChi2').value = '1';
+            document.getElementById('wMC').value = '1';
+            document.getElementById('wTS').value = '1';
         }
 
         function init() {
