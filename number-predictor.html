@@ -647,7 +647,7 @@
         <h1>49数字历史数据分析与预测</h1>
         <p>
             支持粘贴历史开奖数据（1-49），系统将自动识别期数并进行统计分析。预测阶段会<strong>自动避开最近 N 期出现过的所有数字</strong>，
-            再从剩余数字中，基于 5 种算法综合推算下一期概率最高的 Top K。
+            再从剩余数字中，基于多种算法（含卡方检验 / 蒙特卡洛模拟 / 时间序列分析）综合推算下一期概率最高的 Top K。
         </p>
     </header>
 
@@ -813,8 +813,8 @@
                                 </ul>
                                 <div style="margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--gray-200);">
                                     <p style="font-size: 0.875rem; color: var(--gray-500);">
-                                        <strong>分析流程：</strong> 先统计每个数字的出现次数、遗漏期数、平均间隔、卡方偏差；
-                                        再根据综合评分选出 Top K，并根据“避开最近 N 期”策略剔除近期已出现数字。
+                                        <strong>分析流程：</strong> 先统计每个数字的出现次数、遗漏期数、平均间隔，并计算卡方检验、蒙特卡洛模拟、时间序列等分数；
+                                        再对多算法分数进行加权平均得到“全方法综合分”，选出 Top K，并根据“避开最近 N 期”策略剔除近期已出现数字。
                                     </p>
                                 </div>
                             </div>
@@ -848,7 +848,10 @@
                                         <th>周期分</th>
                                         <th>综合分</th>
                                         <th>卡方分</th>
-                                        <th>最终分</th>
+                                        <th>蒙特卡洛分</th>
+                                        <th>时间序列分</th>
+                                        <th>全方法综合分</th>
+                                        <th>经典最终分</th>
                                         <th>状态</th>
                                     </tr>
                                 </thead>
@@ -856,13 +859,14 @@
                             </table>
                         </div>
                         <p class="help-text" style="margin-top: 0.75rem;">
-                            说明：频率分=出现次数归一化；冷号分=遗漏期数归一化；周期分=当前间隔与平均间隔越接近越高；综合分=频率/冷号/周期加权；卡方分=偏离均匀分布程度；最终分=综合分与卡方分加权。
+                            说明：频率分=出现次数归一化；冷号分=遗漏期数归一化；周期分=当前间隔与平均间隔越接近越高；综合分=频率/冷号/周期加权；卡方分=(观测-期望)²/期望归一化；蒙特卡洛分=历史频率抽样模拟结果归一化（默认1000次）；时间序列分=趋势/自相关/滑动平均综合；全方法综合分=以上各分数加权平均（默认等权）；经典最终分=综合分与卡方分加权（保留原有逻辑）。
                         </p>
                     </div>
 
                     <!-- Charts -->
                     <div id="tab-charts" class="tab-content">
-                        <h4 class="card-title" style="font-size: 1rem; margin-bottom: 1.25rem;">Top K 推荐数字的“最终分”柱状图</h4>
+                        <h4 class="card-title" style="font-size: 1rem; margin-bottom: 1.25rem;">Top K 推荐数字的“全方法综合分”柱状图</h4>
+                        <div class="help-text" style="margin-bottom: 0.75rem;">注：全方法综合分 = 多种算法分数的加权平均（并已排除最近 N 期出现的数字）。</div>
                         <div id="topChart" class="chart-bar-container"></div>
                     </div>
 
@@ -872,7 +876,7 @@
                         <div id="algorithmCompareGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
 
                         <div style="margin-top: 1.5rem;">
-                            <h4 class="card-title" style="font-size: 1rem; margin-bottom: 1rem;">算法说明（5种）</h4>
+                            <h4 class="card-title" style="font-size: 1rem; margin-bottom: 1rem;">算法说明（8种）</h4>
                             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                 <div class="algo-card">
                                     <h5>1. 频率分析（Frequency）</h5>
@@ -891,8 +895,20 @@
                                     <p style="font-size: 0.875rem; color: var(--gray-600);">综合分=频率分、冷号分、周期分的加权平均（强调平衡与稳定性）。</p>
                                 </div>
                                 <div class="algo-card">
-                                    <h5>5. 卡方偏差（Chi-Square）</h5>
-                                    <p style="font-size: 0.875rem; color: var(--gray-600);">衡量数字出现次数相对均匀分布的偏离程度，用于捕捉统计异常趋势（仅作参考）。</p>
+                                    <h5>5. 卡方检验（Chi-Square Test）</h5>
+                                    <p style="font-size: 0.875rem; color: var(--gray-600);">计算 (观测-期望)²/期望。卡方值越大，说明偏离均匀分布越明显，可能存在统计异常（仅作参考）。</p>
+                                </div>
+                                <div class="algo-card">
+                                    <h5>6. 蒙特卡洛模拟（Monte Carlo）</h5>
+                                    <p style="font-size: 0.875rem; color: var(--gray-600);">基于历史频率分布进行随机抽样模拟（默认 1000 次），统计每个数字在模拟中被抽到的频次，得到预测分。</p>
+                                </div>
+                                <div class="algo-card">
+                                    <h5>7. 时间序列分析（Time Series）</h5>
+                                    <p style="font-size: 0.875rem; color: var(--gray-600);">把每个数字在每一期是否出现视为 0/1 序列，分析趋势、自相关与滑动平均的变化，给出时间序列预测分。</p>
+                                </div>
+                                <div class="algo-card">
+                                    <h5>8. 全方法综合（All-Methods Combined）</h5>
+                                    <p style="font-size: 0.875rem; color: var(--gray-600);">将以上各算法的分数按权重加权平均得到“全方法综合分”，作为默认 Top K 推荐依据。</p>
                                 </div>
                             </div>
                         </div>
@@ -952,6 +968,11 @@
         predictions: [],
         excludedNumbers: [],
         algorithmResults: null,
+        advanced: {
+            monteCarlo: null,
+            timeSeries: null,
+            overallWeights: null
+        },
         diagnostics: null,
         settings: {
             excludeN: 7,
@@ -1179,6 +1200,15 @@
                 gaps: [],
                 avgGap: totalPeriods,
                 chiSquare: 0,
+                monteCarlo: {
+                    hits: 0,
+                    prob: 0
+                },
+                timeSeries: {
+                    trend: 0,
+                    autocorr: 0,
+                    movingAvg: 0
+                },
                 flags: {
                     hot: false,
                     cold: false
@@ -1188,7 +1218,10 @@
                     gap: 0,
                     period: 0,
                     comprehensive: 0,
-                    chi: 0
+                    chi: 0,
+                    monteCarlo: 0,
+                    timeSeries: 0,
+                    overall: 0
                 },
                 totalScore: 0
             };
@@ -1298,6 +1331,9 @@
         const period = by(s => s.scores.period);
         const comprehensive = by(s => s.scores.comprehensive);
         const chi = by(s => s.scores.chi);
+        const monteCarlo = by(s => s.scores.monteCarlo);
+        const timeSeries = by(s => s.scores.timeSeries);
+        const overall = by(s => s.scores.overall);
         const final = by(s => s.totalScore);
 
         return {
@@ -1306,8 +1342,259 @@
             period,
             comprehensive,
             chi,
+            monteCarlo,
+            timeSeries,
+            overall,
             final
         };
+    }
+
+    const DEFAULT_MONTE_CARLO_RUNS = 1000;
+
+    function getDefaultDrawSize(periods) {
+        if (!periods || periods.length === 0) return 7;
+
+        const counts = new Map();
+        periods.forEach(p => {
+            const len = (p || []).length;
+            counts.set(len, (counts.get(len) || 0) + 1);
+        });
+
+        let bestLen = (periods[periods.length - 1] || []).length || 7;
+        let bestCount = -1;
+        counts.forEach((c, len) => {
+            if (c > bestCount) {
+                bestCount = c;
+                bestLen = len;
+            }
+        });
+
+        return clamp(bestLen, 1, 20);
+    }
+
+    function mulberry32(seed) {
+        let a = seed >>> 0;
+        return () => {
+            let t = a += 0x6D2B79F5;
+            t = Math.imul(t ^ (t >>> 15), t | 1);
+            t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+            return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+        };
+    }
+
+    function sampleWithoutReplacementWeighted(items, weights, k, rng = Math.random) {
+        const picked = [];
+        const poolItems = items.slice();
+        const poolWeights = weights.slice();
+        const take = clamp(k, 0, poolItems.length);
+
+        for (let t = 0; t < take; t++) {
+            let sum = 0;
+            for (const w of poolWeights) sum += w;
+
+            if (sum <= 0) {
+                const idx = Math.floor(rng() * poolItems.length);
+                picked.push(poolItems.splice(idx, 1)[0]);
+                poolWeights.splice(idx, 1);
+                continue;
+            }
+
+            let r = rng() * sum;
+            let idx = 0;
+            for (; idx < poolItems.length; idx++) {
+                r -= poolWeights[idx];
+                if (r <= 0) break;
+            }
+            if (idx >= poolItems.length) idx = poolItems.length - 1;
+
+            picked.push(poolItems.splice(idx, 1)[0]);
+            poolWeights.splice(idx, 1);
+        }
+
+        return picked;
+    }
+
+    function runMonteCarloSimulation(statsObj, periods, excludedNumbers, iterations = DEFAULT_MONTE_CARLO_RUNS, seed = 0) {
+        const excludedSet = new Set(excludedNumbers);
+        const rng = mulberry32(seed);
+
+        const candidates = [];
+        const baseWeights = [];
+        for (let i = 1; i <= 49; i++) {
+            if (excludedSet.has(i)) continue;
+            candidates.push(i);
+            const count = statsObj?.[i]?.count ?? 0;
+            baseWeights.push(count + 1);
+        }
+
+        const drawSize = clamp(getDefaultDrawSize(periods), 1, candidates.length);
+        const hits = new Array(50).fill(0);
+
+        const runs = clamp(iterations, 0, 50000);
+        for (let t = 0; t < runs; t++) {
+            const pick = sampleWithoutReplacementWeighted(candidates, baseWeights, drawSize, rng);
+            pick.forEach(n => {
+                hits[n] += 1;
+            });
+        }
+
+        const totalPicks = runs * drawSize;
+        const probabilityPercent = {};
+        let maxProb = 0;
+        for (let i = 1; i <= 49; i++) {
+            const prob = totalPicks > 0 ? (hits[i] / totalPicks) * 100 : 0;
+            probabilityPercent[i] = prob;
+            maxProb = Math.max(maxProb, prob);
+        }
+
+        const score = {};
+        for (let i = 1; i <= 49; i++) {
+            score[i] = maxProb > 0 ? (probabilityPercent[i] / maxProb) * 100 : 0;
+        }
+
+        return {
+            iterations: runs,
+            drawSize,
+            totalPicks,
+            hitsByNumber: hits,
+            probabilityPercent,
+            score
+        };
+    }
+
+    function calculateLag1Autocorr(series) {
+        const n = series.length;
+        if (n < 3) return 0;
+
+        const mean = series.reduce((a, b) => a + b, 0) / n;
+        let denom = 0;
+        let numer = 0;
+
+        for (let t = 0; t < n; t++) {
+            const d = series[t] - mean;
+            denom += d * d;
+            if (t > 0) {
+                numer += (series[t] - mean) * (series[t - 1] - mean);
+            }
+        }
+
+        return denom > 0 ? numer / denom : 0;
+    }
+
+    function meanLastN(series, n) {
+        if (series.length === 0) return 0;
+        const take = clamp(n, 1, series.length);
+        let sum = 0;
+        for (let i = series.length - take; i < series.length; i++) {
+            sum += series[i];
+        }
+        return sum / take;
+    }
+
+    function calculateTimeSeriesAnalysis(periods) {
+        const totalPeriods = periods.length;
+        const periodSets = periods.map(p => new Set(p));
+
+        const windowShort = clamp(Math.round(totalPeriods * 0.2), 5, 20);
+        const windowLong = clamp(Math.round(totalPeriods * 0.5), windowShort + 1, 60);
+
+        const actualShort = totalPeriods > 0 ? Math.min(windowShort, totalPeriods) : 0;
+        const actualLong = totalPeriods > 0 ? Math.min(windowLong, totalPeriods) : 0;
+
+        const rawScore = {};
+        const score = {};
+        const components = {};
+
+        for (let i = 1; i <= 49; i++) {
+            const series = new Array(totalPeriods).fill(0);
+            for (let t = 0; t < totalPeriods; t++) {
+                series[t] = periodSets[t].has(i) ? 1 : 0;
+            }
+
+            const overallRate = totalPeriods > 0 ? series.reduce((a, b) => a + b, 0) / totalPeriods : 0;
+            const recentRate = actualShort > 0 ? meanLastN(series, actualShort) : overallRate;
+
+            const ratio = overallRate > 0 ? recentRate / overallRate : (recentRate > 0 ? 2 : 1);
+            const trendScore = clamp(50 + (ratio - 1) * 50, 0, 100);
+
+            const r1 = calculateLag1Autocorr(series);
+            const autocorrScore = clamp(Math.abs(r1) * 100, 0, 100);
+
+            const maShort = recentRate;
+            const maLong = actualLong > 0 ? meanLastN(series, actualLong) : overallRate;
+            const movingAvgScore = clamp(50 + (maShort - maLong) * 100, 0, 100);
+
+            const combined = (trendScore * 0.45) + (autocorrScore * 0.25) + (movingAvgScore * 0.30);
+            rawScore[i] = combined;
+            components[i] = {
+                trend: trendScore,
+                autocorr: autocorrScore,
+                movingAvg: movingAvgScore,
+                lag1: r1,
+                overallRatePercent: overallRate * 100,
+                recentRatePercent: recentRate * 100,
+                windowShort: actualShort,
+                windowLong: actualLong
+            };
+        }
+
+        const maxRaw = Math.max(...Object.values(rawScore), 0);
+        for (let i = 1; i <= 49; i++) {
+            score[i] = maxRaw > 0 ? (rawScore[i] / maxRaw) * 100 : 0;
+        }
+
+        return {
+            windowShort: actualShort,
+            windowLong: actualLong,
+            rawScore,
+            score,
+            components
+        };
+    }
+
+    function applyAdvancedScores(statsObj, periods, excludedNumbers, seed = 0) {
+        const monteCarlo = runMonteCarloSimulation(statsObj, periods, excludedNumbers, DEFAULT_MONTE_CARLO_RUNS, seed);
+        const timeSeries = calculateTimeSeriesAnalysis(periods);
+
+        for (let i = 1; i <= 49; i++) {
+            const s = statsObj[i];
+
+            s.monteCarlo.hits = monteCarlo.hitsByNumber[i] || 0;
+            s.monteCarlo.prob = monteCarlo.probabilityPercent[i] || 0;
+            s.scores.monteCarlo = monteCarlo.score[i] || 0;
+
+            const c = timeSeries.components[i];
+            s.timeSeries.trend = c?.trend ?? 0;
+            s.timeSeries.autocorr = c?.autocorr ?? 0;
+            s.timeSeries.movingAvg = c?.movingAvg ?? 0;
+            s.scores.timeSeries = timeSeries.score[i] || 0;
+        }
+
+        const overallWeights = {
+            freq: 1,
+            gap: 1,
+            period: 1,
+            comprehensive: 1,
+            chi: 1,
+            monteCarlo: 1,
+            timeSeries: 1
+        };
+        const weightSum = Object.values(overallWeights).reduce((a, b) => a + b, 0);
+
+        for (let i = 1; i <= 49; i++) {
+            const s = statsObj[i];
+            s.scores.overall = weightSum > 0 ? (
+                (s.scores.freq * overallWeights.freq) +
+                (s.scores.gap * overallWeights.gap) +
+                (s.scores.period * overallWeights.period) +
+                (s.scores.comprehensive * overallWeights.comprehensive) +
+                (s.scores.chi * overallWeights.chi) +
+                (s.scores.monteCarlo * overallWeights.monteCarlo) +
+                (s.scores.timeSeries * overallWeights.timeSeries)
+            ) / weightSum : 0;
+        }
+
+        return { monteCarlo, timeSeries, overallWeights };
     }
 
     function showError(msg) {
@@ -1495,10 +1782,17 @@
         const { stats, expectedAvgCount } = calculateStats(periods, allNumbers);
         state.stats = stats;
 
+        // advanced methods
+        const mcSeed = parseInt(simpleHash(`${input}|${state.settings.excludeN}|${state.settings.predictCount}`), 16) || 0;
+        const advanced = applyAdvancedScores(stats, periods, excluded, mcSeed);
+        state.advanced.monteCarlo = advanced.monteCarlo;
+        state.advanced.timeSeries = advanced.timeSeries;
+        state.advanced.overallWeights = advanced.overallWeights;
+
         const excludedSet = new Set(excluded);
         const predictions = Object.values(stats)
             .filter(s => !excludedSet.has(s.num))
-            .sort((a, b) => b.totalScore - a.totalScore)
+            .sort((a, b) => b.scores.overall - a.scores.overall)
             .slice(0, state.settings.predictCount);
 
         state.predictions = predictions;
@@ -1579,7 +1873,9 @@
             if (p.scores.freq >= 80) reasons.push('历史高频');
             if (p.scores.gap >= 80) reasons.push('冷号反弹');
             if (p.scores.period >= 80) reasons.push('周期到点');
-            if (p.scores.chi >= 80) reasons.push('卡方偏差');
+            if (p.scores.chi >= 80) reasons.push('卡方异常');
+            if (p.scores.monteCarlo >= 80) reasons.push('蒙特卡洛偏高');
+            if (p.scores.timeSeries >= 80) reasons.push('时间序列趋势');
             const reasonText = reasons.length ? reasons.join('、') : '综合多项指标';
 
             card.innerHTML = `
@@ -1588,7 +1884,8 @@
                     <span class="badge ${levelClass}">${levelText}</span>
                 </div>
                 <div class="prediction-number">${pad2(p.num)}</div>
-                <div class="prediction-score">综合预测指数：<strong>${p.totalScore.toFixed(1)}</strong> / 100</div>
+                <div class="prediction-score">全方法综合指数：<strong>${p.scores.overall.toFixed(1)}</strong> / 100</div>
+                <div class="help-text" style="text-align: center; margin-top: -0.25rem; margin-bottom: 0.5rem;">经典最终分：${p.totalScore.toFixed(1)} / 100</div>
                 <div style="font-size: 0.75rem; color: var(--gray-500); display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
                     <span>频率：${p.freq.toFixed(1)}%</span>
                     <span>遗漏：${p.lastSeen} 期</span>
@@ -1598,6 +1895,8 @@
                     <span>冷号分：${p.scores.gap.toFixed(0)}</span>
                     <span>周期分：${p.scores.period.toFixed(0)}</span>
                     <span>卡方分：${p.scores.chi.toFixed(0)}</span>
+                    <span>蒙特卡洛分：${p.scores.monteCarlo.toFixed(0)}</span>
+                    <span>时间序列分：${p.scores.timeSeries.toFixed(0)}</span>
                 </div>
                 <div class="prediction-reason"><strong>原因：</strong>${reasonText}</div>
             `;
@@ -1627,7 +1926,7 @@
 
             const tooltip = document.createElement('div');
             tooltip.className = 'tooltip';
-            tooltip.textContent = `出现 ${s.count} 次 / 频率 ${s.freq.toFixed(1)}% / 遗漏 ${s.lastSeen} 期 / 最终分 ${s.totalScore.toFixed(1)}`;
+            tooltip.textContent = `出现 ${s.count} 次 / 频率 ${s.freq.toFixed(1)}% / 遗漏 ${s.lastSeen} 期 / 综合分 ${s.scores.overall.toFixed(1)} / 经典分 ${s.totalScore.toFixed(1)}`;
             cell.appendChild(tooltip);
 
             if (excludedSet.has(i)) {
@@ -1676,7 +1975,7 @@
         const excludedSet = new Set(state.excludedNumbers);
         const predictedSet = new Set(state.predictions.map(p => p.num));
 
-        const sorted = Object.values(state.stats).sort((a, b) => b.totalScore - a.totalScore);
+        const sorted = Object.values(state.stats).sort((a, b) => b.scores.overall - a.scores.overall);
 
         sorted.forEach(s => {
             const tr = document.createElement('tr');
@@ -1705,7 +2004,10 @@
                 <td style="color: var(--gray-500); font-size: 0.75rem;">${s.scores.period.toFixed(0)}</td>
                 <td style="color: var(--gray-500); font-size: 0.75rem;">${s.scores.comprehensive.toFixed(0)}</td>
                 <td style="color: var(--gray-500); font-size: 0.75rem;">${s.scores.chi.toFixed(0)}</td>
-                <td style="font-weight: 900; color: var(--primary);">${s.totalScore.toFixed(1)}</td>
+                <td style="color: var(--gray-500); font-size: 0.75rem;">${s.scores.monteCarlo.toFixed(0)}</td>
+                <td style="color: var(--gray-500); font-size: 0.75rem;">${s.scores.timeSeries.toFixed(0)}</td>
+                <td style="font-weight: 900; color: var(--primary);">${s.scores.overall.toFixed(1)}</td>
+                <td style="font-weight: 800; color: var(--gray-600);">${s.totalScore.toFixed(1)}</td>
                 <td>${status}</td>
             `;
             elements.statsTableBody.appendChild(tr);
@@ -1714,16 +2016,16 @@
 
     function renderChart() {
         elements.topChart.innerHTML = '';
-        const maxScore = Math.max(...state.predictions.map(p => p.totalScore), 1);
+        const maxScore = Math.max(...state.predictions.map(p => p.scores.overall), 1);
 
         state.predictions.forEach(p => {
             const item = document.createElement('div');
             item.className = 'chart-bar-item';
-            const height = (p.totalScore / maxScore) * 100;
+            const height = (p.scores.overall / maxScore) * 100;
 
             item.innerHTML = `
                 <div class="chart-bar" style="height: ${height}%">
-                    <span class="chart-bar-value">${p.totalScore.toFixed(1)}</span>
+                    <span class="chart-bar-value">${p.scores.overall.toFixed(1)}</span>
                 </div>
                 <span class="chart-bar-label">#${pad2(p.num)}</span>
             `;
@@ -1737,16 +2039,27 @@
             return;
         }
 
-        const { freq, gap, period, comprehensive, chi, final } = state.algorithmResults;
-        const finalSet = new Set(final);
+        const { freq, gap, period, comprehensive, chi, monteCarlo, timeSeries, overall, final } = state.algorithmResults;
+        const overallSet = new Set(overall);
+
+        const mcDesc = state.advanced?.monteCarlo
+            ? `随机抽样模拟（${state.advanced.monteCarlo.iterations}次 / 每次抽${state.advanced.monteCarlo.drawSize}个）`
+            : '随机抽样模拟（默认1000次）';
+
+        const tsDesc = state.advanced?.timeSeries
+            ? `趋势/自相关/滑动平均（窗口 ${state.advanced.timeSeries.windowShort}/${state.advanced.timeSeries.windowLong} 期）`
+            : '趋势/自相关/滑动平均';
 
         const blocks = [
+            { key: 'overall', title: '全方法综合 Top K（默认）', desc: '多算法加权平均（默认等权）', list: overall },
             { key: 'freq', title: '频率分析 Top K', desc: '出现越多越可能', list: freq },
             { key: 'gap', title: '冷号反弹 Top K', desc: '遗漏越久越可能', list: gap },
             { key: 'period', title: '时间间隔 Top K', desc: '接近平均间隔更可能', list: period },
             { key: 'comprehensive', title: '综合评分 Top K', desc: '频率/冷号/周期加权', list: comprehensive },
-            { key: 'chi', title: '卡方偏差 Top K', desc: '偏离均匀分布更明显', list: chi },
-            { key: 'final', title: '最终推荐 Top K', desc: '综合分 + 卡方加权', list: final }
+            { key: 'chi', title: '卡方检验 Top K', desc: '偏离均匀分布更明显', list: chi },
+            { key: 'monteCarlo', title: '蒙特卡洛模拟 Top K', desc: mcDesc, list: monteCarlo },
+            { key: 'timeSeries', title: '时间序列分析 Top K', desc: tsDesc, list: timeSeries },
+            { key: 'final', title: '经典最终推荐 Top K（保留原有）', desc: '综合分 + 卡方加权', list: final }
         ];
 
         elements.algorithmCompareGrid.innerHTML = '';
@@ -1754,11 +2067,11 @@
             const div = document.createElement('div');
             div.className = 'algo-card';
 
-            const overlap = b.key === 'final' ? b.list.length : b.list.filter(n => finalSet.has(n)).length;
+            const overlap = b.key === 'overall' ? b.list.length : b.list.filter(n => overallSet.has(n)).length;
 
             div.innerHTML = `
                 <h5>${b.title}</h5>
-                <div style="font-size: 0.8rem; color: var(--gray-600);">${b.desc} · 与最终推荐重合 <strong>${overlap}</strong> / ${state.settings.predictCount}</div>
+                <div style="font-size: 0.8rem; color: var(--gray-600);">${b.desc} · 与全方法综合重合 <strong>${overlap}</strong> / ${state.settings.predictCount}</div>
                 <div class="algo-numbers" id="algo-${b.key}"></div>
             `;
 
@@ -1767,7 +2080,7 @@
             const listEl = div.querySelector(`#algo-${b.key}`);
             b.list.forEach(n => {
                 const chip = document.createElement('span');
-                chip.className = finalSet.has(n) ? 'badge badge-success' : 'badge badge-secondary';
+                chip.className = overallSet.has(n) ? 'badge badge-success' : 'badge badge-secondary';
                 chip.textContent = pad2(n);
                 listEl.appendChild(chip);
             });
@@ -1791,14 +2104,18 @@
                 avgCountPerNumber: state.flatData.length / 49
             },
             excludedNumbers: state.excludedNumbers,
+            advanced: state.advanced,
             predictions: state.predictions.map(p => ({
                 number: p.num,
-                finalScore: p.totalScore,
+                overallScore: p.scores.overall,
+                classicFinalScore: p.totalScore,
                 frequencyPercent: p.freq,
                 lastSeenPeriods: p.lastSeen,
                 avgGap: p.avgGap,
                 scores: p.scores,
-                chiSquare: p.chiSquare
+                chiSquare: p.chiSquare,
+                monteCarlo: p.monteCarlo,
+                timeSeries: p.timeSeries
             })),
             algorithmResults: state.algorithmResults,
             fullStats: state.stats
@@ -1816,7 +2133,7 @@
         const excludedSet = new Set(state.excludedNumbers);
         const predictedSet = new Set(state.predictions.map(p => p.num));
 
-        let csv = 'Number,Count,FrequencyPercent,LastSeenPeriods,AvgGap,FreqScore,ColdScore,PeriodScore,ComprehensiveScore,ChiScore,FinalScore,ChiSquare,Status\n';
+        let csv = 'Number,Count,FrequencyPercent,LastSeenPeriods,AvgGap,FreqScore,ColdScore,PeriodScore,ComprehensiveScore,ChiScore,MonteCarloScore,TimeSeriesScore,OverallScore,ClassicFinalScore,ChiSquare,MonteCarloProbPercent,MonteCarloHits,Status\n';
 
         Object.values(state.stats).forEach(s => {
             let status = 'Normal';
@@ -1825,7 +2142,7 @@
             else if (s.flags.hot) status = 'Hot';
             else if (s.flags.cold) status = 'Cold';
 
-            csv += `${s.num},${s.count},${s.freq.toFixed(2)},${s.lastSeen},${s.avgGap.toFixed(2)},${s.scores.freq.toFixed(2)},${s.scores.gap.toFixed(2)},${s.scores.period.toFixed(2)},${s.scores.comprehensive.toFixed(2)},${s.scores.chi.toFixed(2)},${s.totalScore.toFixed(2)},${s.chiSquare.toFixed(6)},${status}\n`;
+            csv += `${s.num},${s.count},${s.freq.toFixed(2)},${s.lastSeen},${s.avgGap.toFixed(2)},${s.scores.freq.toFixed(2)},${s.scores.gap.toFixed(2)},${s.scores.period.toFixed(2)},${s.scores.comprehensive.toFixed(2)},${s.scores.chi.toFixed(2)},${s.scores.monteCarlo.toFixed(2)},${s.scores.timeSeries.toFixed(2)},${s.scores.overall.toFixed(2)},${s.totalScore.toFixed(2)},${s.chiSquare.toFixed(6)},${s.monteCarlo.prob.toFixed(4)},${s.monteCarlo.hits},${status}\n`;
         });
 
         downloadBlob(new Blob([csv], { type: 'text/csv' }), `number_prediction_${Date.now()}.csv`);
