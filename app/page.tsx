@@ -282,6 +282,439 @@ export default function Home() {
 
             {results && (
               <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                {/* Comprehensive Prediction Panel */}
+                {results.comprehensivePrediction && (
+                  <div className="bg-gradient-to-br from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 p-6 rounded-xl shadow-lg border-2 border-purple-200 dark:border-purple-800">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-2xl font-bold text-purple-900 dark:text-purple-100 flex items-center gap-2">
+                        ⭐ Comprehensive Prediction
+                      </h3>
+                      <button
+                        onClick={() => {
+                          const csv = [
+                            ["Rank", "Number", "Score", "Confidence", "Votes", "Features"].join(","),
+                            ...results.comprehensivePrediction!.all_predictions.map(p =>
+                              [p.rank, p.number, p.comprehensive_score.toFixed(2), p.confidence_level, p.method_votes, p.key_features.join(";")].join(",")
+                            )
+                          ].join("\n");
+                          const blob = new Blob([csv], { type: "text/csv" });
+                          const url = URL.createObjectURL(blob);
+                          const a = document.createElement("a");
+                          a.href = url;
+                          a.download = "predictions.csv";
+                          a.click();
+                        }}
+                        className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors"
+                      >
+                        📥 Export
+                      </button>
+                    </div>
+
+                    {/* Confidence Summary */}
+                    <div className="grid grid-cols-3 gap-3 mb-6">
+                      <div className="bg-green-100 dark:bg-green-900/30 p-3 rounded-lg border border-green-200 dark:border-green-800">
+                        <div className="text-sm text-green-700 dark:text-green-300 font-medium">High Confidence</div>
+                        <div className="text-2xl font-bold text-green-900 dark:text-green-100">{results.comprehensivePrediction.summary_stats.total_high_confidence}</div>
+                      </div>
+                      <div className="bg-yellow-100 dark:bg-yellow-900/30 p-3 rounded-lg border border-yellow-200 dark:border-yellow-800">
+                        <div className="text-sm text-yellow-700 dark:text-yellow-300 font-medium">Medium Confidence</div>
+                        <div className="text-2xl font-bold text-yellow-900 dark:text-yellow-100">{results.comprehensivePrediction.summary_stats.total_medium_confidence}</div>
+                      </div>
+                      <div className="bg-gray-100 dark:bg-gray-800/30 p-3 rounded-lg border border-gray-200 dark:border-gray-700">
+                        <div className="text-sm text-gray-700 dark:text-gray-300 font-medium">Low Confidence</div>
+                        <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{results.comprehensivePrediction.summary_stats.total_low_confidence}</div>
+                      </div>
+                    </div>
+
+                    {/* Top 10 Predictions */}
+                    <div className="mb-6">
+                      <h4 className="text-lg font-semibold mb-3 text-purple-900 dark:text-purple-200">🎯 Top 10 Recommendations</h4>
+                      <div className="flex flex-wrap gap-3">
+                        {results.comprehensivePrediction.all_predictions.slice(0, 10).map((pred, idx) => (
+                          <div
+                            key={pred.number}
+                            className={`relative px-5 py-4 rounded-lg font-bold text-lg shadow-md ${
+                              pred.confidence_level === "High"
+                                ? "bg-green-500 text-white"
+                                : pred.confidence_level === "Medium"
+                                ? "bg-yellow-500 text-white"
+                                : "bg-gray-400 text-white"
+                            }`}
+                          >
+                            <div className="absolute -top-2 -left-2 w-6 h-6 rounded-full bg-purple-600 text-white text-xs flex items-center justify-center font-bold">
+                              {idx + 1}
+                            </div>
+                            <div className="text-center">
+                              <div className="text-2xl">{pred.number}</div>
+                              <div className="text-xs opacity-90">{pred.comprehensive_score.toFixed(1)}</div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Full 49 Numbers Table */}
+                    <div className="bg-white dark:bg-zinc-800 rounded-lg overflow-hidden border border-purple-200 dark:border-purple-800">
+                      <div className="px-4 py-3 bg-purple-100 dark:bg-purple-900/40 border-b border-purple-200 dark:border-purple-800">
+                        <h4 className="font-semibold text-purple-900 dark:text-purple-200">Complete Rankings (All 49 Numbers)</h4>
+                      </div>
+                      <div className="max-h-96 overflow-y-auto">
+                        <table className="w-full text-sm">
+                          <thead className="bg-zinc-50 dark:bg-zinc-900/50 sticky top-0 z-10">
+                            <tr>
+                              <th className="px-4 py-2 text-left font-medium text-zinc-600 dark:text-zinc-400">Rank</th>
+                              <th className="px-4 py-2 text-left font-medium text-zinc-600 dark:text-zinc-400">Number</th>
+                              <th className="px-4 py-2 text-right font-medium text-zinc-600 dark:text-zinc-400">Score</th>
+                              <th className="px-4 py-2 text-center font-medium text-zinc-600 dark:text-zinc-400">Confidence</th>
+                              <th className="px-4 py-2 text-center font-medium text-zinc-600 dark:text-zinc-400">Votes</th>
+                              <th className="px-4 py-2 text-left font-medium text-zinc-600 dark:text-zinc-400">Key Features</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-zinc-200 dark:divide-zinc-700">
+                            {results.comprehensivePrediction.all_predictions.map((pred, idx) => (
+                              <tr
+                                key={pred.number}
+                                className={`hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-colors ${
+                                  idx % 2 === 0 ? "bg-white dark:bg-zinc-800" : "bg-zinc-50 dark:bg-zinc-900/50"
+                                }`}
+                              >
+                                <td className="px-4 py-2 text-zinc-600 dark:text-zinc-400">#{pred.rank}</td>
+                                <td className="px-4 py-2 font-bold text-lg">{pred.number}</td>
+                                <td className="px-4 py-2 text-right font-semibold">{pred.comprehensive_score.toFixed(2)}</td>
+                                <td className="px-4 py-2 text-center">
+                                  <span
+                                    className={`inline-block px-2 py-1 rounded text-xs font-medium ${
+                                      pred.confidence_level === "High"
+                                        ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                                        : pred.confidence_level === "Medium"
+                                        ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
+                                        : "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200"
+                                    }`}
+                                  >
+                                    {pred.confidence_level}
+                                  </span>
+                                </td>
+                                <td className="px-4 py-2 text-center">{pred.method_votes}/4</td>
+                                <td className="px-4 py-2 text-xs text-zinc-600 dark:text-zinc-400">{pred.key_features.join(", ") || "—"}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Advanced Analysis Cards Grid */}
+                {(results.extremeValueAnalysis || results.autocorrelationAnalysis || results.anovaAnalysis || results.numberSumAnalysis) && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Extreme Value Analysis */}
+                    {results.extremeValueAnalysis && (
+                      <div className="bg-white dark:bg-zinc-800 p-6 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700">
+                        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2 text-red-600 dark:text-red-400">
+                          🔴 Extreme Value Analysis
+                        </h3>
+                        <div className="space-y-3 text-sm">
+                          <div className="flex justify-between border-b border-zinc-100 dark:border-zinc-700 pb-2">
+                            <span className="text-zinc-600 dark:text-zinc-400">Max Frequency:</span>
+                            <span className="font-semibold">{results.extremeValueAnalysis.max_frequency}</span>
+                          </div>
+                          <div className="flex justify-between border-b border-zinc-100 dark:border-zinc-700 pb-2">
+                            <span className="text-zinc-600 dark:text-zinc-400">Mean ± Std:</span>
+                            <span className="font-semibold">
+                              {results.extremeValueAnalysis.mean_frequency.toFixed(2)} ± {results.extremeValueAnalysis.std_deviation.toFixed(2)}
+                            </span>
+                          </div>
+                          <div className="flex justify-between border-b border-zinc-100 dark:border-zinc-700 pb-2">
+                            <span className="text-zinc-600 dark:text-zinc-400">Upper Threshold (μ+3σ):</span>
+                            <span className="font-semibold">{results.extremeValueAnalysis.upper_threshold.toFixed(2)}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-zinc-600 dark:text-zinc-400">Extreme High:</span>
+                            <span className="font-semibold text-red-600 dark:text-red-400">
+                              {results.extremeValueAnalysis.extreme_high.length > 0 ? results.extremeValueAnalysis.extreme_high.join(", ") : "None"}
+                            </span>
+                          </div>
+                        </div>
+                        
+                        {/* Top 5 Anomaly Scores */}
+                        <div className="mt-4 pt-4 border-t border-zinc-200 dark:border-zinc-700">
+                          <h4 className="text-sm font-medium mb-2 text-zinc-700 dark:text-zinc-300">Top 5 Anomalies:</h4>
+                          <div className="flex flex-wrap gap-2">
+                            {Object.entries(results.extremeValueAnalysis.anomaly_score)
+                              .sort(([, a], [, b]) => b - a)
+                              .slice(0, 5)
+                              .map(([num, score]) => (
+                                <div key={num} className="px-3 py-1 bg-red-100 dark:bg-red-900/30 rounded-full text-xs font-medium">
+                                  #{num}: {(score * 100).toFixed(0)}%
+                                </div>
+                              ))}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Autocorrelation Analysis */}
+                    {results.autocorrelationAnalysis && (
+                      <div className="bg-white dark:bg-zinc-800 p-6 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700">
+                        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2 text-blue-600 dark:text-blue-400">
+                          📈 Autocorrelation Analysis
+                        </h3>
+                        <div className="space-y-3 text-sm">
+                          <div className="flex justify-between border-b border-zinc-100 dark:border-zinc-700 pb-2">
+                            <span className="text-zinc-600 dark:text-zinc-400">Lag-1 Correlation:</span>
+                            <span className="font-semibold">{results.autocorrelationAnalysis.lag_1_correlation.toFixed(3)}</span>
+                          </div>
+                          <div className="flex justify-between border-b border-zinc-100 dark:border-zinc-700 pb-2">
+                            <span className="text-zinc-600 dark:text-zinc-400">Lag-2 Correlation:</span>
+                            <span className="font-semibold">{results.autocorrelationAnalysis.lag_2_correlation.toFixed(3)}</span>
+                          </div>
+                          <div className="flex justify-between border-b border-zinc-100 dark:border-zinc-700 pb-2">
+                            <span className="text-zinc-600 dark:text-zinc-400">Lag-3 Correlation:</span>
+                            <span className="font-semibold">{results.autocorrelationAnalysis.lag_3_correlation.toFixed(3)}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-zinc-600 dark:text-zinc-400">Predictability Score:</span>
+                            <span className="font-bold text-blue-600 dark:text-blue-400">
+                              {(results.autocorrelationAnalysis.predictability_score * 100).toFixed(1)}%
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Interpretation */}
+                        <div className="mt-4 pt-4 border-t border-zinc-200 dark:border-zinc-700">
+                          <p className="text-xs text-zinc-600 dark:text-zinc-400 italic">{results.autocorrelationAnalysis.interpretation}</p>
+                        </div>
+
+                        {/* Visual Bar Chart */}
+                        <div className="mt-4 space-y-2">
+                          {[
+                            { label: "Lag-1", value: results.autocorrelationAnalysis.lag_1_correlation },
+                            { label: "Lag-2", value: results.autocorrelationAnalysis.lag_2_correlation },
+                            { label: "Lag-3", value: results.autocorrelationAnalysis.lag_3_correlation },
+                          ].map(({ label, value }) => (
+                            <div key={label} className="flex items-center gap-2">
+                              <span className="text-xs w-12">{label}</span>
+                              <div className="flex-1 bg-zinc-200 dark:bg-zinc-700 rounded-full h-4 overflow-hidden">
+                                <div
+                                  className="bg-blue-500 h-full transition-all"
+                                  style={{ width: `${Math.abs(value) * 100}%` }}
+                                />
+                              </div>
+                              <span className="text-xs w-12 text-right">{value.toFixed(2)}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* ANOVA Analysis */}
+                    {results.anovaAnalysis && (
+                      <div className="bg-white dark:bg-zinc-800 p-6 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700">
+                        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2 text-green-600 dark:text-green-400">
+                          📊 ANOVA (Variance Analysis)
+                        </h3>
+                        <div className="space-y-3 text-sm">
+                          <div className="flex justify-between border-b border-zinc-100 dark:border-zinc-700 pb-2">
+                            <span className="text-zinc-600 dark:text-zinc-400">F-Statistic:</span>
+                            <span className="font-semibold">{results.anovaAnalysis.f_statistic.toFixed(2)}</span>
+                          </div>
+                          <div className="flex justify-between border-b border-zinc-100 dark:border-zinc-700 pb-2">
+                            <span className="text-zinc-600 dark:text-zinc-400">P-Value:</span>
+                            <span className="font-semibold">{results.anovaAnalysis.p_value.toFixed(3)}</span>
+                          </div>
+                          <div className="flex justify-between border-b border-zinc-100 dark:border-zinc-700 pb-2">
+                            <span className="text-zinc-600 dark:text-zinc-400">Significant:</span>
+                            <span className={`font-bold ${results.anovaAnalysis.is_significant ? "text-green-600" : "text-gray-500"}`}>
+                              {results.anovaAnalysis.is_significant ? "Yes" : "No"}
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-zinc-600 dark:text-zinc-400">Hottest Period:</span>
+                            <span className="font-semibold text-orange-600 dark:text-orange-400">{results.anovaAnalysis.hottest_period}</span>
+                          </div>
+                        </div>
+
+                        {/* Period Comparison */}
+                        <div className="mt-4 pt-4 border-t border-zinc-200 dark:border-zinc-700 space-y-3">
+                          {results.anovaAnalysis.periods.map(period => (
+                            <div key={period.period_name} className="space-y-1">
+                              <div className="flex justify-between items-center">
+                                <span className="text-xs font-medium text-zinc-700 dark:text-zinc-300">{period.period_name}</span>
+                                <span className="text-xs text-zinc-500">Mean: {period.period_mean.toFixed(2)}</span>
+                              </div>
+                              <div className="text-xs text-zinc-600 dark:text-zinc-400">
+                                Top 3: {period.top_3_numbers.join(", ")}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Number Sum Analysis */}
+                    {results.numberSumAnalysis && (
+                      <div className="bg-white dark:bg-zinc-800 p-6 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700">
+                        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2 text-purple-600 dark:text-purple-400">
+                          ➕ Number Sum Analysis
+                        </h3>
+                        <div className="space-y-3 text-sm">
+                          <div className="flex justify-between border-b border-zinc-100 dark:border-zinc-700 pb-2">
+                            <span className="text-zinc-600 dark:text-zinc-400">Sum Mean:</span>
+                            <span className="font-semibold">{results.numberSumAnalysis.sum_mean.toFixed(1)}</span>
+                          </div>
+                          <div className="flex justify-between border-b border-zinc-100 dark:border-zinc-700 pb-2">
+                            <span className="text-zinc-600 dark:text-zinc-400">Sum Range:</span>
+                            <span className="font-semibold">
+                              {results.numberSumAnalysis.sum_min} - {results.numberSumAnalysis.sum_max}
+                            </span>
+                          </div>
+                          <div className="flex justify-between border-b border-zinc-100 dark:border-zinc-700 pb-2">
+                            <span className="text-zinc-600 dark:text-zinc-400">Std Deviation:</span>
+                            <span className="font-semibold">{results.numberSumAnalysis.sum_std_dev.toFixed(1)}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-zinc-600 dark:text-zinc-400">Predicted Range:</span>
+                            <span className="font-bold text-purple-600 dark:text-purple-400">
+                              {results.numberSumAnalysis.predicted_sum_range[0]} - {results.numberSumAnalysis.predicted_sum_range[1]}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Quartiles */}
+                        <div className="mt-4 pt-4 border-t border-zinc-200 dark:border-zinc-700">
+                          <h4 className="text-xs font-medium mb-2 text-zinc-700 dark:text-zinc-300">Quartiles:</h4>
+                          <div className="grid grid-cols-3 gap-2 text-center">
+                            <div className="bg-purple-50 dark:bg-purple-900/20 rounded p-2">
+                              <div className="text-xs text-zinc-600 dark:text-zinc-400">Q1</div>
+                              <div className="font-bold">{results.numberSumAnalysis.sum_quartiles.q1}</div>
+                            </div>
+                            <div className="bg-purple-50 dark:bg-purple-900/20 rounded p-2">
+                              <div className="text-xs text-zinc-600 dark:text-zinc-400">Q2</div>
+                              <div className="font-bold">{results.numberSumAnalysis.sum_quartiles.q2}</div>
+                            </div>
+                            <div className="bg-purple-50 dark:bg-purple-900/20 rounded p-2">
+                              <div className="text-xs text-zinc-600 dark:text-zinc-400">Q3</div>
+                              <div className="font-bold">{results.numberSumAnalysis.sum_quartiles.q3}</div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Top Numbers by Sum Score */}
+                        <div className="mt-4 pt-4 border-t border-zinc-200 dark:border-zinc-700">
+                          <h4 className="text-xs font-medium mb-2 text-zinc-700 dark:text-zinc-300">Recommended (Sum-Based):</h4>
+                          <div className="flex flex-wrap gap-1">
+                            {results.numberSumAnalysis.sum_based_numbers.slice(0, 7).map(num => (
+                              <span key={num} className="px-2 py-1 bg-purple-100 dark:bg-purple-900/30 rounded text-xs font-medium">
+                                {num}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Decision Tree Analysis */}
+                {results.ruleTreeAnalysis && (
+                  <div className="bg-white dark:bg-zinc-800 p-6 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700">
+                    <h3 className="text-xl font-semibold mb-4 flex items-center gap-2 text-indigo-600 dark:text-indigo-400">
+                      🎯 Decision Tree / Random Forest
+                    </h3>
+                    
+                    {/* Rule Summary */}
+                    <div className="mb-6 p-4 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg border border-indigo-200 dark:border-indigo-800">
+                      <p className="text-sm text-indigo-900 dark:text-indigo-200">{results.ruleTreeAnalysis.rule_summary}</p>
+                    </div>
+
+                    {/* Confidence Distribution */}
+                    <div className="grid grid-cols-3 gap-3 mb-6">
+                      <div className="text-center p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                        <div className="text-2xl font-bold text-green-700 dark:text-green-300">{results.ruleTreeAnalysis.confidence_distribution.high_count}</div>
+                        <div className="text-xs text-green-600 dark:text-green-400">High</div>
+                      </div>
+                      <div className="text-center p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
+                        <div className="text-2xl font-bold text-yellow-700 dark:text-yellow-300">{results.ruleTreeAnalysis.confidence_distribution.medium_count}</div>
+                        <div className="text-xs text-yellow-600 dark:text-yellow-400">Medium</div>
+                      </div>
+                      <div className="text-center p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-gray-200 dark:border-gray-700">
+                        <div className="text-2xl font-bold text-gray-700 dark:text-gray-300">{results.ruleTreeAnalysis.confidence_distribution.low_count}</div>
+                        <div className="text-xs text-gray-600 dark:text-gray-400">Low</div>
+                      </div>
+                    </div>
+
+                    {/* Top 10 with Feature Scores */}
+                    <div className="space-y-3">
+                      <h4 className="font-semibold text-sm text-zinc-700 dark:text-zinc-300">Top 10 Predictions with Feature Scores:</h4>
+                      {results.ruleTreeAnalysis.predictions.slice(0, 10).map((pred, idx) => (
+                        <div key={pred.number} className="p-3 bg-zinc-50 dark:bg-zinc-900/50 rounded-lg border border-zinc-200 dark:border-zinc-700">
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center gap-3">
+                              <div className="text-xl font-bold text-indigo-600 dark:text-indigo-400">#{pred.number}</div>
+                              <span
+                                className={`px-2 py-1 rounded text-xs font-medium ${
+                                  pred.confidence_level === "High"
+                                    ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                                    : pred.confidence_level === "Medium"
+                                    ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
+                                    : "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200"
+                                }`}
+                              >
+                                {pred.confidence_level}
+                              </span>
+                            </div>
+                            <div className="text-right">
+                              <div className="text-lg font-bold">{pred.confidence_score.toFixed(1)}%</div>
+                              <div className="text-xs text-zinc-500">{pred.voting_methods.length} votes</div>
+                            </div>
+                          </div>
+                          
+                          {/* Feature Scores Mini Bars */}
+                          <div className="grid grid-cols-5 gap-1 text-xs">
+                            <div className="text-center">
+                              <div className="h-12 bg-zinc-200 dark:bg-zinc-700 rounded relative overflow-hidden">
+                                <div className="absolute bottom-0 w-full bg-blue-500" style={{ height: `${pred.feature_scores.frequency_score * 50}%` }} />
+                              </div>
+                              <div className="mt-1 text-zinc-600 dark:text-zinc-400">Freq</div>
+                            </div>
+                            <div className="text-center">
+                              <div className="h-12 bg-zinc-200 dark:bg-zinc-700 rounded relative overflow-hidden">
+                                <div className="absolute bottom-0 w-full bg-red-500" style={{ height: `${pred.feature_scores.extreme_value_score * 100}%` }} />
+                              </div>
+                              <div className="mt-1 text-zinc-600 dark:text-zinc-400">Extr</div>
+                            </div>
+                            <div className="text-center">
+                              <div className="h-12 bg-zinc-200 dark:bg-zinc-700 rounded relative overflow-hidden">
+                                <div className="absolute bottom-0 w-full bg-purple-500" style={{ height: `${pred.feature_scores.autocorrelation_score * 100}%` }} />
+                              </div>
+                              <div className="mt-1 text-zinc-600 dark:text-zinc-400">Auto</div>
+                            </div>
+                            <div className="text-center">
+                              <div className="h-12 bg-zinc-200 dark:bg-zinc-700 rounded relative overflow-hidden">
+                                <div className="absolute bottom-0 w-full bg-green-500" style={{ height: `${pred.feature_scores.anova_score * 50}%` }} />
+                              </div>
+                              <div className="mt-1 text-zinc-600 dark:text-zinc-400">ANOVA</div>
+                            </div>
+                            <div className="text-center">
+                              <div className="h-12 bg-zinc-200 dark:bg-zinc-700 rounded relative overflow-hidden">
+                                <div className="absolute bottom-0 w-full bg-yellow-500" style={{ height: `${pred.feature_scores.sum_score * 100}%` }} />
+                              </div>
+                              <div className="mt-1 text-zinc-600 dark:text-zinc-400">Sum</div>
+                            </div>
+                          </div>
+                          
+                          {pred.reasons.length > 0 && (
+                            <div className="mt-2 text-xs text-zinc-600 dark:text-zinc-400">
+                              {pred.reasons.join(" • ")}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 {/* Summary Cards */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-white dark:bg-zinc-800 p-4 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700">
